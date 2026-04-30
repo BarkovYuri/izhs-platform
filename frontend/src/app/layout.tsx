@@ -101,9 +101,11 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [
         {
           url: "/og.png",
+          secureUrl: "/og.png",
           width: 1200,
           height: 630,
           alt: `${s.site_name} — строительство кирпичных домов`,
+          type: "image/png",
         },
       ],
     },
