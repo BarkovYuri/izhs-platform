@@ -85,12 +85,14 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
   };
 
   return (
-    <div className="container-rs py-10 sm:py-14">
-      <Breadcrumbs items={[
-        { label: "Проекты", href: "/builds" },
-        { label: b.title },
-      ]} />
-      <div className="grid gap-10 lg:grid-cols-[1fr_380px]">
+    <div className="py-6 sm:py-14">
+      <div className="container-rs">
+        <Breadcrumbs items={[
+          { label: "Проекты", href: "/builds" },
+          { label: b.title },
+        ]} />
+      </div>
+      <div className="container-rs grid gap-6 sm:gap-10 lg:grid-cols-[1fr_380px]">
         <div>
           <div className="flex flex-wrap gap-2 mb-3">
             <span className={`badge ${STATUS_BADGE[b.status] || "badge-muted"}`}>{b.status_label}</span>
@@ -100,26 +102,27 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             )}
           </div>
 
-          <h1 className="h-display text-[32px] sm:text-[48px] font-extrabold tracking-tight">
+          <h1 className="h-display text-[26px] sm:text-[40px] lg:text-[48px] font-extrabold tracking-tight leading-tight">
             {b.title}
           </h1>
 
           {b.short_description && (
-            <p className="mt-3 text-[15px] sm:text-[17px] text-[var(--rs-muted)] max-w-3xl">
+            <p className="mt-3 text-[14px] sm:text-[17px] text-[var(--rs-muted)] max-w-3xl">
               {b.short_description}
             </p>
           )}
 
-          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
-            <span className="inline-flex items-center gap-1.5"><Maximize2 size={16} className="text-[var(--rs-muted)]"/> {formatArea(b.area)}</span>
-            <span className="inline-flex items-center gap-1.5"><Building2 size={16} className="text-[var(--rs-muted)]"/> {b.floors} эт.</span>
+          <div className="mt-4 sm:mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px] sm:text-[14px]">
+            <span className="inline-flex items-center gap-1.5"><Maximize2 size={15} className="text-[var(--rs-muted)]"/> {formatArea(b.area)}</span>
+            <span className="inline-flex items-center gap-1.5"><Building2 size={15} className="text-[var(--rs-muted)]"/> {b.floors} эт.</span>
             {b.bedrooms != null && (
-              <span className="inline-flex items-center gap-1.5"><Bed size={16} className="text-[var(--rs-muted)]"/> {b.bedrooms} спальни</span>
+              <span className="inline-flex items-center gap-1.5"><Bed size={15} className="text-[var(--rs-muted)]"/> {b.bedrooms} спальни</span>
             )}
           </div>
 
-          <div className="mt-8">
-            <Gallery items={b.images} aspect="16/10" />
+          {/* На mobile галерея во всю ширину (без боковых padding'ов) */}
+          <div className="mt-5 sm:mt-8 -mx-4 sm:mx-0">
+            <Gallery items={b.images} />
           </div>
 
           {b.description && (

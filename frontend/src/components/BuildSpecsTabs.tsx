@@ -52,12 +52,12 @@ export default function BuildSpecsTabs({ build }: { build: BuildDetail }) {
       )}
 
       {tab === "plans" && (
-        hasPlans ? <Gallery items={build.floor_plans} aspect="16/12" />
+        hasPlans ? <Gallery items={build.floor_plans} />
                  : <Empty>Поэтажные планы скоро появятся</Empty>
       )}
 
       {tab === "facades" && (
-        hasFacades ? <Gallery items={build.facades} aspect="16/9" />
+        hasFacades ? <Gallery items={build.facades} />
                    : <Empty>Схемы фасадов скоро появятся</Empty>
       )}
 
