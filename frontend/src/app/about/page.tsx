@@ -10,9 +10,10 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const FALLBACK_KICKER = "О компании";
-const FALLBACK_META_TITLE = "О компании — Ремстрой";
+const FALLBACK_META_TITLE =
+  "О компании — застройщик кирпичных домов в Томске с 2016 года";
 const FALLBACK_META_DESCRIPTION =
-  "Застройщик кирпичных домов в Томске и Томской области. Эскроу, аккредитация в банках, собственный ЖК «Красная смородина».";
+  "Строительная компания Ремстрой — застройщик ИЖС в Томске и Томской области с 2016 года. Эскроу, аккредитация в Сбербанке, Альфа-Банке, Левобережном, ДОМ.РФ. Собственный ЖК «Красная смородина».";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("about");

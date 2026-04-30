@@ -15,9 +15,10 @@ const FALLBACK_KICKER = "FAQ";
 const FALLBACK_TITLE = "Вопросы и ответы";
 const FALLBACK_SUBTITLE =
   "Ответы на самые частые вопросы клиентов. Если нужного нет — задайте свой через форму ниже.";
-const FALLBACK_META_TITLE = "Вопросы и ответы";
+const FALLBACK_META_TITLE =
+  "Вопросы о строительстве кирпичного дома в Томске — FAQ";
 const FALLBACK_META_DESCRIPTION =
-  "Ответы на частые вопросы о строительстве кирпичных домов: сроки, эскроу, ипотека, ЖК «Красная смородина» в Кисловке.";
+  "Ответы на частые вопросы о строительстве кирпичного дома в Томске и Кисловке: сроки, цена, эскроу, ипотека, гарантии, материалы, ЖК «Красная смородина».";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("faq");

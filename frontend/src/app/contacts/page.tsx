@@ -16,9 +16,10 @@ const FALLBACK_KICKER = "Контакты";
 const FALLBACK_TITLE = "Связаться с нами";
 const FALLBACK_SUBTITLE =
   "Позвоните или оставьте заявку — обсудим проект, выезд на участок и стоимость.";
-const FALLBACK_META_TITLE = "Контакты";
+const FALLBACK_META_TITLE =
+  "Контакты застройщика в Томске — телефон, адрес, мессенджеры";
 const FALLBACK_META_DESCRIPTION =
-  "Связаться с застройщиком Ремстрой: телефон, email, адрес офиса в Томске на Комсомольском проспекте, 43А. Карта проезда.";
+  "Связаться с застройщиком кирпичных домов в Томске: телефон, офис на Комсомольском проспекте 43А, Telegram, WhatsApp, email. Бесплатный выезд на участок.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("contacts");

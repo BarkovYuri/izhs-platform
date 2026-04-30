@@ -13,9 +13,10 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const FALLBACK_KICKER = "Жилой комплекс";
-const FALLBACK_META_TITLE = "ЖК «Красная смородина» — Кисловка, Томск";
+const FALLBACK_META_TITLE =
+  "ЖК «Красная смородина» в Кисловке — кирпичные дома под Томском";
 const FALLBACK_META_DESCRIPTION =
-  "Жилой комплекс «Красная смородина» в деревне Кисловка под Томском. Кирпичные дома с земельными участками, скважина, септик, эскроу.";
+  "Жилой комплекс «Красная смородина» в деревне Кисловка, 15 минут от Томска: кирпичные дома с участками, скважина, септик, эскроу. 12 из 40 домов уже построены. Узнайте о свободных участках.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("settlement");
