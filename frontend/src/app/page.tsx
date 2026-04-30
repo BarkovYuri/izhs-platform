@@ -31,8 +31,8 @@ export default async function HomePage() {
       <section className="section">
         <div className="container-rs">
           <SectionHead
-            kicker="О посёлке"
-            title={`«${s.settlement_name}» — посёлок в Кисловке`}
+            kicker="О ЖК"
+            title={`«${s.settlement_name}» — жилой комплекс в Кисловке`}
             subtitle={s.about_short}
           />
           <div className="grid gap-4 md:grid-cols-3 mt-10">

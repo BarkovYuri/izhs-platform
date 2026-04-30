@@ -65,10 +65,10 @@ class Build(models.Model):
 
     plot_number = models.CharField(
         "Номер участка на генплане", max_length=20, blank=True,
-        help_text="Если проект привязан к конкретному участку поселка"
+        help_text="Если проект привязан к конкретному участку ЖК"
     )
     available_in_settlement = models.BooleanField(
-        "Можно построить в посёлке Красная смородина", default=True
+        "Можно построить в ЖК «Красная смородина»", default=True
     )
     available_on_client_land = models.BooleanField(
         "Можно построить на участке клиента", default=True

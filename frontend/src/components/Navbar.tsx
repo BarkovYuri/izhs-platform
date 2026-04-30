@@ -13,7 +13,7 @@ type NavLink = { href: string; label: string };
 const NAV: NavLink[] = [
   { href: "/builds", label: "Проекты" },
   { href: "/portfolio", label: "Построенные" },
-  { href: "/settlement", label: "Посёлок" },
+  { href: "/settlement", label: "ЖК" },
   { href: "/about", label: "О компании" },
   { href: "/faq", label: "Вопросы" },
   { href: "/contacts", label: "Контакты" },

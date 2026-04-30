@@ -55,10 +55,10 @@ class SiteSettingsAdmin(ModelAdmin):
     fieldsets = (
         ("Бренд", {"fields": ("site_name", "tagline", "about_short")}),
         ("Контакты", {"fields": ("phone", "email", "address")}),
-        ("Посёлок", {"fields": ("settlement_name", "settlement_location")}),
+        ("ЖК (жилой комплекс)", {"fields": ("settlement_name", "settlement_location")}),
         ("Реквизиты", {"fields": ("legal_name", "inn", "ogrnip")}),
         ("Соцсети и мессенджеры", {"fields": ("vk_url", "telegram_url", "whatsapp_url", "max_url")}),
-        ("Посёлок — карта и план", {"fields": ("yandex_map_iframe", "settlement_plan", "settlement_plan_preview")}),
+        ("ЖК — карта и генплан", {"fields": ("yandex_map_iframe", "settlement_plan", "settlement_plan_preview")}),
         ("Офис — карта", {"fields": ("office_map_iframe",)}),
         ("Аналитика и верификация поисковиков", {
             "fields": ("yandex_metrika_id", "yandex_verification", "google_verification"),
@@ -73,7 +73,7 @@ class SiteSettingsAdmin(ModelAdmin):
             ),
             "description": (
                 "Эти числа показываются в Hero на главной и в блоке "
-                "статистики посёлка. Меняй их по мере роста — переделывать "
+                "статистики ЖК. Меняй их по мере роста — переделывать "
                 "сайт не нужно."
             ),
         }),

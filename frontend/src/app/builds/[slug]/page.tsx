@@ -170,9 +170,9 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
               <div className="card-rs p-5 flex items-start gap-3">
                 <MapPin className="text-[var(--rs-brand)] shrink-0 mt-0.5" size={20} />
                 <div>
-                  <div className="font-bold text-[15px]">В посёлке «{s.settlement_name}»</div>
+                  <div className="font-bold text-[15px]">В ЖК «{s.settlement_name}»</div>
                   <div className="text-[13px] text-[var(--rs-muted)] mt-1">
-                    Под ключ на участке посёлка. Цена — с участком.
+                    Под ключ на участке ЖК. Цена — с участком.
                   </div>
                 </div>
               </div>

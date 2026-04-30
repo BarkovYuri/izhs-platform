@@ -16,7 +16,7 @@ const FALLBACK_SUBTITLE =
 const FALLBACK_KICKER = "Каталог";
 const FALLBACK_META_TITLE = "Каталог проектов кирпичных домов";
 const FALLBACK_META_DESCRIPTION =
-  "Типовые и индивидуальные проекты кирпичных домов в посёлке Красная смородина и на вашем участке. Площадь, цены, фото, планировки.";
+  "Типовые и индивидуальные проекты кирпичных домов в ЖК «Красная смородина» и на вашем участке. Площадь, цены, фото, планировки.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("builds");

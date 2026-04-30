@@ -26,7 +26,7 @@ export default function Footer({ s }: { s: SiteSettings }) {
             <ul className="space-y-2 text-[14px]">
               <li><Link href="/builds" className="hover:text-[var(--rs-brand)]">Проекты домов</Link></li>
               <li><Link href="/portfolio" className="hover:text-[var(--rs-brand)]">Построенные дома</Link></li>
-              <li><Link href="/settlement" className="hover:text-[var(--rs-brand)]">Посёлок «{s.settlement_name}»</Link></li>
+              <li><Link href="/settlement" className="hover:text-[var(--rs-brand)]">ЖК «{s.settlement_name}»</Link></li>
               <li><Link href="/about" className="hover:text-[var(--rs-brand)]">О компании</Link></li>
               <li><Link href="/faq" className="hover:text-[var(--rs-brand)]">Вопросы и ответы</Link></li>
               <li><Link href="/contacts" className="hover:text-[var(--rs-brand)]">Контакты</Link></li>

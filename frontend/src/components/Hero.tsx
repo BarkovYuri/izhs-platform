@@ -58,7 +58,7 @@ export default function Hero({
           <div className="flex flex-wrap items-center gap-2">
             <div className="inline-flex items-center gap-2 badge badge-brand">
               <MapPin size={14} />
-              Посёлок «{s.settlement_name}», {s.settlement_location}
+              ЖК «{s.settlement_name}», {s.settlement_location}
             </div>
             <div className="inline-flex items-center gap-1.5 badge badge-olive">
               <Award size={13} />
@@ -100,7 +100,7 @@ export default function Hero({
             <Stat value={`${homesBuilt}+`} label="построено домов" />
             <Stat
               value={`${settlementBuilt}/${settlementTotal}`}
-              label={`в посёлке «${s.settlement_name}»`}
+              label={`в ЖК «${s.settlement_name}»`}
             />
             <Stat value="100%" label="кирпич" />
             <Stat value="индивид." label="доработка проекта" />

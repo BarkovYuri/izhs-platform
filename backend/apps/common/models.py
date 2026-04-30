@@ -13,8 +13,8 @@ class SiteSettings(models.Model):
     email = models.EmailField("Email для заявок", blank=True)
     address = models.CharField("Адрес офиса", max_length=300, blank=True)
 
-    settlement_name = models.CharField("Название посёлка", max_length=120, default="Красная смородина")
-    settlement_location = models.CharField("Расположение посёлка", max_length=200, default="д. Кисловка, Томская область")
+    settlement_name = models.CharField("Название ЖК", max_length=120, default="Красная смородина")
+    settlement_location = models.CharField("Расположение ЖК", max_length=200, default="д. Кисловка, Томская область")
 
     legal_name = models.CharField("Юр. наименование", max_length=200, blank=True)
     inn = models.CharField("ИНН", max_length=20, blank=True)
@@ -29,11 +29,11 @@ class SiteSettings(models.Model):
     )
 
     yandex_map_iframe = models.TextField(
-        "Iframe Яндекс.Карты — посёлок Красная смородина",
+        "Iframe Яндекс.Карты — ЖК «Красная смородина»",
         blank=True,
         help_text=(
             "Вставьте полный код «iframe» из Яндекс.Карт "
-            "для страницы посёлка."
+            "для страницы ЖК."
         ),
     )
     office_map_iframe = models.TextField(
@@ -41,12 +41,12 @@ class SiteSettings(models.Model):
         blank=True,
         help_text=(
             "Код «iframe» из Яндекс.Карт для страницы Контакты, "
-            "если офис не в посёлке."
+            "если офис не в ЖК."
         ),
     )
     settlement_plan = models.ImageField(
-        "Генплан посёлка (картинка)", upload_to="site/", blank=True, null=True,
-        help_text="Изображение генплана с участками — отображается на странице посёлка",
+        "Генплан ЖК (картинка)", upload_to="site/", blank=True, null=True,
+        help_text="Изображение генплана с участками — отображается на странице ЖК",
     )
     yandex_metrika_id = models.CharField("ID Яндекс.Метрики", max_length=20, blank=True)
     yandex_verification = models.CharField(
@@ -75,23 +75,23 @@ class SiteSettings(models.Model):
         default=30,
         help_text=(
             "Число в Hero на главной: «N построено». Учитываются все "
-            "объекты, не только в посёлке. На сайте показывается со "
+            "объекты, не только в ЖК. На сайте показывается со "
             "знаком «+» (например, «30+»)."
         ),
     )
     settlement_homes_built = models.PositiveSmallIntegerField(
-        "Построено домов в посёлке",
+        "Построено домов в ЖК",
         default=12,
         help_text=(
-            "Сколько домов в посёлке «Красная смородина» уже сданы. "
-            "Используется в блоке статистики посёлка."
+            "Сколько домов в ЖК «Красная смородина» уже сданы. "
+            "Используется в блоке статистики ЖК."
         ),
     )
     settlement_homes_total = models.PositiveSmallIntegerField(
-        "Всего домов в посёлке (план)",
+        "Всего домов в ЖК (план)",
         default=40,
         help_text=(
-            "Сколько всего домов запланировано в посёлке. На сайте "
+            "Сколько всего домов запланировано в ЖК. На сайте "
             "будет показано «N из M уже построены»."
         ),
     )
@@ -110,9 +110,9 @@ class SiteSettings(models.Model):
         help_text="Параграф про эскроу-счета и банки-партнёры",
     )
     about_settlement = models.TextField(
-        "О компании — про посёлок",
+        "О компании — про ЖК",
         blank=True,
-        help_text="Параграф про собственный посёлок «Красная Смородина»",
+        help_text="Параграф про собственный ЖК «Красная смородина»",
     )
     about_outro = models.TextField(
         "О компании — заключение",
@@ -187,7 +187,7 @@ class PageContent(models.Model):
         (PAGE_FAQ, "Вопросы и ответы (/faq)"),
         (PAGE_ABOUT, "О компании (/about)"),
         (PAGE_CONTACTS, "Контакты (/contacts)"),
-        (PAGE_SETTLEMENT, "Посёлок (/settlement)"),
+        (PAGE_SETTLEMENT, "ЖК (/settlement)"),
     ]
 
     slug = models.CharField(

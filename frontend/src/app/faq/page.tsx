@@ -17,7 +17,7 @@ const FALLBACK_SUBTITLE =
   "Ответы на самые частые вопросы клиентов. Если нужного нет — задайте свой через форму ниже.";
 const FALLBACK_META_TITLE = "Вопросы и ответы";
 const FALLBACK_META_DESCRIPTION =
-  "Ответы на частые вопросы о строительстве кирпичных домов: сроки, эскроу, ипотека, посёлок Красная смородина в Кисловке.";
+  "Ответы на частые вопросы о строительстве кирпичных домов: сроки, эскроу, ипотека, ЖК «Красная смородина» в Кисловке.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("faq");

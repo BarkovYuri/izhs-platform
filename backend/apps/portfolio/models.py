@@ -43,7 +43,7 @@ class PortfolioItem(models.Model):
         "Расположение (опционально)",
         max_length=200,
         blank=True,
-        help_text='Например: «посёлок Красная смородина» или «д. Лоскутово».',
+        help_text='Например: «ЖК Красная смородина» или «д. Лоскутово».',
     )
 
     cover = models.ImageField(

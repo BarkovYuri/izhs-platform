@@ -91,13 +91,13 @@ export function faqPageJsonLd(categories: { items: { question: string; answer: s
   };
 }
 
-/** Place — посёлок как географический объект с координатами. */
+/** Place — ЖК как географический объект с координатами. */
 export function settlementJsonLd(s: SiteSettings) {
   return {
     "@context": "https://schema.org",
     "@type": "Place",
     "@id": `${SITE_URL}/settlement#place`,
-    name: `Посёлок ${s.settlement_name}`,
+    name: `ЖК ${s.settlement_name}`,
     description: s.about_settlement,
     url: `${SITE_URL}/settlement`,
     image: s.settlement_plan ? absoluteUrl(s.settlement_plan) : OG_IMAGE,
@@ -107,7 +107,7 @@ export function settlementJsonLd(s: SiteSettings) {
       addressRegion: "Томская область",
       addressLocality: s.settlement_location || "д. Кисловка",
     },
-    // Координаты посёлка из его iframe карты
+    // Координаты ЖК из его iframe карты
     geo: {
       "@type": "GeoCoordinates",
       latitude: 56.404519,

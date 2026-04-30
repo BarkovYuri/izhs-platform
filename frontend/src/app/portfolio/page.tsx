@@ -16,7 +16,7 @@ const FALLBACK_SUBTITLE =
   "Реальные объекты с фотографиями и видео-обзорами. Нажмите на карточку, чтобы посмотреть всю галерею.";
 const FALLBACK_META_TITLE = "Реализованные объекты — построенные дома";
 const FALLBACK_META_DESCRIPTION =
-  "Фото и видео уже построенных кирпичных домов застройщика Ремстрой в Томске и посёлке Красная смородина.";
+  "Фото и видео уже построенных кирпичных домов застройщика Ремстрой в Томске и ЖК «Красная смородина».";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("portfolio");

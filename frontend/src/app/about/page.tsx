@@ -12,7 +12,7 @@ export const revalidate = 0;
 const FALLBACK_KICKER = "О компании";
 const FALLBACK_META_TITLE = "О компании — Ремстрой";
 const FALLBACK_META_DESCRIPTION =
-  "Застройщик кирпичных домов в Томске и Томской области. Эскроу, аккредитация в банках, собственный посёлок Красная смородина.";
+  "Застройщик кирпичных домов в Томске и Томской области. Эскроу, аккредитация в банках, собственный ЖК «Красная смородина».";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("about");
@@ -128,15 +128,15 @@ export default async function AboutPage() {
         </div>
         <div className="flex-1">
           <h2 className="h-display text-[22px] sm:text-[26px] font-extrabold">
-            Собственный посёлок «{s.settlement_name}»
+            Собственный ЖК «{s.settlement_name}»
           </h2>
           <p className="mt-2 text-[15px] leading-relaxed text-[var(--rs-muted)] max-w-2xl">
-            Строим в собственном жилом посёлке в {s.settlement_location}.
+            Строим в собственном жилом комплексе в {s.settlement_location}.
             Свободные участки, общая инфраструктура, единый стандарт качества.
           </p>
         </div>
         <Link href="/settlement" className="btn-secondary text-[14px] shrink-0">
-          О посёлке <ArrowRight size={14} />
+          О ЖК <ArrowRight size={14} />
         </Link>
       </section>
 
@@ -230,8 +230,8 @@ export default async function AboutPage() {
         <Feature icon={<Wallet />} title="Ипотека">
           Аккредитация в Сбербанке, Альфа-Банке, Левобережном, ДОМ.РФ
         </Feature>
-        <Feature icon={<Hammer />} title="Свой посёлок">
-          Посёлок «{s.settlement_name}» — стройка в проверенной локации
+        <Feature icon={<Hammer />} title="Свой ЖК">
+          ЖК «{s.settlement_name}» — стройка в проверенной локации
         </Feature>
       </section>
     </div>

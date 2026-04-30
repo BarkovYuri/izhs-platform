@@ -96,12 +96,12 @@ export default async function ContactsPage() {
           )}
 
           <div className="card-rs p-6">
-            <div className="font-extrabold text-[15px] mb-2">Хотите посмотреть посёлок?</div>
+            <div className="font-extrabold text-[15px] mb-2">Хотите посмотреть наш ЖК?</div>
             <div className="text-[13px] text-[var(--rs-muted)] mb-4">
-              Карта и подробная информация о посёлке «{s.settlement_name}» — на отдельной странице.
+              Карта и подробная информация о ЖК «{s.settlement_name}» — на отдельной странице.
             </div>
             <Link href="/settlement" className="btn-secondary text-[13px]">
-              Перейти на страницу посёлка <ArrowRight size={14} />
+              Перейти на страницу ЖК <ArrowRight size={14} />
             </Link>
           </div>
 

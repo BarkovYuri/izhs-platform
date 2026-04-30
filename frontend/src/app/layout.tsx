@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // Главная: SEO Title/Description в PageContent имеет высший приоритет,
   // потом seo_title_default из настроек, потом дефолтная фраза.
   const fallbackTitle = s.seo_title_default
-    || `${s.site_name} — кирпичные дома в посёлке ${s.settlement_name}`;
+    || `${s.site_name} — кирпичные дома в ЖК «${s.settlement_name}»`;
   const fallbackDescription = s.seo_description_default
     || s.about_short
     || "Строительство кирпичных домов";
@@ -52,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
     },
     keywords: [
-      "кирпичный дом", "купить дом Томск", "коттеджный посёлок", "Красная смородина",
+      "кирпичный дом", "купить дом Томск", "ЖК Красная смородина", "жилой комплекс",
       "Кисловка", "ИЖС Томск", "Ремстрой", "дом под ключ", "ипотека на дом",
     ],
     authors: [{ name: s.legal_name || s.site_name }],

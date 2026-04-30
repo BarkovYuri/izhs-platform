@@ -11,10 +11,10 @@ import { pickText } from "@/lib/pageContent";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const FALLBACK_KICKER = "Жилой посёлок";
-const FALLBACK_META_TITLE = "Посёлок «Красная смородина» — Кисловка, Томск";
+const FALLBACK_KICKER = "Жилой комплекс";
+const FALLBACK_META_TITLE = "ЖК «Красная смородина» — Кисловка, Томск";
 const FALLBACK_META_DESCRIPTION =
-  "Жилой коттеджный посёлок «Красная смородина» в деревне Кисловка под Томском. Кирпичные дома с земельными участками, скважина, септик, эскроу.";
+  "Жилой комплекс «Красная смородина» в деревне Кисловка под Томском. Кирпичные дома с земельными участками, скважина, септик, эскроу.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pc = await getPageContent("settlement");
@@ -48,7 +48,7 @@ export default async function SettlementPage() {
   return (
     <div className="container-rs py-10 sm:py-14">
       <JsonLd data={settlementJsonLd(s)} />
-      <Breadcrumbs items={[{ label: `Посёлок ${s.settlement_name}` }]} />
+      <Breadcrumbs items={[{ label: `ЖК ${s.settlement_name}` }]} />
 
       {/* HERO */}
       <section className="grid gap-8 lg:grid-cols-[1.2fr_1fr] items-start mb-14">
@@ -85,7 +85,7 @@ export default async function SettlementPage() {
           />
         ) : (
           <div className="card-rs aspect-[4/3] grid place-items-center text-[var(--rs-muted)] text-sm">
-            Карта посёлка скоро появится
+            Карта ЖК скоро появится
           </div>
         )}
       </section>
@@ -103,7 +103,7 @@ export default async function SettlementPage() {
           </div>
           <div className="min-w-0">
             <h2 className="h-display text-[20px] sm:text-[24px] font-extrabold leading-tight">
-              домов в посёлке уже построены
+              домов в ЖК уже построены
             </h2>
             <p className="mt-2 text-[14px] text-[var(--rs-muted)] leading-relaxed">
               Стройка идёт постоянно — посмотрите фото и видео реализованных
@@ -135,7 +135,7 @@ export default async function SettlementPage() {
       {/* Преимущества */}
       <section className="mb-14">
         <h2 className="h-display text-[26px] sm:text-[34px] font-extrabold mb-6">
-          Что есть в посёлке
+          Что есть в ЖК
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Feature icon={<MapPin />} title="Расположение">
@@ -160,14 +160,14 @@ export default async function SettlementPage() {
             Генеральный план
           </h2>
           <p className="text-[15px] text-[var(--rs-muted)] mb-6 max-w-2xl">
-            Расположение участков и проектов на территории посёлка. Уточняйте
+            Расположение участков и проектов на территории ЖК. Уточняйте
             актуальный статус каждого участка через форму ниже.
           </p>
           <div className="card-rs overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={planUrl}
-              alt={`Генплан посёлка ${s.settlement_name}`}
+              alt={`Генплан ЖК ${s.settlement_name}`}
               className="w-full h-auto block"
             />
           </div>
@@ -175,7 +175,7 @@ export default async function SettlementPage() {
       ) : (
         <section className="mb-14 card-rs p-8 text-center">
           <div className="text-[var(--rs-muted)] text-[14px]">
-            Генеральный план посёлка скоро будет добавлен.
+            Генеральный план ЖК скоро будет добавлен.
           </div>
         </section>
       )}
@@ -185,7 +185,7 @@ export default async function SettlementPage() {
         <section className="mb-14">
           <div className="flex items-end justify-between gap-4 flex-wrap mb-6">
             <h2 className="h-display text-[26px] sm:text-[34px] font-extrabold">
-              Проекты, доступные в посёлке
+              Проекты, доступные в ЖК
             </h2>
             <Link href="/builds" className="btn-secondary text-[14px]">
               Все проекты <ArrowRight size={14} />
@@ -218,7 +218,7 @@ export default async function SettlementPage() {
             Свободные участки
           </div>
           <h2 className="h-display mt-2 text-[26px] sm:text-[34px] font-extrabold">
-            Узнать о свободных участках в посёлке
+            Узнать о свободных участках в ЖК
           </h2>
           <p className="mt-3 text-[15px] text-[var(--rs-muted)] max-w-xl">
             Расскажем, какие участки и проекты сейчас доступны, согласуем
@@ -227,7 +227,7 @@ export default async function SettlementPage() {
           <ul className="mt-6 grid gap-3 text-[14px]">
             <li className="flex gap-2">
               <CheckCircle2 size={18} className="text-[var(--rs-brand)] shrink-0 mt-0.5"/>
-              Осмотр посёлка и свободных участков
+              Осмотр ЖК и свободных участков
             </li>
             <li className="flex gap-2">
               <CheckCircle2 size={18} className="text-[var(--rs-brand)] shrink-0 mt-0.5"/>
