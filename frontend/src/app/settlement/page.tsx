@@ -7,6 +7,8 @@ import LeadForm from "@/components/LeadForm";
 import { getBuilds, getSettings, resolveMediaUrl } from "@/services/api";
 import { settlementJsonLd } from "@/lib/seo";
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Посёлок «Красная смородина» — Кисловка, Томск",
   description: "Жилой коттеджный посёлок «Красная смородина» в деревне Кисловка под Томском. Кирпичные дома с земельными участками, скважина, септик, эскроу.",

@@ -5,7 +5,7 @@ import WriteUsButton from "@/components/WriteUsButton";
 
 export default function Hero({ s }: { s: SiteSettings }) {
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative isolate">
       <div
         className="absolute inset-0 -z-10"
         style={{

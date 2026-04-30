@@ -1,3 +1,6 @@
+// Не кэшируем — данные приходят из админки, должны обновляться сразу.
+export const revalidate = 0;
+
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Hammer, Home, Layers, MapPin, Wrench } from "lucide-react";
 import Hero from "@/components/Hero";

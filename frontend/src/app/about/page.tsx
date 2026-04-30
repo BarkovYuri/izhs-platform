@@ -5,6 +5,8 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import LeadForm from "@/components/LeadForm";
 import { getSettings } from "@/services/api";
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "О компании — Ремстрой",
   description: "Застройщик кирпичных домов в Томске и Томской области. Эскроу, аккредитация в банках, собственный посёлок Красная смородина.",

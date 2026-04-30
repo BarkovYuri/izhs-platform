@@ -6,6 +6,9 @@ import LeadForm from "@/components/LeadForm";
 import { getFaq } from "@/services/api";
 import { faqPageJsonLd } from "@/lib/seo";
 
+// Не кэшируем — FAQ редактируется в админке, должен обновляться сразу.
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Вопросы и ответы",
   description: "Ответы на частые вопросы о строительстве кирпичных домов: сроки, эскроу, ипотека, посёлок Красная смородина в Кисловке.",

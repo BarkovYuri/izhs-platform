@@ -6,6 +6,8 @@ import JsonLd from "@/components/JsonLd";
 import { getBuilds } from "@/services/api";
 import { buildsCatalogJsonLd } from "@/lib/seo";
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Каталог проектов кирпичных домов",
   description: "Типовые и индивидуальные проекты кирпичных домов в посёлке Красная смородина и на вашем участке. Площадь, цены, фото, планировки.",

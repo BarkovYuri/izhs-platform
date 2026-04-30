@@ -8,6 +8,8 @@ import { getSettings } from "@/services/api";
 import { formatPhoneHref } from "@/lib/utils";
 import { localBusinessJsonLd } from "@/lib/seo";
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Контакты",
   description: "Связаться с застройщиком Ремстрой: телефон, email, адрес офиса в Томске на Комсомольском проспекте, 43А. Карта проезда.",

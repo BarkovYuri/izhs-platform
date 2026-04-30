@@ -8,6 +8,8 @@ import LeadForm from "@/components/LeadForm";
 import { getBuild, getSettings, resolveMediaUrl } from "@/services/api";
 import { formatArea, formatPrice } from "@/lib/utils";
 
+export const revalidate = 0;
+
 const SITE_URL = "https://remstroy70.ru";
 
 const STATUS_BADGE: Record<string, string> = {

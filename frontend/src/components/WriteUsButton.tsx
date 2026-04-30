@@ -119,6 +119,7 @@ export default function WriteUsButton({
               "fixed inset-x-3 bottom-3 z-50 card-rs p-2 shadow-2xl",
               // Desktop (sm+): обычный dropdown справа от кнопки.
               "sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:mt-2 sm:min-w-[280px] sm:max-w-[320px]",
+              "sm:z-50",
               "max-h-[80vh] overflow-y-auto",
             )}
           >
