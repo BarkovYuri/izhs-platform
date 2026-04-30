@@ -10,12 +10,12 @@ import LeadForm from "@/components/LeadForm";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import PortfolioCard from "@/components/PortfolioCard";
-import { getBuilds, getFaq, getPortfolio, getSettings } from "@/services/api";
+import { getBuilds, getFaq, getPageContent, getPortfolio, getSettings } from "@/services/api";
 import { organizationJsonLd } from "@/lib/seo";
 
 export default async function HomePage() {
-  const [s, builds, faq, portfolio] = await Promise.all([
-    getSettings(), getBuilds(), getFaq(), getPortfolio(),
+  const [s, builds, faq, portfolio, homePageContent] = await Promise.all([
+    getSettings(), getBuilds(), getFaq(), getPortfolio(), getPageContent("home"),
   ]);
   // На главную показываем только проекты с флагом is_featured.
   // Если ни один проект не отмечен — fallback на первые 6, чтобы блок не был пустым.
@@ -26,7 +26,7 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={organizationJsonLd(s)} />
-      <Hero s={s} />
+      <Hero s={s} pageContent={homePageContent} />
 
       <section className="section">
         <div className="container-rs">

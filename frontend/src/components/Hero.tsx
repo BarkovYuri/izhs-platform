@@ -1,13 +1,38 @@
 import Link from "next/link";
-import { ArrowRight, Award, MapPin } from "lucide-react";
-import type { SiteSettings } from "@/types/api";
+import { ArrowRight, Award, CheckCircle2, MapPin } from "lucide-react";
+import type { PageContent, SiteSettings } from "@/types/api";
 import WriteUsButton from "@/components/WriteUsButton";
+import { pickText } from "@/lib/pageContent";
 
-export default function Hero({ s }: { s: SiteSettings }) {
+const DEFAULT_HERO_SUBTITLE =
+  "Проверенные типовые проекты с функциональной планировкой " +
+  "• Бесплатная доработка архитектором под ваши нужды " +
+  "• Скважина и септик включены в стоимость " +
+  "• Строим в «Красной смородине» и на ваших участках.";
+
+export default function Hero({
+  s,
+  pageContent,
+}: {
+  s: SiteSettings;
+  pageContent?: PageContent | null;
+}) {
   const foundedYear = s.founded_year || 2016;
   const homesBuilt = s.homes_built_total || 30;
   const settlementBuilt = s.settlement_homes_built || 12;
   const settlementTotal = s.settlement_homes_total || 40;
+
+  // Subtitle берём из PageContent (можно править в админке).
+  // Если пользователь разделил пункты через •, показываем как
+  // список с галочками — это выглядит сильнее обычного абзаца.
+  const subtitle = pickText(pageContent, "subtitle", DEFAULT_HERO_SUBTITLE);
+  const bullets = subtitle.includes("•")
+    ? subtitle
+        .split("•")
+        .map((s) => s.trim().replace(/[.,;]+$/, ""))
+        .filter(Boolean)
+    : null;
+
   return (
     <section className="relative isolate">
       <div
@@ -46,10 +71,23 @@ export default function Hero({ s }: { s: SiteSettings }) {
             <span className="text-[var(--rs-brand)]">под ваш стиль жизни</span>
           </h1>
 
-          <p className="mt-6 text-[16px] sm:text-[18px] leading-relaxed text-[var(--rs-muted)] max-w-2xl">
-            6 типовых проектов с возможностью индивидуальной доработки. Скважина и септик в комплекте.
-            Строим на участках посёлка «{s.settlement_name}» или на вашей земле.
-          </p>
+          {bullets ? (
+            <ul className="mt-6 grid gap-2.5 max-w-2xl text-[15px] sm:text-[17px] leading-snug">
+              {bullets.map((b) => (
+                <li key={b} className="flex items-start gap-2.5">
+                  <CheckCircle2
+                    size={20}
+                    className="text-[var(--rs-brand)] shrink-0 mt-0.5"
+                  />
+                  <span className="text-[var(--rs-ink)]/90">{b}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-6 text-[16px] sm:text-[18px] leading-relaxed text-[var(--rs-muted)] max-w-2xl">
+              {subtitle}
+            </p>
+          )}
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/builds" className="btn-primary">
