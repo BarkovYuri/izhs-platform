@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { resolveMediaUrl } from "@/services/api";
@@ -8,8 +7,6 @@ import { resolveMediaUrl } from "@/services/api";
 type Item = { image: string; order: number };
 
 export default function Gallery({ items }: { items: Item[] }) {
-  // Мемоизируем — иначе каждый rerender создаёт новый array → next/image
-  // считает что src изменился и грузит заново.
   const urls = useMemo(
     () =>
       items
@@ -54,23 +51,25 @@ export default function Gallery({ items }: { items: Item[] }) {
 
   return (
     <div>
-      {/* Главное фото — на mobile почти квадрат (4:3), на десктопе шире (16:10).
-          Все картинки рендерим разом (display:opacity), браузер кэширует —
-          переключения мгновенные, без повторной загрузки. */}
+      {/* Главное фото — на mobile 4:3, на десктопе 16:10.
+          Native <img> грузится напрямую с домена, без next/image оптимизации
+          (которая на медленном mobile добавляет паузу). Все картинки в DOM
+          с opacity, после первого показа браузер кэширует — переключения
+          между ними и возврат с модалки мгновенные. */}
       <div className="relative overflow-hidden bg-[var(--rs-line)]/40 sm:rounded-2xl aspect-[4/3] sm:aspect-[16/10]">
         {urls.map((src, i) => (
-          <Image
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             key={src}
             src={src}
             alt=""
-            fill
-            sizes="(min-width: 1024px) 800px, 100vw"
-            quality={80}
-            priority={i === 0}
-            className={`object-cover transition-opacity duration-200 ${
-              i === idx ? "opacity-100" : "opacity-0 pointer-events-none"
-            } cursor-zoom-in`}
+            loading={i < 3 ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={i === idx ? "high" : "auto"}
             onClick={() => i === idx && setOpen(true)}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-200 cursor-zoom-in ${
+              i === idx ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
           />
         ))}
 
@@ -113,13 +112,14 @@ export default function Gallery({ items }: { items: Item[] }) {
               }`}
               aria-label={`Фото ${i + 1}`}
             >
-              <Image
+              {/* Thumbnail — тот же URL, браузер не грузит ещё раз. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={u}
                 alt=""
-                fill
-                sizes="96px"
-                quality={50}
-                className="object-cover"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </button>
           ))}
@@ -132,7 +132,6 @@ export default function Gallery({ items }: { items: Item[] }) {
           onClick={() => setOpen(false)}
         >
           <div className="relative max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
-            {/* В модалке — оригинал (полноразмерный) */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={urls[idx]}

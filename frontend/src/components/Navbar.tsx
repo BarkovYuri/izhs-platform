@@ -71,21 +71,23 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
       ref={headerRef}
       className="sticky top-0 z-40 nav-header transition-colors duration-150"
     >
-      <div className="container-rs flex items-center justify-between gap-3 py-3">
-        <Link href="/" className="flex items-center gap-3" aria-label="На главную">
-          <div className="relative h-9 w-9 overflow-hidden rounded-lg bg-[var(--rs-brand)]/10 shrink-0">
+      <div className="container-rs flex items-center justify-between gap-3 py-3 sm:py-3.5">
+        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0" aria-label="На главную">
+          <div className="relative h-10 w-10 sm:h-11 sm:w-11 overflow-hidden rounded-xl bg-[var(--rs-brand)]/10 shrink-0">
             <Image
               src="/logo.png"
               alt={siteName}
               fill
-              sizes="36px"
-              className="object-contain p-1"
+              sizes="44px"
+              className="object-contain p-1.5"
               priority
             />
           </div>
           <div className="leading-tight min-w-0">
-            <div className="font-extrabold text-[15px] tracking-tight truncate">{siteName}</div>
-            <div className="text-[11px] text-[var(--rs-muted)] hidden sm:block truncate">
+            <div className="font-extrabold text-[17px] sm:text-[18px] tracking-tight truncate">
+              {siteName}
+            </div>
+            <div className="text-[11px] sm:text-[12px] text-[var(--rs-muted)] truncate">
               Кирпичные дома в Кисловке
             </div>
           </div>
