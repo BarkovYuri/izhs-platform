@@ -17,6 +17,8 @@ async function fetchJson<T>(path: string, init?: RequestInit, fallback?: T): Pro
       ...init,
       headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
       cache: init?.cache ?? "no-store",
+      // Двойная страховка: Next.js Data Cache не должен кэшировать ответ.
+      next: { revalidate: 0 },
     });
     if (!res.ok) {
       if (fallback !== undefined) return fallback;

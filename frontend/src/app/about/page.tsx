@@ -5,6 +5,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import LeadForm from "@/components/LeadForm";
 import { getSettings } from "@/services/api";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = {

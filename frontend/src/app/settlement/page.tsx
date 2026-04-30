@@ -7,6 +7,7 @@ import LeadForm from "@/components/LeadForm";
 import { getBuilds, getSettings, resolveMediaUrl } from "@/services/api";
 import { settlementJsonLd } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = {

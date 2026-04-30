@@ -7,6 +7,7 @@ import { getFaq } from "@/services/api";
 import { faqPageJsonLd } from "@/lib/seo";
 
 // Не кэшируем — FAQ редактируется в админке, должен обновляться сразу.
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = {

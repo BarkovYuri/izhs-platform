@@ -8,6 +8,7 @@ import { getSettings } from "@/services/api";
 import { formatPhoneHref } from "@/lib/utils";
 import { localBusinessJsonLd } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export const metadata: Metadata = {

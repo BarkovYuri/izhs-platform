@@ -1,4 +1,5 @@
 // Не кэшируем — данные приходят из админки, должны обновляться сразу.
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import Link from "next/link";
