@@ -70,6 +70,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Запрет browser/proxy-кэша на /api/* — иначе Safari может кэшировать
+    # ответы на часы и пользователь видит старые данные после правки в админке.
+    "apps.common.middleware.NoCacheApiMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
