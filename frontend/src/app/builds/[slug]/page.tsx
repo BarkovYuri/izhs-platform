@@ -42,7 +42,7 @@ export async function generateMetadata(
         description: b.short_description || "",
         type: "website",
         url: `${SITE_URL}/builds/${b.slug}`,
-        images: b.cover ? [resolveMediaUrl(b.cover)] : undefined,
+        images: b.cover ? [resolveMediaUrl(b.cover)] : ["/og.png"],
       },
     };
   } catch {

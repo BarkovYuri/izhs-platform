@@ -60,8 +60,21 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "ru_RU",
       siteName: s.site_name,
       url: SITE_URL,
+      images: [
+        {
+          url: "/og.png",
+          width: 1200,
+          height: 630,
+          alt: `${s.site_name} — строительство кирпичных домов`,
+        },
+      ],
     },
-    twitter: { card: "summary_large_image", title, description },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.png"],
+    },
     robots: {
       index: true, follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
