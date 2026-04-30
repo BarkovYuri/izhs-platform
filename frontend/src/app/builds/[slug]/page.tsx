@@ -102,7 +102,7 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             )}
           </div>
 
-          <h1 className="h-display text-[26px] sm:text-[40px] lg:text-[48px] font-extrabold tracking-tight leading-tight">
+          <h1 className="h-display text-[22px] sm:text-[36px] lg:text-[44px] font-extrabold tracking-tight leading-tight break-words">
             {b.title}
           </h1>
 
@@ -120,8 +120,9 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             )}
           </div>
 
-          {/* На mobile галерея во всю ширину (без боковых padding'ов) */}
-          <div className="mt-5 sm:mt-8 -mx-4 sm:mx-0">
+          {/* Галерея в пределах контейнера (никаких отрицательных margin'ов —
+              они вызывали horizontal overflow на iPhone Safari → авто-zoom). */}
+          <div className="mt-5 sm:mt-8">
             <Gallery items={b.images} />
           </div>
 
