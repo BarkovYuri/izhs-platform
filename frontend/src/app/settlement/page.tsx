@@ -80,15 +80,20 @@ export default async function SettlementPage() {
           </div>
         </div>
 
-        {/* Карта посёлка справа в hero */}
-        {s.yandex_map_iframe ? (
-          <div
-            className="yandex-map-wrap card-rs overflow-hidden"
-            dangerouslySetInnerHTML={{ __html: s.yandex_map_iframe }}
-          />
+        {/* Генплан справа в hero — самое важное для посетителя:
+            сразу видно расположение участков и инфраструктуру ЖК. */}
+        {planUrl ? (
+          <div className="card-rs overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={planUrl}
+              alt={`Генплан ЖК ${s.settlement_name}`}
+              className="w-full h-auto block"
+            />
+          </div>
         ) : (
           <div className="card-rs aspect-[4/3] grid place-items-center text-[var(--rs-muted)] text-sm">
-            Карта ЖК скоро появится
+            Генплан ЖК скоро появится
           </div>
         )}
       </section>
@@ -156,30 +161,22 @@ export default async function SettlementPage() {
         </div>
       </section>
 
-      {/* Генплан */}
-      {planUrl ? (
+      {/* Как добраться — Яндекс-карта с маршрутом, перенесена сверху
+          вниз: посетитель сначала видит сам ЖК (генплан), а потом
+          разбирается как туда ехать. */}
+      {s.yandex_map_iframe && (
         <section className="mb-14">
           <h2 className="h-display text-[26px] sm:text-[34px] font-extrabold mb-3">
-            Генеральный план
+            Как добраться
           </h2>
           <p className="text-[15px] text-[var(--rs-muted)] mb-6 max-w-2xl">
-            Расположение участков и проектов на территории ЖК. Уточняйте
-            актуальный статус каждого участка через форму ниже.
+            {s.settlement_location} — около 15 минут от Томска. Координаты
+            и маршрут на Яндекс.Картах.
           </p>
-          <div className="card-rs overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={planUrl}
-              alt={`Генплан ЖК ${s.settlement_name}`}
-              className="w-full h-auto block"
-            />
-          </div>
-        </section>
-      ) : (
-        <section className="mb-14 card-rs p-8 text-center">
-          <div className="text-[var(--rs-muted)] text-[14px]">
-            Генеральный план ЖК скоро будет добавлен.
-          </div>
+          <div
+            className="yandex-map-wrap card-rs overflow-hidden"
+            dangerouslySetInnerHTML={{ __html: s.yandex_map_iframe }}
+          />
         </section>
       )}
 
