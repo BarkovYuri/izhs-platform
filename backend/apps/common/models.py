@@ -31,12 +31,18 @@ class SiteSettings(models.Model):
     yandex_map_iframe = models.TextField(
         "Iframe Яндекс.Карты — посёлок Красная смородина",
         blank=True,
-        help_text="Вставьте полный <iframe> из Яндекс.Карт для страницы посёлка",
+        help_text=(
+            "Вставьте полный код «iframe» из Яндекс.Карт "
+            "для страницы посёлка."
+        ),
     )
     office_map_iframe = models.TextField(
         "Iframe Яндекс.Карты — офис компании",
         blank=True,
-        help_text="<iframe> для страницы Контакты, если офис не в посёлке",
+        help_text=(
+            "Код «iframe» из Яндекс.Карт для страницы Контакты, "
+            "если офис не в посёлке."
+        ),
     )
     settlement_plan = models.ImageField(
         "Генплан посёлка (картинка)", upload_to="site/", blank=True, null=True,
