@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Modal from "@/components/Modal";
-import PrivacyContent from "@/components/PrivacyContent";
+import TermsContent from "@/components/TermsContent";
 import { getSettings } from "@/services/api";
 import type { SiteSettings } from "@/types/api";
 
-export default function PrivacyLink({
+export default function TermsLink({
   children,
   className,
 }: {
@@ -30,15 +30,15 @@ export default function PrivacyLink({
           className ?? "text-[var(--rs-brand)] hover:underline cursor-pointer"
         }
       >
-        {children ?? "Политикой обработки персональных данных"}
+        {children ?? "Пользовательское соглашение"}
       </button>
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Политика обработки персональных данных"
+        title="Пользовательское соглашение"
       >
         {s ? (
-          <PrivacyContent s={s} />
+          <TermsContent s={s} />
         ) : (
           <div className="py-8 text-center text-[var(--rs-muted)]">Загрузка…</div>
         )}

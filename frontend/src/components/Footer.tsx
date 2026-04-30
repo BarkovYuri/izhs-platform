@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Mail, MapPin, MessageCircle, MessageSquare, Phone, Send, Users } from "lucide-react";
 import type { SiteSettings } from "@/types/api";
 import { formatPhoneHref } from "@/lib/utils";
+import PrivacyLink from "@/components/PrivacyLink";
+import TermsLink from "@/components/TermsLink";
 
 export default function Footer({ s }: { s: SiteSettings }) {
   const year = new Date().getFullYear();
@@ -30,8 +32,16 @@ export default function Footer({ s }: { s: SiteSettings }) {
               <li><Link href="/about" className="hover:text-[var(--rs-brand)]">О компании</Link></li>
               <li><Link href="/faq" className="hover:text-[var(--rs-brand)]">Вопросы и ответы</Link></li>
               <li><Link href="/contacts" className="hover:text-[var(--rs-brand)]">Контакты</Link></li>
-              <li className="pt-2 border-t border-[var(--rs-line)] mt-2"><Link href="/privacy" className="text-[var(--rs-muted)] hover:text-[var(--rs-brand)]">Политика обработки данных</Link></li>
-              <li><Link href="/terms" className="text-[var(--rs-muted)] hover:text-[var(--rs-brand)]">Пользовательское соглашение</Link></li>
+              <li className="pt-2 border-t border-[var(--rs-line)] mt-2">
+                <PrivacyLink className="text-[var(--rs-muted)] hover:text-[var(--rs-brand)] cursor-pointer">
+                  Политика обработки данных
+                </PrivacyLink>
+              </li>
+              <li>
+                <TermsLink className="text-[var(--rs-muted)] hover:text-[var(--rs-brand)] cursor-pointer">
+                  Пользовательское соглашение
+                </TermsLink>
+              </li>
             </ul>
           </div>
 

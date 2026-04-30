@@ -94,7 +94,7 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
               {siteName}
             </div>
             <div className="text-[12px] text-[var(--rs-muted)] truncate">
-              Кирпичные дома в Кисловке
+              Строительство кирпичных домов
             </div>
           </div>
         </Link>
@@ -151,7 +151,7 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
                   {siteName}
                 </div>
                 <div className="text-[12px] text-[var(--rs-muted)] truncate">
-                  Кирпичные дома в Кисловке
+                  Строительство кирпичных домов
                 </div>
               </div>
             </Link>
