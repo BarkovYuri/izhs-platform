@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, Hammer, Home, MapPin, Trees } from "lucide-re
 import Breadcrumbs from "@/components/Breadcrumbs";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
+import ZoomableImage from "@/components/ZoomableImage";
 import { getBuilds, getPageContent, getSettings, resolveMediaUrl } from "@/services/api";
 import { settlementJsonLd } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
@@ -81,16 +82,13 @@ export default async function SettlementPage() {
         </div>
 
         {/* Генплан справа в hero — самое важное для посетителя:
-            сразу видно расположение участков и инфраструктуру ЖК. */}
+            сразу видно расположение участков и инфраструктуру ЖК.
+            При клике открывается на весь экран для деталей. */}
         {planUrl ? (
-          <div className="card-rs overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={planUrl}
-              alt={`Генплан ЖК ${s.settlement_name}`}
-              className="w-full h-auto block"
-            />
-          </div>
+          <ZoomableImage
+            src={planUrl}
+            alt={`Генплан ЖК ${s.settlement_name}`}
+          />
         ) : (
           <div className="card-rs aspect-[4/3] grid place-items-center text-[var(--rs-muted)] text-sm">
             Генплан ЖК скоро появится
