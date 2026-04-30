@@ -112,12 +112,13 @@ export default function Gallery({ items }: { items: Item[] }) {
               }`}
               aria-label={`Фото ${i + 1}`}
             >
-              {/* Thumbnail — тот же URL, браузер не грузит ещё раз. */}
+              {/* Thumbnail — eager loading: они маленькие и ВИДНЫ сразу
+                  (за пределами вьюпорта только если у проекта 5+ фото). */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={u}
                 alt=""
-                loading="lazy"
+                loading="eager"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover"
               />

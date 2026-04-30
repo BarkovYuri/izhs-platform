@@ -72,22 +72,27 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
       className="sticky top-0 z-40 nav-header transition-colors duration-150"
     >
       <div className="container-rs flex items-center justify-between gap-3 py-3 sm:py-3.5">
-        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0" aria-label="На главную">
-          <div className="relative h-10 w-10 sm:h-11 sm:w-11 overflow-hidden rounded-xl bg-[var(--rs-brand)]/10 shrink-0">
+        <Link href="/" className="flex items-center gap-3 min-w-0" aria-label="На главную">
+          {/* Полностью терракотовый бренд-блок — заметно и фирменно. */}
+          <div
+            className="relative h-11 w-11 sm:h-12 sm:w-12 grid place-items-center rounded-xl shrink-0 shadow-sm"
+            style={{ background: "var(--rs-brand)" }}
+          >
             <Image
               src="/logo.png"
               alt={siteName}
-              fill
-              sizes="44px"
-              className="object-contain p-1.5"
+              width={36}
+              height={36}
+              className="object-contain"
+              style={{ filter: "brightness(0) invert(1)" }}
               priority
             />
           </div>
           <div className="leading-tight min-w-0">
-            <div className="font-extrabold text-[17px] sm:text-[18px] tracking-tight truncate">
+            <div className="font-extrabold text-[18px] sm:text-[19px] tracking-tight truncate">
               {siteName}
             </div>
-            <div className="text-[11px] sm:text-[12px] text-[var(--rs-muted)] truncate">
+            <div className="text-[12px] text-[var(--rs-muted)] truncate">
               Кирпичные дома в Кисловке
             </div>
           </div>
