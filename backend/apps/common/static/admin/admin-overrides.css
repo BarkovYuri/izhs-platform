@@ -1,0 +1,24 @@
+/*
+ * Override-стили для админки Unfold.
+ *
+ * Фикс №1: видимость fieldsets когда Alpine.js падает.
+ *
+ * В Unfold каждый <fieldset> имеет атрибут
+ *   x-show="activeTab == 'general'"
+ * Когда у пользователя в браузере крипто-расширение (MetaMask, Phantom,
+ * Brave Wallet и т.п.) — оно ставит SES lockdown, который ломает
+ * Alpine.js (eval/Function() заблокированы CSP). Alpine успевает
+ * установить style="display:none" на части fieldset'ов до падения,
+ * и пользователь видит только часть формы.
+ *
+ * Решение: !important переопределяет inline-style, который ставит
+ * Alpine. Когда Alpine работает нормально, он перерисовывает x-show
+ * через свой механизм, наш override уже не мешает (Alpine ставит
+ * style и через CSS-приоритет специфичности).
+ *
+ * Фикс лучше держать узким (только x-show с activeTab) — чтобы не
+ * сломать другие x-show внутри Unfold (модалки, дропдауны).
+ */
+fieldset[x-show*="activeTab"] {
+    display: block !important;
+}

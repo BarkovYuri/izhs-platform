@@ -224,6 +224,8 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ---- Django Unfold (admin) ----
+from django.templatetags.static import static as _unfold_static
+
 UNFOLD = {
     "SITE_TITLE": "Ремстрой — админка",
     "SITE_HEADER": "Ремстрой",
@@ -231,6 +233,11 @@ UNFOLD = {
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
     "BORDER_RADIUS": "10px",
+    # Override-стили — фикс видимости fieldsets при сломанном Alpine
+    # (когда у пользователя в браузере крипто-расширение / SES lockdown).
+    "STYLES": [
+        lambda request: _unfold_static("admin/admin-overrides.css"),
+    ],
     "COLORS": {
         "primary": {
             "50":  "253 246 240",
