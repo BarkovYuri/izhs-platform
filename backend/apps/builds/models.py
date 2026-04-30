@@ -1,6 +1,41 @@
+from io import BytesIO
+from pathlib import Path
+
+from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from PIL import Image as PILImage, ImageOps
+
+# Максимальный размер по большей стороне (px). Достаточно для рендеров.
+IMAGE_MAX_SIZE = 1920
+IMAGE_JPEG_QUALITY = 82
+
+
+def _compress_imagefield(field_file) -> bool:
+    """Сжимает изображение «на лету» при сохранении модели.
+    Возвращает True если файл был изменён."""
+    if not field_file:
+        return False
+    try:
+        with PILImage.open(field_file) as im:
+            im = ImageOps.exif_transpose(im)
+            w, h = im.size
+            if max(w, h) <= IMAGE_MAX_SIZE:
+                return False  # уже маленький — не трогаем
+            im.thumbnail((IMAGE_MAX_SIZE, IMAGE_MAX_SIZE), PILImage.LANCZOS)
+            if im.mode != "RGB":
+                im = im.convert("RGB")
+            buf = BytesIO()
+            im.save(buf, "JPEG", quality=IMAGE_JPEG_QUALITY, optimize=True, progressive=True)
+            buf.seek(0)
+            # Сохраняем в jpeg, новое имя с расширением .jpg
+            orig_name = Path(field_file.name).stem
+            field_file.save(f"{orig_name}.jpg", ContentFile(buf.read()), save=False)
+            return True
+    except Exception:
+        # На прод-сервере молча не падаем — оставим исходный файл
+        return False
 
 
 class Build(models.Model):
@@ -56,10 +91,31 @@ class Build(models.Model):
         return self.title
 
 
-class BuildImage(models.Model):
+class _BuildImageBase(models.Model):
+    image = models.ImageField("Изображение", upload_to="builds/")
+    order = models.PositiveIntegerField("Порядок", default=0)
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        # При первом сохранении файла — сжимаем если он крупнее лимита.
+        if self.image and not self.pk:
+            _compress_imagefield(self.image)
+        elif self.image and self.pk:
+            # Если файл изменился (новый upload поверх старого) — тоже сжимаем
+            try:
+                old = type(self).objects.only("image").get(pk=self.pk)
+                if old.image != self.image:
+                    _compress_imagefield(self.image)
+            except type(self).DoesNotExist:
+                pass
+        super().save(*args, **kwargs)
+
+
+class BuildImage(_BuildImageBase):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name="images", verbose_name="Дом")
     image = models.ImageField("Фото дома", upload_to="builds/")
-    order = models.PositiveIntegerField("Порядок", default=0)
 
     class Meta:
         verbose_name = "Фото дома"
@@ -67,10 +123,9 @@ class BuildImage(models.Model):
         ordering = ["order", "id"]
 
 
-class BuildFloorImage(models.Model):
+class BuildFloorImage(_BuildImageBase):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name="floors_images", verbose_name="Дом")
     image = models.ImageField("Поэтажный план", upload_to="builds/floors/")
-    order = models.PositiveIntegerField("Порядок", default=0)
 
     class Meta:
         verbose_name = "Поэтажный план"
@@ -78,10 +133,9 @@ class BuildFloorImage(models.Model):
         ordering = ["order", "id"]
 
 
-class BuildFacadeImage(models.Model):
+class BuildFacadeImage(_BuildImageBase):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name="facades", verbose_name="Дом")
     image = models.ImageField("Схема фасадов", upload_to="builds/facades/")
-    order = models.PositiveIntegerField("Порядок", default=0)
 
     class Meta:
         verbose_name = "Схема фасадов"

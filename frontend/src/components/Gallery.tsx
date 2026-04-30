@@ -51,12 +51,9 @@ export default function Gallery({ items }: { items: Item[] }) {
 
   return (
     <div>
-      {/* Главное фото — на mobile 4:3, на десктопе 16:10.
-          Native <img> грузится напрямую с домена, без next/image оптимизации
-          (которая на медленном mobile добавляет паузу). Все картинки в DOM
-          с opacity, после первого показа браузер кэширует — переключения
-          между ними и возврат с модалки мгновенные. */}
-      <div className="relative overflow-hidden bg-[var(--rs-line)]/40 sm:rounded-2xl aspect-[4/3] sm:aspect-[16/10]">
+      {/* Главное фото: object-contain — дом виден целиком.
+          На mobile 4:3 (фото пропорционально), на десктопе 16:10. */}
+      <div className="relative overflow-hidden bg-[var(--rs-bg)] sm:rounded-2xl aspect-[4/3] sm:aspect-[16/10]">
         {urls.map((src, i) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -67,7 +64,7 @@ export default function Gallery({ items }: { items: Item[] }) {
             decoding="async"
             fetchPriority={i === idx ? "high" : "auto"}
             onClick={() => i === idx && setOpen(true)}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-200 cursor-zoom-in ${
+            className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-200 cursor-zoom-in ${
               i === idx ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           />
