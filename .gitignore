@@ -39,5 +39,7 @@ Thumbs.db
 .idea/
 
 # SSL / certbot (создаются на VPS, не в репо)
+letsencrypt/
+certbot-www/
 infra/letsencrypt/
 infra/certbot-www/
