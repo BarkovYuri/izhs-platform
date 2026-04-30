@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+:root {
+  /* Ремстрой — earth tones для строительной тематики */
+  --rs-bg:        #faf7f2;   /* тёплый песок (фон) */
+  --rs-surface:   #ffffff;   /* карточки */
+  --rs-ink:       #1f1c18;   /* основной текст (тёплый чарколь) */
+  --rs-muted:     #6a635a;   /* приглушённый текст */
+  --rs-line:      #e8e1d4;   /* линии и границы */
+  --rs-brand:     #b85a35;   /* терракота (акцент) */
+  --rs-brand-2:   #8c4126;   /* тёмная терракота (hover) */
+  --rs-olive:     #5b6b41;   /* олива (вторичный) */
+  --rs-gold:      #c9a35e;   /* тёплая охра (badge) */
+  --rs-success:   #4f7a3e;
+  --rs-danger:    #a8392a;
+  --rs-shadow:    0 1px 2px rgba(31,28,24,.04), 0 8px 24px rgba(31,28,24,.06);
+  --rs-radius:    14px;
+}
+
+@theme inline {
+  --color-bg: var(--rs-bg);
+  --color-surface: var(--rs-surface);
+  --color-ink: var(--rs-ink);
+  --color-muted: var(--rs-muted);
+  --color-line: var(--rs-line);
+  --color-brand: var(--rs-brand);
+  --color-brand-2: var(--rs-brand-2);
+  --color-olive: var(--rs-olive);
+  --color-gold: var(--rs-gold);
+  --color-success: var(--rs-success);
+  --color-danger: var(--rs-danger);
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--rs-bg);
+  color: var(--rs-ink);
+  font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Утилиты */
+.container-rs { max-width: 1200px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
+
+.btn-primary {
+  background: var(--rs-brand);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 12px 22px;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  box-shadow: 0 4px 14px rgba(184, 90, 53, 0.25);
+}
+.btn-primary:hover { background: var(--rs-brand-2); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(184, 90, 53, 0.32); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: var(--rs-surface);
+  color: var(--rs-ink);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 12px 22px;
+  border: 1px solid var(--rs-line);
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: background .15s ease, border-color .15s ease;
+}
+.btn-secondary:hover { background: #f3ede2; border-color: #d6cab2; }
+
+.btn-ghost {
+  color: var(--rs-ink);
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 999px;
+  transition: background .15s ease;
+}
+.btn-ghost:hover { background: rgba(31,28,24,0.06); }
+
+.input-rs {
+  width: 100%;
+  background: var(--rs-surface);
+  border: 1px solid var(--rs-line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: var(--rs-ink);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.input-rs:focus { outline: none; border-color: var(--rs-brand); box-shadow: 0 0 0 3px rgba(184,90,53,0.15); }
+
+.card-rs {
+  background: var(--rs-surface);
+  border: 1px solid var(--rs-line);
+  border-radius: var(--rs-radius);
+  box-shadow: var(--rs-shadow);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--rs-line);
+  background: #fff;
+  color: var(--rs-muted);
+}
+.badge-brand { background: rgba(184,90,53,0.10); color: var(--rs-brand-2); border-color: rgba(184,90,53,0.20); }
+.badge-olive { background: rgba(91,107,65,0.10); color: var(--rs-olive); border-color: rgba(91,107,65,0.20); }
+.badge-gold  { background: rgba(201,163,94,0.15); color: #8a6926; border-color: rgba(201,163,94,0.30); }
+.badge-muted { background: rgba(31,28,24,0.05); color: var(--rs-muted); }
+
+.h-display { font-family: var(--font-manrope), var(--font-inter), system-ui, sans-serif; letter-spacing: -0.02em; line-height: 1.05; }
+
+.section { padding: 64px 0; }
+@media (max-width: 640px) { .section { padding: 40px 0; } }
+
+.divider { height: 1px; background: var(--rs-line); }
+
+/* Скроллбар на десктопе */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(31,28,24,0.12); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(31,28,24,0.22); }
+}
+
+/* Iframe Яндекс.Карт — растягиваем на весь блок.
+   Yandex отдаёт <div style="position:relative"> с iframe внутри, у которого
+   жёстко прибиты атрибуты width="560" height="400" и inline-стили.
+   Перебиваем абсолютно всё через !important + явная высота в пикселях. */
+.yandex-map-wrap {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 460px !important;
+  overflow: hidden !important;
+  border-radius: 16px;
+  background: var(--rs-line);
+}
+.yandex-map-wrap > div {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.yandex-map-wrap iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: 100% !important;
+  border: 0 !important;
+  display: block !important;
+}
+@media (min-width: 768px)  { .yandex-map-wrap { height: 520px !important; } }
+@media (min-width: 1280px) { .yandex-map-wrap { height: 600px !important; } }

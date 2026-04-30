@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: izhs_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-izhs}
+      POSTGRES_USER: ${POSTGRES_USER:-izhs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-izhs}
+    ports:
+      - "5433:5432"
+    volumes:
+      - izhs_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-izhs} -d ${POSTGRES_DB:-izhs}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: izhs_redis
+    ports:
+      - "6380:6379"
+
+volumes:
+  izhs_pgdata:
