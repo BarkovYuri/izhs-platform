@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
 import { formatPhoneHref } from "@/lib/utils";
@@ -23,6 +24,11 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
   const tickingRef = useRef(false);
+
+  // На главной над тёмным Hero делаем светлый текст. На остальных
+  // страницах фон светлый — оставляем тёмный текст по умолчанию.
+  const pathname = usePathname();
+  const isOverDark = pathname === "/";
 
   // Scroll-class через rAF + прямую манипуляцию DOM (без setState на каждый
   // пиксель — это и был источник лага на mobile).
@@ -70,7 +76,7 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-40 nav-header transition-colors duration-150"
+      className={`sticky top-0 z-40 nav-header transition-colors duration-150${isOverDark ? " over-dark" : ""}`}
     >
       <div className="container-rs flex items-center justify-between gap-3 py-3 sm:py-3.5">
         <Link href="/" className="flex items-center gap-3 min-w-0" aria-label="На главную">
@@ -90,10 +96,10 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
             />
           </div>
           <div className="leading-tight min-w-0">
-            <div className="font-extrabold text-[18px] sm:text-[19px] tracking-tight truncate">
+            <div className="nav-site-name font-extrabold text-[18px] sm:text-[19px] tracking-tight truncate">
               {siteName}
             </div>
-            <div className="text-[12px] text-[var(--rs-muted)] truncate">
+            <div className="nav-tagline text-[12px] text-[var(--rs-muted)] truncate">
               Строительство кирпичных домов
             </div>
           </div>
@@ -101,7 +107,7 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
 
         <nav className="hidden md:flex items-center gap-1">
           {NAV.map((it) => (
-            <Link key={it.href} href={it.href} className="btn-ghost text-[14px]">
+            <Link key={it.href} href={it.href} className="nav-link btn-ghost text-[14px]">
               {it.label}
             </Link>
           ))}
@@ -113,7 +119,7 @@ export default function Navbar({ settings }: { settings: SiteSettings }) {
 
         <button
           type="button"
-          className="md:hidden btn-ghost p-2 -mr-2"
+          className="md:hidden nav-link btn-ghost p-2 -mr-2"
           onClick={() => setOpen(true)}
           aria-label="Открыть меню"
         >
