@@ -35,16 +35,28 @@
 
 * { box-sizing: border-box; }
 
-/* Страховка от случайного horizontal overflow:
-   на iPhone Safari любой элемент шире viewport вызывает автозум всей страницы. */
+/* Любые широкие медиа никогда не выпирают за родителя. */
+img, video, iframe, svg, table {
+  max-width: 100%;
+}
+
+/* Жёсткое предотвращение horizontal overflow.
+   overflow-x: hidden работает на всех Safari (clip — только новые). */
 html, body {
-  overflow-x: clip;
+  overflow-x: hidden;
   max-width: 100vw;
-  /* iOS Safari иногда увеличивает шрифты при повороте экрана — выключаем. */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 html { scroll-behavior: smooth; }
+
+/* Длинные русские слова в верхнем регистре (характеристики типа
+   «АВТОМАТИЗИРОВАННОЕ РЕГУЛИРОВАНИЕ ПАРАМЕТРОВ ТЕПЛОНОСИТЕЛЯ»)
+   не помещаются на mobile — переносим где угодно. */
+dt, dd, p, li, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
 
 /* Контейнер с правильными отступами под разные размеры телефонов. */
 .container-rs {

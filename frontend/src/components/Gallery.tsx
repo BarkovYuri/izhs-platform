@@ -96,7 +96,10 @@ export default function Gallery({ items }: { items: Item[] }) {
       </div>
 
       {total > 1 && (
-        <div className="mt-3 px-4 sm:px-0 flex gap-2 overflow-x-auto pb-1">
+        <div
+          className="mt-3 flex gap-2 overflow-x-auto pb-1 w-full max-w-full"
+          style={{ scrollbarWidth: "thin" }}
+        >
           {urls.map((u, i) => (
             <button
               key={u}

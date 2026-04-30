@@ -92,8 +92,8 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
           { label: b.title },
         ]} />
       </div>
-      <div className="container-rs grid gap-6 sm:gap-10 lg:grid-cols-[1fr_380px]">
-        <div>
+      <div className="container-rs grid gap-6 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0">
           <div className="flex flex-wrap gap-2 mb-3">
             <span className={`badge ${STATUS_BADGE[b.status] || "badge-muted"}`}>{b.status_label}</span>
             {b.is_typical && <span className="badge badge-brand">Типовой проект</span>}
@@ -173,10 +173,19 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
           </section>
         </div>
 
-        <aside className="lg:sticky lg:top-24 self-start">
-          <div className="card-rs p-6">
+        <aside className="lg:sticky lg:top-24 self-start min-w-0">
+          <div className="card-rs p-5 sm:p-6">
             <div className="text-[12px] text-[var(--rs-muted)] uppercase tracking-wide">Цена от</div>
-            <div className="font-extrabold text-[34px] text-[var(--rs-brand)] leading-none">{formatPrice(b.price)}</div>
+            <div
+              className="font-extrabold text-[var(--rs-brand)] leading-none"
+              style={{
+                fontSize: "clamp(24px, 7.5vw, 34px)",
+                fontVariantNumeric: "tabular-nums",
+                overflowWrap: "anywhere",
+              }}
+            >
+              {formatPrice(b.price)}
+            </div>
             <div className="text-[12px] text-[var(--rs-muted)] mt-2">
               Финальная стоимость зависит от участка, доработок и комплектации.
             </div>

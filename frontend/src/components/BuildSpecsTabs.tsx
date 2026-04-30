@@ -25,7 +25,7 @@ export default function BuildSpecsTabs({ build }: { build: BuildDetail }) {
 
   return (
     <div>
-      <div className="flex gap-2 overflow-x-auto pb-1 mb-6 border-b border-[var(--rs-line)]">
+      <div className="flex gap-2 overflow-x-auto pb-1 mb-6 border-b border-[var(--rs-line)] w-full max-w-full">
         {TABS.map((t) => (
           <button
             key={t.id}
