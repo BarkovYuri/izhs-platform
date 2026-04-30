@@ -66,7 +66,7 @@ export default async function HomePage() {
                 Проекты добавляются в админке. Откройте /admin/ и заполните «Проекты домов».
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {featured.map((b) => <BuildCard key={b.slug} b={b} />)}
               </div>
             )}
