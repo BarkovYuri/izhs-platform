@@ -126,6 +126,17 @@ body {
 }
 .btn-secondary:hover { background: #f3ede2; border-color: #d6cab2; }
 
+/* Hero с фоновой картинкой:
+   background-attachment: fixed на mobile Safari/Chrome работает плохо
+   (фон скачет, тормозит, иногда растягивается на весь viewport).
+   На сенсорных экранах отключаем parallax — фон просто едет вместе со
+   страницей. Визуально остаётся та же картинка, но без багов. */
+@media (hover: none) and (pointer: coarse) {
+  .hero-bg {
+    background-attachment: scroll !important;
+  }
+}
+
 .btn-ghost {
   color: var(--rs-ink);
   font-weight: 600;

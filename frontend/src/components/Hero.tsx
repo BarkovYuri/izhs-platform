@@ -34,41 +34,37 @@ export default function Hero({
     : null;
 
   return (
-    <section className="relative isolate">
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(60% 80% at 70% 0%, rgba(184,90,53,0.10), transparent 60%)," +
-            "radial-gradient(50% 60% at 0% 100%, rgba(91,107,65,0.10), transparent 60%)," +
-            "linear-gradient(180deg, var(--rs-bg) 0%, #f6efde 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 -z-10 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(31,28,24,1) 1px, transparent 1px), linear-gradient(90deg, rgba(31,28,24,1) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
-      />
-
-      <div className="container-rs pt-16 pb-20 sm:pt-24 sm:pb-28">
+    <section
+      className="relative isolate hero-bg"
+      style={{
+        // background-attachment: fixed → parallax-эффект на десктопе:
+        // фон «стоит» при скролле, контент едет вверх. На mobile Safari
+        // fixed не работает корректно — браузер сам падает на scroll
+        // (см. CSS-фикс ниже в globals).
+        backgroundImage:
+          "linear-gradient(180deg, rgba(20,16,12,0.55) 0%, rgba(20,16,12,0.35) 40%, rgba(20,16,12,0.65) 100%), url('/hero-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center 60%",
+        backgroundAttachment: "fixed",
+        backgroundColor: "#1a1411",
+      }}
+    >
+      <div className="container-rs pt-20 pb-24 sm:pt-28 sm:pb-32">
         <div className="max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-2 badge badge-brand">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--rs-brand)]/90 text-white text-[12px] sm:text-[13px] font-bold border border-white/10 backdrop-blur-sm">
               <MapPin size={14} />
               ЖК «{s.settlement_name}», {s.settlement_location}
             </div>
-            <div className="inline-flex items-center gap-1.5 badge badge-olive">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 text-white text-[12px] sm:text-[13px] font-bold border border-white/20 backdrop-blur-sm">
               <Award size={13} />
               На рынке с {foundedYear} года
             </div>
           </div>
 
-          <h1 className="h-display mt-5 text-[40px] sm:text-[64px] font-extrabold">
+          <h1 className="h-display mt-5 text-[40px] sm:text-[64px] font-extrabold leading-[1.05] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
             Кирпичные дома{" "}
-            <span className="text-[var(--rs-brand)]">под ваш стиль жизни</span>
+            <span className="text-[#f3a677]">под ваш стиль жизни</span>
           </h1>
 
           {bullets ? (
@@ -77,26 +73,32 @@ export default function Hero({
                 <li key={b} className="flex items-start gap-2.5">
                   <CheckCircle2
                     size={20}
-                    className="text-[var(--rs-brand)] shrink-0 mt-0.5"
+                    className="text-[#f3a677] shrink-0 mt-0.5"
                   />
-                  <span className="text-[var(--rs-ink)]/90">{b}</span>
+                  <span className="text-white/95 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
+                    {b}
+                  </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="mt-6 text-[16px] sm:text-[18px] leading-relaxed text-[var(--rs-muted)] max-w-2xl">
+            <p className="mt-6 text-[16px] sm:text-[18px] leading-relaxed text-white/85 max-w-2xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
               {subtitle}
             </p>
           )}
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/builds" className="btn-primary">
+            <Link href="/builds" className="btn-primary shadow-lg shadow-black/30">
               Смотреть проекты <ArrowRight size={16} />
             </Link>
-            <WriteUsButton settings={s} variant="secondary" label="Написать нам" />
+            <WriteUsButton
+              settings={s}
+              variant="secondary"
+              label="Написать нам"
+            />
           </div>
 
-          <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-[13px]">
+          <div className="mt-12 flex flex-wrap gap-x-8 gap-y-4 text-[13px]">
             <Stat value={`${homesBuilt}+`} label="построено домов" />
             <Stat
               value={`${settlementBuilt}/${settlementTotal}`}
@@ -114,8 +116,12 @@ export default function Hero({
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <div className="font-extrabold text-[20px] text-[var(--rs-ink)]">{value}</div>
-      <div className="text-[12px] uppercase tracking-wide text-[var(--rs-muted)]">{label}</div>
+      <div className="font-extrabold text-[22px] text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
+        {value}
+      </div>
+      <div className="text-[12px] uppercase tracking-wide text-white/70">
+        {label}
+      </div>
     </div>
   );
 }
