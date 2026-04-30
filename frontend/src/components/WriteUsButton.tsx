@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mail, MessageCircle, MessageSquare, Phone, Send, Users } from "lucide-react";
+import { Mail, MessageCircle, MessageSquare, Phone, Send, Users, X } from "lucide-react";
 import type { SiteSettings } from "@/types/api";
 import { cn, formatPhoneHref } from "@/lib/utils";
 
@@ -105,13 +105,36 @@ export default function WriteUsButton({
       </button>
 
       {open && (
-        <div
-          role="menu"
-          className="absolute z-30 right-0 mt-2 min-w-[280px] card-rs p-2 shadow-lg"
-        >
-          <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-[var(--rs-muted)] font-bold">
-            Выберите способ
-          </div>
+        <>
+          {/* Backdrop на mobile — затемнение фона + клик для закрытия */}
+          <div
+            className="fixed inset-0 z-40 bg-black/40 sm:hidden"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            role="menu"
+            className={cn(
+              // Mobile: bottom-sheet снизу экрана.
+              "fixed inset-x-3 bottom-3 z-50 card-rs p-2 shadow-2xl",
+              // Desktop (sm+): обычный dropdown справа от кнопки.
+              "sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:mt-2 sm:min-w-[280px] sm:max-w-[320px]",
+              "max-h-[80vh] overflow-y-auto",
+            )}
+          >
+            <div className="px-3 py-2 flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-wide text-[var(--rs-muted)] font-bold">
+                Выберите способ
+              </span>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="sm:hidden btn-ghost p-1 -mr-1"
+                aria-label="Закрыть"
+              >
+                <X size={18} />
+              </button>
+            </div>
           <ul className="grid">
             {channels.map((c) => (
               <li key={c.id}>
@@ -123,20 +146,21 @@ export default function WriteUsButton({
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-[var(--rs-bg)] transition"
                 >
                   <span
-                    className="grid place-items-center w-9 h-9 rounded-lg shrink-0 text-white"
+                    className="grid place-items-center w-10 h-10 rounded-lg shrink-0 text-white"
                     style={{ background: c.color }}
                   >
                     {c.icon}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-bold text-[14px] truncate">{c.label}</span>
-                    {c.hint && <span className="block text-[11px] text-[var(--rs-muted)]">{c.hint}</span>}
+                    <span className="block font-bold text-[15px] sm:text-[14px] truncate">{c.label}</span>
+                    {c.hint && <span className="block text-[12px] sm:text-[11px] text-[var(--rs-muted)]">{c.hint}</span>}
                   </span>
                 </a>
               </li>
             ))}
           </ul>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
