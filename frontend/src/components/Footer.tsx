@@ -98,6 +98,7 @@ export default function Footer({ s }: { s: SiteSettings }) {
           <span>© {year} {s.site_name}. Все права защищены.</span>
           {s.legal_name && <span>{s.legal_name}</span>}
           {s.inn && <span>ИНН {s.inn}</span>}
+          {s.ogrnip && <span>ОГРНИП {s.ogrnip}</span>}
         </div>
       </div>
     </footer>
