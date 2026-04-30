@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import BuildFiltersBar from "@/components/BuildFiltersBar";
@@ -35,7 +36,20 @@ export default async function BuildsPage() {
         </p>
       </div>
 
-      <BuildFiltersBar builds={builds} />
+      <Suspense fallback={<CatalogSkeleton />}>
+        <BuildFiltersBar builds={builds} />
+      </Suspense>
+    </div>
+  );
+}
+
+/** Скелетон, пока компонент с useSearchParams хидрируется на клиенте. */
+function CatalogSkeleton() {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="card-rs aspect-[4/3] bg-[var(--rs-line)]/40 animate-pulse" />
+      ))}
     </div>
   );
 }
