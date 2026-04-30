@@ -37,6 +37,26 @@
 
 html { scroll-behavior: smooth; }
 
+/* ---- Header / Navbar ---------------------------------------- */
+/* Базовое состояние — прозрачный, без бордера и blur (mobile-friendly) */
+.nav-header {
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+}
+/* При scroll > 8px — добавляем компактный фон и нижний бордер.
+   Никакого backdrop-blur — он тормозит на mobile и low-end устройствах. */
+.nav-header.nav-scrolled {
+  background-color: color-mix(in srgb, var(--rs-bg) 92%, transparent);
+  border-bottom-color: var(--rs-line);
+}
+/* На современных десктопах можно blur — он не тормозит */
+@media (min-width: 768px) and (hover: hover) {
+  .nav-header.nav-scrolled {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
 body {
   background: var(--rs-bg);
   color: var(--rs-ink);

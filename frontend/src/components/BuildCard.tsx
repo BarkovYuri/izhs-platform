@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Bed, Building2, Maximize2 } from "lucide-react";
 import type { BuildListItem } from "@/types/api";
 import { formatArea, formatPrice } from "@/lib/utils";
@@ -20,12 +21,13 @@ export default function BuildCard({ b }: { b: BuildListItem }) {
     >
       <div className="relative aspect-[4/3] bg-[var(--rs-line)]/40 overflow-hidden">
         {cover ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={cover}
             alt={b.title}
-            loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            quality={75}
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="w-full h-full grid place-items-center text-[var(--rs-muted)] text-sm">
