@@ -1,0 +1,90 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block form_top %}
+<div class="rs-save-bar">
+    <div class="rs-save-bar-inner">
+        <div class="rs-save-bar-hint">
+            После правок не забудьте нажать «Сохранить» — иначе изменения не применятся.
+        </div>
+        <div class="rs-save-bar-actions">
+            <button type="submit" name="_continue" form="{{ opts.model_name }}_form" class="rs-btn rs-btn-secondary">
+                Сохранить и продолжить
+            </button>
+            <button type="submit" name="_save" form="{{ opts.model_name }}_form" class="rs-btn rs-btn-primary">
+                Сохранить
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.rs-save-bar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    margin: -16px -16px 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92));
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(184, 90, 53, 0.18);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.rs-save-bar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+}
+.rs-save-bar-hint {
+    font-size: 13px;
+    color: rgb(120, 113, 108);
+    flex: 1;
+    min-width: 200px;
+}
+.rs-save-bar-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.rs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+}
+.rs-btn-primary {
+    background: rgb(184, 90, 53);
+    color: #fff;
+}
+.rs-btn-primary:hover {
+    background: rgb(156, 71, 41);
+}
+.rs-btn-secondary {
+    background: #fff;
+    color: rgb(31, 28, 24);
+    border-color: rgb(214, 211, 204);
+}
+.rs-btn-secondary:hover {
+    background: rgb(245, 243, 239);
+}
+@media (max-width: 640px) {
+    .rs-save-bar-inner {
+        padding: 10px 16px;
+    }
+    .rs-btn {
+        padding: 9px 14px;
+        font-size: 13px;
+    }
+}
+</style>
+{% endblock %}

@@ -3,47 +3,59 @@ import Link from "next/link";
 import { ArrowRight, Building2, CheckCircle2, Hammer, MapPin, ShieldCheck, Wallet } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import LeadForm from "@/components/LeadForm";
-import { getSettings } from "@/services/api";
+import { getPageContent, getSettings } from "@/services/api";
+import { pickText } from "@/lib/pageContent";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "О компании — Ремстрой",
-  description: "Застройщик кирпичных домов в Томске и Томской области. Эскроу, аккредитация в банках, собственный посёлок Красная смородина.",
-  alternates: { canonical: "/about" },
-  openGraph: {
-    title: "О компании Ремстрой",
-    description: "Эскроу, банки-партнёры, собственный посёлок, индивидуальные проекты.",
-    url: "/about", type: "website",
-  },
-};
+const FALLBACK_KICKER = "О компании";
+const FALLBACK_META_TITLE = "О компании — Ремстрой";
+const FALLBACK_META_DESCRIPTION =
+  "Застройщик кирпичных домов в Томске и Томской области. Эскроу, аккредитация в банках, собственный посёлок Красная смородина.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pc = await getPageContent("about");
+  const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
+  const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
+  return {
+    title,
+    description,
+    alternates: { canonical: "/about" },
+    openGraph: { title, description, url: "/about", type: "website" },
+  };
+}
 
 function splitLines(text: string): string[] {
   return text.split("\n").map((s) => s.trim()).filter(Boolean);
 }
 
 export default async function AboutPage() {
-  const s = await getSettings();
+  const [s, pc] = await Promise.all([getSettings(), getPageContent("about")]);
   const directions = splitLines(s.directions_list);
   const advantages = splitLines(s.advantages_list);
   const banks = s.partner_banks
     ? s.partner_banks.split(",").map((b) => b.trim()).filter(Boolean)
     : [];
 
+  // Если в PageContent заполнены title/subtitle — они переопределяют дефолт.
+  const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
+  const title = pickText(pc, "title", `${s.site_name} — застройщик кирпичных домов`);
+  const subtitle = pickText(pc, "subtitle", s.about_intro);
+
   return (
     <div className="container-rs py-10 sm:py-14">
       <Breadcrumbs items={[{ label: "О компании" }]} />
       <div className="max-w-3xl">
         <div className="text-[12px] uppercase tracking-[0.2em] text-[var(--rs-brand)] font-bold">
-          О компании
+          {kicker}
         </div>
         <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold">
-          {s.site_name} — застройщик кирпичных домов
+          {title}
         </h1>
-        {s.about_intro && (
+        {subtitle && (
           <p className="mt-5 text-[16px] sm:text-[18px] leading-relaxed text-[var(--rs-muted)]">
-            {s.about_intro}
+            {subtitle}
           </p>
         )}
       </div>

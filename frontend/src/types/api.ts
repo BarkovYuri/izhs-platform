@@ -74,6 +74,18 @@ export type SiteSettings = {
   seo_description_default: string;
 };
 
+export type PageSlug =
+  | "home" | "builds" | "faq" | "about" | "contacts" | "settlement";
+
+export type PageContent = {
+  slug: PageSlug;
+  kicker: string;
+  title: string;
+  subtitle: string;
+  meta_title: string;
+  meta_description: string;
+};
+
 export type FaqItem = {
   id: number;
   question: string;

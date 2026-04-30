@@ -1,5 +1,6 @@
 import type {
-  BuildDetail, BuildListItem, FaqCategory, LeadPayload, SiteSettings,
+  BuildDetail, BuildListItem, FaqCategory, LeadPayload,
+  PageContent, PageSlug, SiteSettings,
 } from "@/types/api";
 
 export const API_BASE =
@@ -49,6 +50,21 @@ export const getSettings = () => fetchJson<SiteSettings>("/api/settings/", undef
   directions_list: "", advantages_list: "", partner_banks: "",
   seo_title_default: "", seo_description_default: "",
 });
+
+/**
+ * Тексты заголовков для одной страницы (редактируется в админке).
+ * Если бэкенд недоступен или поле пустое — на фронте используется
+ * хардкод-фолбэк, чтобы сайт не упал и не стал пустым.
+ */
+export const getPageContent = (slug: PageSlug) =>
+  fetchJson<PageContent>(`/api/page/${slug}/`, undefined, {
+    slug,
+    kicker: "",
+    title: "",
+    subtitle: "",
+    meta_title: "",
+    meta_description: "",
+  });
 
 export async function createLead(payload: LeadPayload): Promise<{ ok: boolean; id?: number; error?: string }> {
   try {

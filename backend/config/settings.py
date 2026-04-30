@@ -268,6 +268,13 @@ UNFOLD = {
                 ],
             },
             {
+                "title": "Тексты страниц",
+                "separator": True,
+                "items": [
+                    {"title": "Заголовки и описания", "icon": "edit_note", "link": "/admin/common/pagecontent/"},
+                ],
+            },
+            {
                 "title": "Настройки",
                 "separator": True,
                 "items": [

@@ -4,37 +4,50 @@ import { ArrowRight, Mail, MapPin, MessageCircle, MessageSquare, Phone, Send, Us
 import Breadcrumbs from "@/components/Breadcrumbs";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
-import { getSettings } from "@/services/api";
+import { getPageContent, getSettings } from "@/services/api";
 import { formatPhoneHref } from "@/lib/utils";
 import { localBusinessJsonLd } from "@/lib/seo";
+import { pickText } from "@/lib/pageContent";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "Контакты",
-  description: "Связаться с застройщиком Ремстрой: телефон, email, адрес офиса в Томске на Комсомольском проспекте, 43А. Карта проезда.",
-  alternates: { canonical: "/contacts" },
-  openGraph: {
-    title: "Контакты — Ремстрой",
-    description: "Адрес офиса, телефон, мессенджеры. Карта проезда в Томске.",
-    url: "/contacts", type: "website",
-  },
-};
+const FALLBACK_KICKER = "Контакты";
+const FALLBACK_TITLE = "Связаться с нами";
+const FALLBACK_SUBTITLE =
+  "Позвоните или оставьте заявку — обсудим проект, выезд на участок и стоимость.";
+const FALLBACK_META_TITLE = "Контакты";
+const FALLBACK_META_DESCRIPTION =
+  "Связаться с застройщиком Ремстрой: телефон, email, адрес офиса в Томске на Комсомольском проспекте, 43А. Карта проезда.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pc = await getPageContent("contacts");
+  const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
+  const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
+  return {
+    title,
+    description,
+    alternates: { canonical: "/contacts" },
+    openGraph: { title, description, url: "/contacts", type: "website" },
+  };
+}
 
 export default async function ContactsPage() {
-  const s = await getSettings();
+  const [s, pc] = await Promise.all([getSettings(), getPageContent("contacts")]);
+  const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
+  const title = pickText(pc, "title", FALLBACK_TITLE);
+  const subtitle = pickText(pc, "subtitle", FALLBACK_SUBTITLE);
   return (
     <div className="container-rs py-10 sm:py-14">
       <JsonLd data={localBusinessJsonLd(s)} />
       <Breadcrumbs items={[{ label: "Контакты" }]} />
       <div className="mb-10 max-w-2xl">
         <div className="text-[12px] uppercase tracking-[0.2em] text-[var(--rs-brand)] font-bold">
-          Контакты
+          {kicker}
         </div>
-        <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold">Связаться с нами</h1>
+        <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold">{title}</h1>
         <p className="mt-3 text-[15px] text-[var(--rs-muted)]">
-          Позвоните или оставьте заявку — обсудим проект, выезд на участок и стоимость.
+          {subtitle}
         </p>
       </div>
 

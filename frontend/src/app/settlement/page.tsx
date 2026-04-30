@@ -4,27 +4,39 @@ import { ArrowRight, CheckCircle2, Hammer, Home, MapPin, Trees } from "lucide-re
 import Breadcrumbs from "@/components/Breadcrumbs";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
-import { getBuilds, getSettings, resolveMediaUrl } from "@/services/api";
+import { getBuilds, getPageContent, getSettings, resolveMediaUrl } from "@/services/api";
 import { settlementJsonLd } from "@/lib/seo";
+import { pickText } from "@/lib/pageContent";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "Посёлок «Красная смородина» — Кисловка, Томск",
-  description: "Жилой коттеджный посёлок «Красная смородина» в деревне Кисловка под Томском. Кирпичные дома с земельными участками, скважина, септик, эскроу.",
-  alternates: { canonical: "/settlement" },
-  openGraph: {
-    title: "Посёлок «Красная смородина» — Кисловка, Томск",
-    description: "Кирпичные дома с участками в собственном посёлке. Свободные участки, генплан, ипотека.",
-    url: "/settlement", type: "website",
-  },
-};
+const FALLBACK_KICKER = "Жилой посёлок";
+const FALLBACK_META_TITLE = "Посёлок «Красная смородина» — Кисловка, Томск";
+const FALLBACK_META_DESCRIPTION =
+  "Жилой коттеджный посёлок «Красная смородина» в деревне Кисловка под Томском. Кирпичные дома с земельными участками, скважина, септик, эскроу.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pc = await getPageContent("settlement");
+  const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
+  const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
+  return {
+    title,
+    description,
+    alternates: { canonical: "/settlement" },
+    openGraph: { title, description, url: "/settlement", type: "website" },
+  };
+}
 
 export default async function SettlementPage() {
-  const [s, builds] = await Promise.all([getSettings(), getBuilds()]);
+  const [s, builds, pc] = await Promise.all([getSettings(), getBuilds(), getPageContent("settlement")]);
   const planUrl = s.settlement_plan ? resolveMediaUrl(s.settlement_plan) : null;
   const featured = builds.slice(0, 3);
+
+  // PageContent переопределяет, иначе берём настройки/название посёлка.
+  const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
+  const title = pickText(pc, "title", `«${s.settlement_name}»`);
+  const subtitle = pickText(pc, "subtitle", s.about_settlement);
 
   return (
     <div className="container-rs py-10 sm:py-14">
@@ -35,17 +47,17 @@ export default async function SettlementPage() {
       <section className="grid gap-8 lg:grid-cols-[1.2fr_1fr] items-start mb-14">
         <div>
           <div className="text-[12px] uppercase tracking-[0.2em] text-[var(--rs-brand)] font-bold">
-            Жилой посёлок
+            {kicker}
           </div>
           <h1 className="h-display mt-2 text-[40px] sm:text-[60px] font-extrabold leading-[1.05]">
-            «{s.settlement_name}»
+            {title}
           </h1>
           <div className="mt-3 inline-flex items-center gap-2 badge badge-brand">
             <MapPin size={14} /> {s.settlement_location}
           </div>
-          {s.about_settlement && (
+          {subtitle && (
             <p className="mt-6 text-[16px] sm:text-[18px] leading-relaxed text-[var(--rs-muted)] max-w-2xl">
-              {s.about_settlement}
+              {subtitle}
             </p>
           )}
           <div className="mt-8 flex flex-wrap gap-3">

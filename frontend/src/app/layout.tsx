@@ -4,8 +4,9 @@ import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { getSettings } from "@/services/api";
+import { getPageContent, getSettings } from "@/services/api";
 import { SITE_URL } from "@/lib/seo";
+import { pickText } from "@/lib/pageContent";
 
 // Явный viewport — фиксирует масштаб на старте загрузки страницы,
 // чтобы iPhone Safari не уменьшал зум автоматически если что-то широкое
@@ -24,9 +25,16 @@ const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", 
 const manrope = Manrope({ subsets: ["latin", "cyrillic"], variable: "--font-manrope", display: "swap" });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const s = await getSettings();
-  const title = s.seo_title_default || `${s.site_name} — кирпичные дома в посёлке ${s.settlement_name}`;
-  const description = s.seo_description_default || s.about_short || "Строительство кирпичных домов";
+  const [s, pc] = await Promise.all([getSettings(), getPageContent("home")]);
+  // Главная: SEO Title/Description в PageContent имеет высший приоритет,
+  // потом seo_title_default из настроек, потом дефолтная фраза.
+  const fallbackTitle = s.seo_title_default
+    || `${s.site_name} — кирпичные дома в посёлке ${s.settlement_name}`;
+  const fallbackDescription = s.seo_description_default
+    || s.about_short
+    || "Строительство кирпичных домов";
+  const title = pickText(pc, "meta_title", fallbackTitle);
+  const description = pickText(pc, "meta_description", fallbackDescription);
   const verification: Record<string, string> = {};
   if (s.yandex_verification) verification.yandex = s.yandex_verification;
   if (s.google_verification) verification.google = s.google_verification;

@@ -1,5 +1,15 @@
 from rest_framework import serializers
-from .models import SiteSettings
+from .models import PageContent, SiteSettings
+
+
+class PageContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PageContent
+        fields = (
+            "slug",
+            "kicker", "title", "subtitle",
+            "meta_title", "meta_description",
+        )
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer):

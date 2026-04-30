@@ -3,37 +3,50 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
-import { getFaq } from "@/services/api";
+import { getFaq, getPageContent } from "@/services/api";
 import { faqPageJsonLd } from "@/lib/seo";
+import { pickText } from "@/lib/pageContent";
 
 // Не кэшируем — FAQ редактируется в админке, должен обновляться сразу.
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "Вопросы и ответы",
-  description: "Ответы на частые вопросы о строительстве кирпичных домов: сроки, эскроу, ипотека, посёлок Красная смородина в Кисловке.",
-  alternates: { canonical: "/faq" },
-  openGraph: {
-    title: "Вопросы и ответы — Ремстрой",
-    description: "Эскроу, ипотека, сроки, индивидуальные проекты — отвечаем на частые вопросы.",
-    url: "/faq", type: "website",
-  },
-};
+const FALLBACK_KICKER = "FAQ";
+const FALLBACK_TITLE = "Вопросы и ответы";
+const FALLBACK_SUBTITLE =
+  "Ответы на самые частые вопросы клиентов. Если нужного нет — задайте свой через форму ниже.";
+const FALLBACK_META_TITLE = "Вопросы и ответы";
+const FALLBACK_META_DESCRIPTION =
+  "Ответы на частые вопросы о строительстве кирпичных домов: сроки, эскроу, ипотека, посёлок Красная смородина в Кисловке.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pc = await getPageContent("faq");
+  const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
+  const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
+  return {
+    title,
+    description,
+    alternates: { canonical: "/faq" },
+    openGraph: { title, description, url: "/faq", type: "website" },
+  };
+}
 
 export default async function FaqPage() {
-  const categories = await getFaq();
+  const [categories, pc] = await Promise.all([getFaq(), getPageContent("faq")]);
+  const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
+  const title = pickText(pc, "title", FALLBACK_TITLE);
+  const subtitle = pickText(pc, "subtitle", FALLBACK_SUBTITLE);
   return (
     <div className="container-rs py-10 sm:py-14">
       <JsonLd data={faqPageJsonLd(categories)} />
       <Breadcrumbs items={[{ label: "Вопросы и ответы" }]} />
       <div className="mb-10 max-w-2xl">
         <div className="text-[12px] uppercase tracking-[0.2em] text-[var(--rs-brand)] font-bold">
-          FAQ
+          {kicker}
         </div>
-        <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold">Вопросы и ответы</h1>
+        <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold">{title}</h1>
         <p className="mt-3 text-[15px] text-[var(--rs-muted)]">
-          Ответы на самые частые вопросы клиентов. Если нужного нет — задайте свой через форму ниже.
+          {subtitle}
         </p>
       </div>
 

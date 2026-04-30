@@ -3,25 +3,38 @@ import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import BuildFiltersBar from "@/components/BuildFiltersBar";
 import JsonLd from "@/components/JsonLd";
-import { getBuilds } from "@/services/api";
+import { getBuilds, getPageContent } from "@/services/api";
 import { buildsCatalogJsonLd } from "@/lib/seo";
+import { pickText } from "@/lib/pageContent";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "Каталог проектов кирпичных домов",
-  description: "Типовые и индивидуальные проекты кирпичных домов в посёлке Красная смородина и на вашем участке. Площадь, цены, фото, планировки.",
-  alternates: { canonical: "/builds" },
-  openGraph: {
-    title: "Каталог проектов кирпичных домов",
-    description: "Типовые и индивидуальные проекты, цены, планировки, спецификации.",
-    url: "/builds", type: "website",
-  },
-};
+const FALLBACK_TITLE = "Проекты кирпичных домов";
+const FALLBACK_SUBTITLE =
+  "Типовые проекты, готовые к строительству. Перепланировка и доработка по запросу клиента.";
+const FALLBACK_KICKER = "Каталог";
+const FALLBACK_META_TITLE = "Каталог проектов кирпичных домов";
+const FALLBACK_META_DESCRIPTION =
+  "Типовые и индивидуальные проекты кирпичных домов в посёлке Красная смородина и на вашем участке. Площадь, цены, фото, планировки.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pc = await getPageContent("builds");
+  const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
+  const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
+  return {
+    title,
+    description,
+    alternates: { canonical: "/builds" },
+    openGraph: { title, description, url: "/builds", type: "website" },
+  };
+}
 
 export default async function BuildsPage() {
-  const builds = await getBuilds();
+  const [builds, pc] = await Promise.all([getBuilds(), getPageContent("builds")]);
+  const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
+  const title = pickText(pc, "title", FALLBACK_TITLE);
+  const subtitle = pickText(pc, "subtitle", FALLBACK_SUBTITLE);
 
   return (
     <div className="container-rs py-10 sm:py-14">
@@ -29,13 +42,13 @@ export default async function BuildsPage() {
       <Breadcrumbs items={[{ label: "Проекты домов" }]} />
       <div className="mb-8">
         <div className="text-[12px] uppercase tracking-[0.2em] text-[var(--rs-brand)] font-bold">
-          Каталог
+          {kicker}
         </div>
         <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold">
-          Проекты кирпичных домов
+          {title}
         </h1>
         <p className="mt-3 text-[15px] text-[var(--rs-muted)] max-w-2xl">
-          Типовые проекты, готовые к строительству. Перепланировка и доработка по запросу клиента.
+          {subtitle}
         </p>
       </div>
 

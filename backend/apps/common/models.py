@@ -124,3 +124,90 @@ class SiteSettings(models.Model):
         if obj is None:
             obj = cls.objects.create()
         return obj
+
+
+class PageContent(models.Model):
+    """Тексты заголовков/подзаголовков для страниц сайта.
+
+    Одна запись = одна страница. Поля редактируются в админке.
+    Если поле пустое, фронт использует значение по умолчанию (хардкод).
+    """
+
+    PAGE_HOME = "home"
+    PAGE_BUILDS = "builds"
+    PAGE_FAQ = "faq"
+    PAGE_ABOUT = "about"
+    PAGE_CONTACTS = "contacts"
+    PAGE_SETTLEMENT = "settlement"
+    PAGE_CHOICES = [
+        (PAGE_HOME, "Главная (/)"),
+        (PAGE_BUILDS, "Каталог проектов (/builds)"),
+        (PAGE_FAQ, "Вопросы и ответы (/faq)"),
+        (PAGE_ABOUT, "О компании (/about)"),
+        (PAGE_CONTACTS, "Контакты (/contacts)"),
+        (PAGE_SETTLEMENT, "Посёлок (/settlement)"),
+    ]
+
+    slug = models.CharField(
+        "Страница",
+        max_length=20,
+        choices=PAGE_CHOICES,
+        unique=True,
+        help_text="Какую именно страницу сайта редактируем",
+    )
+
+    kicker = models.CharField(
+        "Мини-метка над заголовком",
+        max_length=80,
+        blank=True,
+        help_text=(
+            "Маленькая надпись над h1, обычно одно-два слова, "
+            "например: «Каталог», «FAQ», «О компании»"
+        ),
+    )
+    title = models.CharField(
+        "Заголовок страницы (h1)",
+        max_length=200,
+        blank=True,
+        help_text=(
+            "Большой заголовок, который видит посетитель в самом верху страницы. "
+            "Если оставить пустым — будет показан стандартный текст из кода."
+        ),
+    )
+    subtitle = models.TextField(
+        "Лид-абзац под заголовком",
+        blank=True,
+        help_text=(
+            "Короткий пояснительный текст под h1 (1–3 предложения). "
+            "Не виден напрямую если оставить пустым."
+        ),
+    )
+
+    meta_title = models.CharField(
+        "SEO Title (для Google/Яндекс)",
+        max_length=200,
+        blank=True,
+        help_text=(
+            "Заголовок страницы во вкладке браузера и в выдаче поисковика. "
+            "Если пусто — берётся title."
+        ),
+    )
+    meta_description = models.CharField(
+        "SEO Description",
+        max_length=300,
+        blank=True,
+        help_text=(
+            "Описание страницы для поисковиков (до ~160 символов). "
+            "Показывается в результатах поиска."
+        ),
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Тексты страницы"
+        verbose_name_plural = "Тексты страниц"
+        ordering = ["slug"]
+
+    def __str__(self) -> str:
+        return dict(self.PAGE_CHOICES).get(self.slug, self.slug)
