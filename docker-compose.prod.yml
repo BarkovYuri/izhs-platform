@@ -31,7 +31,10 @@ services:
       - redisdata:/data
 
   backend:
-    image: ${BACKEND_IMAGE}
+    image: ${BACKEND_IMAGE:-izhs-backend:local}
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: izhs_backend
     restart: unless-stopped
     env_file: .env.prod
@@ -45,11 +48,16 @@ services:
       - "8000"
 
   frontend:
-    image: ${FRONTEND_IMAGE}
+    image: ${FRONTEND_IMAGE:-izhs-frontend:local}
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://remstroy70.ru}
     container_name: izhs_frontend
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://remstroy70.ru}
       NODE_ENV: production
     depends_on:
       - backend
