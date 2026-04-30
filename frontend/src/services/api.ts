@@ -1,6 +1,6 @@
 import type {
   BuildDetail, BuildListItem, FaqCategory, LeadPayload,
-  PageContent, PageSlug, SiteSettings,
+  PageContent, PageSlug, PortfolioItem, SiteSettings,
 } from "@/types/api";
 
 export const API_BASE =
@@ -33,6 +33,7 @@ async function fetchJson<T>(path: string, init?: RequestInit, fallback?: T): Pro
 }
 
 export const getBuilds = () => fetchJson<BuildListItem[]>("/api/builds/", undefined, []);
+export const getPortfolio = () => fetchJson<PortfolioItem[]>("/api/portfolio/", undefined, []);
 export const getBuild  = (slug: string) => fetchJson<BuildDetail>(`/api/builds/${slug}/`);
 export const getFaq    = () => fetchJson<FaqCategory[]>("/api/faq/", undefined, []);
 export const getSettings = () => fetchJson<SiteSettings>("/api/settings/", undefined, {
@@ -45,6 +46,7 @@ export const getSettings = () => fetchJson<SiteSettings>("/api/settings/", undef
   vk_url: "", telegram_url: "", whatsapp_url: "", max_url: "",
   yandex_map_iframe: "", office_map_iframe: "", settlement_plan: null,
   yandex_metrika_id: "", yandex_verification: "", google_verification: "", working_hours: "",
+  founded_year: 2016,
   about_short: "",
   about_intro: "", about_escrow: "", about_settlement: "", about_outro: "",
   directions_list: "", advantages_list: "", partner_banks: "",

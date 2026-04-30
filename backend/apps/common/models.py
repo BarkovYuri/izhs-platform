@@ -55,6 +55,14 @@ class SiteSettings(models.Model):
         "Часы работы офиса", max_length=120, blank=True,
         help_text='Например: "Пн-Пт 9:00-18:00, Сб 10:00-15:00"',
     )
+    founded_year = models.PositiveSmallIntegerField(
+        "Год основания / выхода на рынок",
+        default=2016,
+        help_text=(
+            "Используется в Hero на главной: «На рынке с 2016 года». "
+            "Также вычисляется стаж компании."
+        ),
+    )
 
     about_short = models.TextField("О компании (короткий текст для футера)", blank=True)
 

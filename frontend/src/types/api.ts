@@ -62,6 +62,7 @@ export type SiteSettings = {
   yandex_verification: string;
   google_verification: string;
   working_hours: string;
+  founded_year: number;
   about_short: string;
   about_intro: string;
   about_escrow: string;
@@ -72,6 +73,24 @@ export type SiteSettings = {
   partner_banks: string;
   seo_title_default: string;
   seo_description_default: string;
+};
+
+export type PortfolioImage = {
+  image: string;
+  order: number;
+};
+
+export type PortfolioItem = {
+  id: number;
+  title: string;
+  description: string;
+  year: number | null;
+  area: string | null;
+  location: string;
+  cover: string;
+  video_url: string;
+  images: PortfolioImage[];
+  order: number;
 };
 
 export type PageSlug =

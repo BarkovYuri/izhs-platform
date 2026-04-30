@@ -63,6 +63,7 @@ class SiteSettingsAdmin(ModelAdmin):
             "fields": ("yandex_metrika_id", "yandex_verification", "google_verification"),
         }),
         ("Контакты — дополнительно", {"fields": ("working_hours",)}),
+        ("Стаж компании", {"fields": ("founded_year",)}),
         ("О компании — расширенный блок", {
             "fields": ("about_intro", "about_escrow", "about_settlement", "about_outro",
                        "directions_list", "advantages_list", "partner_banks"),

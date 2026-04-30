@@ -9,11 +9,14 @@ import BuildCard from "@/components/BuildCard";
 import LeadForm from "@/components/LeadForm";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
-import { getBuilds, getFaq, getSettings } from "@/services/api";
+import PortfolioCard from "@/components/PortfolioCard";
+import { getBuilds, getFaq, getPortfolio, getSettings } from "@/services/api";
 import { organizationJsonLd } from "@/lib/seo";
 
 export default async function HomePage() {
-  const [s, builds, faq] = await Promise.all([getSettings(), getBuilds(), getFaq()]);
+  const [s, builds, faq, portfolio] = await Promise.all([
+    getSettings(), getBuilds(), getFaq(), getPortfolio(),
+  ]);
   // На главную показываем только проекты с флагом is_featured.
   // Если ни один проект не отмечен — fallback на первые 6, чтобы блок не был пустым.
   const featuredOnly = builds.filter((b) => b.is_featured);
@@ -93,6 +96,30 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {portfolio.length > 0 && (
+        <section className="section bg-white border-y border-[var(--rs-line)]">
+          <div className="container-rs">
+            <SectionHead
+              kicker="Что мы построили"
+              title="Реализованные объекты"
+              subtitle="Реальные дома с фотографиями и видео-обзорами. Нажмите на карточку, чтобы посмотреть всю галерею."
+              action={
+                portfolio.length > 3 ? (
+                  <Link href="/portfolio" className="btn-secondary">
+                    Все объекты <ArrowRight size={16} />
+                  </Link>
+                ) : undefined
+              }
+            />
+            <div className="mt-10 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {portfolio.slice(0, 6).map((item) => (
+                <PortfolioCard key={item.id} item={item} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {faqPreview.length > 0 && (
         <section className="section bg-white border-y border-[var(--rs-line)]">

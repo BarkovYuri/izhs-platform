@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, Award, MapPin } from "lucide-react";
 import type { SiteSettings } from "@/types/api";
 import WriteUsButton from "@/components/WriteUsButton";
 
 export default function Hero({ s }: { s: SiteSettings }) {
+  const foundedYear = s.founded_year || 2016;
   return (
     <section className="relative isolate">
       <div
@@ -26,9 +27,15 @@ export default function Hero({ s }: { s: SiteSettings }) {
 
       <div className="container-rs pt-16 pb-20 sm:pt-24 sm:pb-28">
         <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 badge badge-brand">
-            <MapPin size={14} />
-            Посёлок «{s.settlement_name}», {s.settlement_location}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-2 badge badge-brand">
+              <MapPin size={14} />
+              Посёлок «{s.settlement_name}», {s.settlement_location}
+            </div>
+            <div className="inline-flex items-center gap-1.5 badge badge-olive">
+              <Award size={13} />
+              На рынке с {foundedYear} года
+            </div>
           </div>
 
           <h1 className="h-display mt-5 text-[40px] sm:text-[64px] font-extrabold">

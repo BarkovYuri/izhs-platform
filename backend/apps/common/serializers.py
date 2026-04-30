@@ -23,7 +23,7 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             "vk_url", "telegram_url", "whatsapp_url", "max_url",
             "yandex_map_iframe", "office_map_iframe", "settlement_plan",
             "yandex_metrika_id", "yandex_verification", "google_verification",
-            "working_hours",
+            "working_hours", "founded_year",
             "about_short",
             "about_intro", "about_escrow", "about_settlement", "about_outro",
             "directions_list", "advantages_list", "partner_banks",
