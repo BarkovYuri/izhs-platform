@@ -102,7 +102,15 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             )}
           </div>
 
-          <h1 className="h-display text-[22px] sm:text-[36px] lg:text-[44px] font-extrabold tracking-tight leading-tight break-words">
+          <h1
+            className="h-display font-extrabold tracking-tight leading-tight"
+            style={{
+              fontSize: "clamp(18px, 5.6vw, 44px)",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
+              hyphens: "auto",
+            }}
+          >
             {b.title}
           </h1>
 

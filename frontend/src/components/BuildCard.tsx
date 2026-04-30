@@ -46,7 +46,14 @@ export default function BuildCard({ b }: { b: BuildListItem }) {
       </div>
 
       <div className="p-4 sm:p-5 flex flex-col gap-2.5 flex-1">
-        <h3 className="font-extrabold text-[16px] sm:text-[18px] leading-tight tracking-tight line-clamp-2">
+        <h3
+          className="font-extrabold leading-tight tracking-tight line-clamp-2"
+          style={{
+            fontSize: "clamp(15px, 4.4vw, 18px)",
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
+          }}
+        >
           {b.title}
         </h3>
 

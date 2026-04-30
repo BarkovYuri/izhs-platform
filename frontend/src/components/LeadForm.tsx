@@ -30,8 +30,16 @@ export default function LeadForm({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !phone.trim()) {
-      setState("error"); setErrorText("Заполните имя и телефон"); return;
+    if (!name.trim()) {
+      setState("error"); setErrorText("Введите имя"); return;
+    }
+    // Жёсткая проверка номера телефона: должно быть 10-15 цифр
+    // (без учёта пробелов/скобок/дефисов).
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length < 10 || digits.length > 15) {
+      setState("error");
+      setErrorText("Введите корректный номер телефона (минимум 10 цифр)");
+      return;
     }
     if (!agree) {
       setState("error"); setErrorText("Нужно согласие на обработку персональных данных"); return;
@@ -81,10 +89,20 @@ export default function LeadForm({
         <input
           className="input-rs" placeholder="Ваше имя" value={name}
           onChange={(e) => setName(e.target.value)} required
+          minLength={2} maxLength={120}
+          autoComplete="name"
         />
         <input
-          className="input-rs" placeholder="Телефон*" type="tel" value={phone}
-          onChange={(e) => setPhone(e.target.value)} required
+          className="input-rs"
+          placeholder="+7 (___) ___-__-__"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+          inputMode="tel"
+          autoComplete="tel"
+          pattern="[\d\+\-\(\)\s]{10,20}"
+          title="Минимум 10 цифр (с кодом страны)"
         />
       </div>
       <input
