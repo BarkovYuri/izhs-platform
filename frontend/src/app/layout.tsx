@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
@@ -6,6 +6,19 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getSettings } from "@/services/api";
 import { SITE_URL } from "@/lib/seo";
+
+// Явный viewport — фиксирует масштаб на старте загрузки страницы,
+// чтобы iPhone Safari не уменьшал зум автоматически если что-то широкое
+// проскочит. Юзер всё ещё может пинч-зумить (maximumScale=5).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+  themeColor: "#b85a35",
+};
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", display: "swap" });
 const manrope = Manrope({ subsets: ["latin", "cyrillic"], variable: "--font-manrope", display: "swap" });

@@ -40,8 +40,23 @@
 html, body {
   overflow-x: clip;
   max-width: 100vw;
+  /* iOS Safari иногда увеличивает шрифты при повороте экрана — выключаем. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 html { scroll-behavior: smooth; }
+
+/* Контейнер с правильными отступами под разные размеры телефонов. */
+.container-rs {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+@media (max-width: 359px) {
+  /* Узкие телефоны (iPhone SE 1st gen и т.п.) — меньше padding'ов */
+  .container-rs { padding-left: 12px; padding-right: 12px; }
+}
 
 /* ---- Header / Navbar ---------------------------------------- */
 /* Базовое состояние — прозрачный, без бордера и blur (mobile-friendly) */
@@ -72,8 +87,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Утилиты */
-.container-rs { max-width: 1200px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
+/* (container-rs определён выше с media-query под узкие экраны) */
 
 .btn-primary {
   background: var(--rs-brand);

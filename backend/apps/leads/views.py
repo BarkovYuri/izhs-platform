@@ -44,6 +44,10 @@ def _notify(lead: Lead) -> None:
 class LeadCreateView(CreateAPIView):
     serializer_class = LeadCreateSerializer
     throttle_scope = "leads"
+    # Public endpoint — не требуем session/CSRF/auth.
+    # Защита: throttle 5/min + honeypot-поле + 152-ФЗ-чекбокс на фронте.
+    authentication_classes = []
+    permission_classes = []
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
