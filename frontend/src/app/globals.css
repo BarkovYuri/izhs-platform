@@ -105,10 +105,20 @@ dt, dd, p, li, h1, h2, h3, h4, h5, h6 {
    Когда добавляется .nav-scrolled (>8px скролла), эти правила
    перебиваются дефолтными — текст возвращается к тёмному. */
 .nav-header.over-dark:not(.nav-scrolled) {
-  background-color: rgba(20, 16, 12, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* На mobile blur тормозит весь UI (тап на бургер-меню "виснет"
+     на 1-2 секунды пока браузер пересчитывает размытие).
+     По умолчанию blur НЕ применяем — даём более плотный тёмный
+     фон чтобы белый текст читался. Blur добавим только для desktop
+     (см. медиазапрос ниже). */
+  background-color: rgba(20, 16, 12, 0.72);
   border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+@media (min-width: 768px) and (hover: hover) {
+  .nav-header.over-dark:not(.nav-scrolled) {
+    background-color: rgba(20, 16, 12, 0.50);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
 }
 .nav-header.over-dark:not(.nav-scrolled) .nav-site-name {
   color: #fff;
