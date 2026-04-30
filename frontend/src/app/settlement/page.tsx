@@ -37,7 +37,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SettlementPage() {
   const [s, builds, pc] = await Promise.all([getSettings(), getBuilds(), getPageContent("settlement")]);
-  const planUrl = s.settlement_plan ? resolveMediaUrl(s.settlement_plan) : null;
+  // Если план не загружен через админку — показываем статический
+  // обработанный генплан из /public. После загрузки через админку он
+  // автоматически заменит дефолтный.
+  const planUrl = s.settlement_plan ? resolveMediaUrl(s.settlement_plan) : "/genplan.png";
   const featured = builds.slice(0, 3);
 
   // PageContent переопределяет, иначе берём настройки/название посёлка.
