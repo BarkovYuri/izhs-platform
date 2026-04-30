@@ -47,6 +47,7 @@ export const getSettings = () => fetchJson<SiteSettings>("/api/settings/", undef
   yandex_map_iframe: "", office_map_iframe: "", settlement_plan: null,
   yandex_metrika_id: "", yandex_verification: "", google_verification: "", working_hours: "",
   founded_year: 2016,
+  homes_built_total: 30, settlement_homes_built: 12, settlement_homes_total: 40,
   about_short: "",
   about_intro: "", about_escrow: "", about_settlement: "", about_outro: "",
   directions_list: "", advantages_list: "", partner_banks: "",

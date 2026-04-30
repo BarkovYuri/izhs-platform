@@ -63,6 +63,9 @@ export type SiteSettings = {
   google_verification: string;
   working_hours: string;
   founded_year: number;
+  homes_built_total: number;
+  settlement_homes_built: number;
+  settlement_homes_total: number;
   about_short: string;
   about_intro: string;
   about_escrow: string;
@@ -94,7 +97,7 @@ export type PortfolioItem = {
 };
 
 export type PageSlug =
-  | "home" | "builds" | "faq" | "about" | "contacts" | "settlement";
+  | "home" | "builds" | "faq" | "about" | "contacts" | "settlement" | "portfolio";
 
 export type PageContent = {
   slug: PageSlug;

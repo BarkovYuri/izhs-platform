@@ -24,7 +24,14 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: "/settlement" },
-    openGraph: { title, description, url: "/settlement", type: "website" },
+    openGraph: {
+      title, description, url: "/settlement", type: "website",
+      images: ["/og.png"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title, description, images: ["/og.png"],
+    },
   };
 }
 
@@ -81,6 +88,48 @@ export default async function SettlementPage() {
             Карта посёлка скоро появится
           </div>
         )}
+      </section>
+
+      {/* Прогресс застройки посёлка */}
+      <section className="mb-14">
+        <div className="card-rs p-6 sm:p-8 grid gap-5 sm:grid-cols-[auto_1fr_auto] items-center">
+          <div className="flex items-baseline gap-2">
+            <div className="font-extrabold text-[var(--rs-brand)] leading-none text-[44px] sm:text-[56px]">
+              {s.settlement_homes_built}
+            </div>
+            <div className="text-[var(--rs-muted)] text-[18px] sm:text-[22px] font-bold">
+              из {s.settlement_homes_total}
+            </div>
+          </div>
+          <div className="min-w-0">
+            <h2 className="h-display text-[20px] sm:text-[24px] font-extrabold leading-tight">
+              домов в посёлке уже построены
+            </h2>
+            <p className="mt-2 text-[14px] text-[var(--rs-muted)] leading-relaxed">
+              Стройка идёт постоянно — посмотрите фото и видео реализованных
+              объектов, чтобы оценить качество.
+            </p>
+            {/* Полоса прогресса */}
+            <div className="mt-3 h-2 rounded-full bg-[var(--rs-line)] overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[var(--rs-brand)]"
+                style={{
+                  width: `${Math.min(
+                    100,
+                    Math.round(
+                      (s.settlement_homes_built /
+                        Math.max(1, s.settlement_homes_total)) *
+                        100,
+                    ),
+                  )}%`,
+                }}
+              />
+            </div>
+          </div>
+          <Link href="/portfolio" className="btn-secondary text-[14px] shrink-0">
+            Реализованные объекты <ArrowRight size={14} />
+          </Link>
+        </div>
       </section>
 
       {/* Преимущества */}

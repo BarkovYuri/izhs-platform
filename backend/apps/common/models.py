@@ -70,6 +70,32 @@ class SiteSettings(models.Model):
         ),
     )
 
+    homes_built_total = models.PositiveSmallIntegerField(
+        "Всего построено домов",
+        default=30,
+        help_text=(
+            "Число в Hero на главной: «N построено». Учитываются все "
+            "объекты, не только в посёлке. На сайте показывается со "
+            "знаком «+» (например, «30+»)."
+        ),
+    )
+    settlement_homes_built = models.PositiveSmallIntegerField(
+        "Построено домов в посёлке",
+        default=12,
+        help_text=(
+            "Сколько домов в посёлке «Красная смородина» уже сданы. "
+            "Используется в блоке статистики посёлка."
+        ),
+    )
+    settlement_homes_total = models.PositiveSmallIntegerField(
+        "Всего домов в посёлке (план)",
+        default=40,
+        help_text=(
+            "Сколько всего домов запланировано в посёлке. На сайте "
+            "будет показано «N из M уже построены»."
+        ),
+    )
+
     about_short = models.TextField("О компании (короткий текст для футера)", blank=True)
 
     # Расширенный блок «О компании» для страницы /about
@@ -153,9 +179,11 @@ class PageContent(models.Model):
     PAGE_ABOUT = "about"
     PAGE_CONTACTS = "contacts"
     PAGE_SETTLEMENT = "settlement"
+    PAGE_PORTFOLIO = "portfolio"
     PAGE_CHOICES = [
         (PAGE_HOME, "Главная (/)"),
         (PAGE_BUILDS, "Каталог проектов (/builds)"),
+        (PAGE_PORTFOLIO, "Реализованные объекты (/portfolio)"),
         (PAGE_FAQ, "Вопросы и ответы (/faq)"),
         (PAGE_ABOUT, "О компании (/about)"),
         (PAGE_CONTACTS, "Контакты (/contacts)"),

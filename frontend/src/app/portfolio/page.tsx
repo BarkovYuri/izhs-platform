@@ -1,41 +1,63 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
 import PortfolioCard from "@/components/PortfolioCard";
-import { getPortfolio } from "@/services/api";
+import { getPageContent, getPortfolio, getSettings } from "@/services/api";
+import { pickText } from "@/lib/pageContent";
+import { portfolioJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "Реализованные объекты — построенные дома",
-  description:
-    "Фото и видео уже построенных кирпичных домов застройщика Ремстрой в Томске и посёлке Красная смородина.",
-  alternates: { canonical: "/portfolio" },
-  openGraph: {
-    title: "Реализованные объекты — Ремстрой",
-    description:
-      "Галерея построенных кирпичных домов с фото и видео — посмотрите как мы строим.",
-    url: "/portfolio",
-    type: "website",
-  },
-};
+const FALLBACK_KICKER = "Реализованные объекты";
+const FALLBACK_TITLE = "Дома, которые мы построили";
+const FALLBACK_SUBTITLE =
+  "Реальные объекты с фотографиями и видео-обзорами. Нажмите на карточку, чтобы посмотреть всю галерею.";
+const FALLBACK_META_TITLE = "Реализованные объекты — построенные дома";
+const FALLBACK_META_DESCRIPTION =
+  "Фото и видео уже построенных кирпичных домов застройщика Ремстрой в Томске и посёлке Красная смородина.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pc = await getPageContent("portfolio");
+  const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
+  const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
+  return {
+    title,
+    description,
+    alternates: { canonical: "/portfolio" },
+    openGraph: {
+      title, description, url: "/portfolio", type: "website",
+      images: ["/og.png"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title, description, images: ["/og.png"],
+    },
+  };
+}
 
 export default async function PortfolioPage() {
-  const items = await getPortfolio();
+  const [items, pc, s] = await Promise.all([
+    getPortfolio(), getPageContent("portfolio"), getSettings(),
+  ]);
+  const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
+  const title = pickText(pc, "title", FALLBACK_TITLE);
+  const subtitle = pickText(pc, "subtitle", FALLBACK_SUBTITLE);
+
   return (
     <div className="container-rs py-10 sm:py-14">
+      {items.length > 0 && <JsonLd data={portfolioJsonLd(items, s.site_name)} />}
       <Breadcrumbs items={[{ label: "Реализованные объекты" }]} />
       <div className="mb-10 max-w-2xl">
         <div className="text-[12px] uppercase tracking-[0.2em] text-[var(--rs-brand)] font-bold">
-          Реализованные объекты
+          {kicker}
         </div>
         <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold">
-          Дома, которые мы построили
+          {title}
         </h1>
         <p className="mt-3 text-[15px] text-[var(--rs-muted)]">
-          Реальные объекты с фотографиями и видео-обзорами. Нажмите на
-          карточку, чтобы посмотреть всю галерею.
+          {subtitle}
         </p>
       </div>
 

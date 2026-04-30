@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { SITE_URL } from "@/lib/seo";
 
 export type Crumb = { label: string; href?: string };
-
-const SITE_URL = "https://remstroy70.ru";
 
 export default function Breadcrumbs({ items }: { items: Crumb[] }) {
   const all: Crumb[] = [{ label: "Главная", href: "/" }, ...items];

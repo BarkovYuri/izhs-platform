@@ -44,7 +44,13 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     metadataBase: new URL(SITE_URL),
     alternates: { canonical: "/" },
-    icons: { icon: "/favicon.svg" },
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any", type: "image/x-icon" },
+        { url: "/favicon.svg", type: "image/svg+xml" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    },
     keywords: [
       "кирпичный дом", "купить дом Томск", "коттеджный посёлок", "Красная смородина",
       "Кисловка", "ИЖС Томск", "Ремстрой", "дом под ключ", "ипотека на дом",

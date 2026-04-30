@@ -7,11 +7,10 @@ import BuildSpecsTabs from "@/components/BuildSpecsTabs";
 import LeadForm from "@/components/LeadForm";
 import { getBuild, getSettings, resolveMediaUrl } from "@/services/api";
 import { formatArea, formatPrice } from "@/lib/utils";
+import { SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-const SITE_URL = "https://remstroy70.ru";
 
 const STATUS_BADGE: Record<string, string> = {
   available: "badge-olive",
@@ -33,16 +32,32 @@ export async function generateMetadata(
   const { slug } = await params;
   try {
     const b = await getBuild(slug);
+    const fullDescription =
+      b.short_description ||
+      `Кирпичный дом ${formatArea(b.area)}, ${b.floors} эт., от ${formatPrice(b.price)}`;
+    // Google и Яндекс показывают ~160 символов в выдаче — длиннее
+    // обрезается на середине слова. Режем сами по последнему пробелу.
+    const description =
+      fullDescription.length > 160
+        ? fullDescription.slice(0, 157).replace(/\s+\S*$/, "") + "…"
+        : fullDescription;
+    const ogImage = b.cover ? resolveMediaUrl(b.cover) : "/og.png";
     return {
-      title: `${b.title} — проект кирпичного дома ${formatArea(b.area)}`,
-      description: b.short_description || `Кирпичный дом ${formatArea(b.area)}, ${b.floors} эт., от ${formatPrice(b.price)}`,
+      title: `${b.title} — кирпичный дом ${formatArea(b.area)}`,
+      description,
       alternates: { canonical: `${SITE_URL}/builds/${b.slug}` },
       openGraph: {
         title: b.title,
-        description: b.short_description || "",
+        description,
         type: "website",
         url: `${SITE_URL}/builds/${b.slug}`,
-        images: b.cover ? [resolveMediaUrl(b.cover)] : ["/og.png"],
+        images: [ogImage],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: b.title,
+        description,
+        images: [ogImage],
       },
     };
   } catch {

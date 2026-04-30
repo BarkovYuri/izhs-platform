@@ -5,6 +5,9 @@ import WriteUsButton from "@/components/WriteUsButton";
 
 export default function Hero({ s }: { s: SiteSettings }) {
   const foundedYear = s.founded_year || 2016;
+  const homesBuilt = s.homes_built_total || 30;
+  const settlementBuilt = s.settlement_homes_built || 12;
+  const settlementTotal = s.settlement_homes_total || 40;
   return (
     <section className="relative isolate">
       <div
@@ -56,8 +59,11 @@ export default function Hero({ s }: { s: SiteSettings }) {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-[13px]">
-            <Stat value="9" label="построено" />
-            <Stat value="20+" label="в проекте" />
+            <Stat value={`${homesBuilt}+`} label="построено домов" />
+            <Stat
+              value={`${settlementBuilt}/${settlementTotal}`}
+              label={`в посёлке «${s.settlement_name}»`}
+            />
             <Stat value="100%" label="кирпич" />
             <Stat value="индивид." label="доработка проекта" />
           </div>

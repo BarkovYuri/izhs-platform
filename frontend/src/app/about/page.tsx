@@ -22,7 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: "/about" },
-    openGraph: { title, description, url: "/about", type: "website" },
+    openGraph: {
+      title, description, url: "/about", type: "website",
+      images: ["/og.png"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title, description, images: ["/og.png"],
+    },
   };
 }
 
@@ -130,6 +137,25 @@ export default async function AboutPage() {
         </div>
         <Link href="/settlement" className="btn-secondary text-[14px] shrink-0">
           О посёлке <ArrowRight size={14} />
+        </Link>
+      </section>
+
+      {/* Кросс-линк на портфолио — социальное доказательство */}
+      <section className="mt-6 card-rs p-6 sm:p-8 flex flex-col sm:flex-row gap-5 items-start">
+        <div className="w-12 h-12 shrink-0 rounded-xl bg-[var(--rs-olive)]/15 text-[var(--rs-olive)] grid place-items-center">
+          <CheckCircle2 size={24} />
+        </div>
+        <div className="flex-1">
+          <h2 className="h-display text-[22px] sm:text-[26px] font-extrabold">
+            Уже построено более {s.homes_built_total} домов
+          </h2>
+          <p className="mt-2 text-[15px] leading-relaxed text-[var(--rs-muted)] max-w-2xl">
+            Реальные объекты с фото и видео — посмотрите, как мы строим
+            и что получают наши клиенты.
+          </p>
+        </div>
+        <Link href="/portfolio" className="btn-secondary text-[14px] shrink-0">
+          Реализованные объекты <ArrowRight size={14} />
         </Link>
       </section>
 
