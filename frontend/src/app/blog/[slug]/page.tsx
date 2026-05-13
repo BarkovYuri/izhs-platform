@@ -47,9 +47,15 @@ export async function generateMetadata(
   const description = metaDescriptionFor(article);
   const cover = article.cover ? resolveMediaUrl(article.cover) : "/og.png";
   const url = `/blog/${article.slug}`;
+  // Keywords из админки — необязательно. Парсим строку «слово, слово»
+  // в массив, как ожидает Next.js Metadata API.
+  const keywords = article.keywords
+    ? article.keywords.split(/\s*,\s*/).filter(Boolean)
+    : undefined;
   return {
     title,
     description,
+    keywords,
     alternates: { canonical: url },
     openGraph: {
       title,

@@ -36,5 +36,5 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
             "excerpt", "body", "cover",
             "category",
             "published_at", "updated_at",
-            "meta_title", "meta_description",
+            "meta_title", "meta_description", "keywords",
         )

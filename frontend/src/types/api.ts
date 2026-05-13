@@ -165,6 +165,7 @@ export type BlogArticle = BlogArticleListItem & {
   updated_at: string;
   meta_title: string;
   meta_description: string;
+  keywords: string;
 };
 
 export type LeadPayload = {

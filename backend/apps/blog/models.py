@@ -151,6 +151,17 @@ class Article(models.Model):
         blank=True,
         help_text="Если пусто — будет использован excerpt.",
     )
+    keywords = models.CharField(
+        "Ключевые слова",
+        max_length=300,
+        blank=True,
+        help_text=(
+            "Через запятую: «эскроу, ипотека, ИЖС, Томск». "
+            "Прим.: Google игнорирует meta keywords, Яндекс тоже "
+            "не использует их для ранжирования. Поле — больше для "
+            "учёта копирайтера, чем для SEO."
+        ),
+    )
 
     class Meta:
         verbose_name = "Статья"

@@ -42,6 +42,7 @@ class ArticleForm(forms.ModelForm):
             }),
             "meta_title": forms.TextInput(attrs={"size": 80}),
             "meta_description": forms.Textarea(attrs={"rows": 2, "cols": 80}),
+            "keywords": forms.TextInput(attrs={"size": 80}),
         }
 
 
@@ -89,11 +90,12 @@ class ArticleAdmin(ModelAdmin):
             ),
         }),
         ("SEO (опционально)", {
-            "fields": ("meta_title", "meta_description"),
+            "fields": ("meta_title", "meta_description", "keywords"),
             "classes": ("collapse",),
             "description": (
-                "Если оставить пустыми — будут использованы title "
-                "и excerpt."
+                "Title и Description — если пусто, используются "
+                "заголовок и excerpt. Ключевые слова — справочное "
+                "поле для копирайтера; современный SEO их игнорирует."
             ),
         }),
         ("Технические поля", {
