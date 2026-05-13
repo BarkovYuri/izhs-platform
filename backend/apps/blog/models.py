@@ -182,3 +182,54 @@ class Article(models.Model):
 
         if _compress_imagefield(self.cover):
             super().save(update_fields=["cover"])
+
+
+class ArticleImage(models.Model):
+    """Изображения для вставки внутрь тела статьи.
+
+    Админ загружает фото инлайн-блоком к статье, копирует готовый
+    шорткод вида «![Подпись](/media/blog/foo.jpg)» и вставляет в body
+    в нужное место. Парсер на фронте превратит это в <figure> с
+    подписью под картинкой.
+    """
+
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        related_name="inline_images",
+        verbose_name="Статья",
+    )
+    image = models.ImageField(
+        "Изображение",
+        upload_to="blog/inline/",
+        help_text="Большие фото сожмутся автоматически до 1920px.",
+    )
+    alt = models.CharField(
+        "Подпись (alt-текст)",
+        max_length=200,
+        blank=True,
+        help_text=(
+            "Подпись под картинкой и alt-текст для поисковика и "
+            "скринридеров. Желательно — описательный, без «фото»."
+        ),
+    )
+    order = models.PositiveSmallIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Меньшее число — выше в списке (для удобства админа).",
+    )
+
+    class Meta:
+        verbose_name = "Изображение в статье"
+        verbose_name_plural = "Изображения в статьях"
+        ordering = ("order", "id")
+
+    def __str__(self) -> str:
+        return f"{self.article.slug} #{self.order}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        from apps.builds.models import _compress_imagefield
+
+        if _compress_imagefield(self.image):
+            super().save(update_fields=["image"])

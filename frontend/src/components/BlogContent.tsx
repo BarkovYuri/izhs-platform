@@ -1,21 +1,23 @@
 import { Fragment, type ReactNode } from "react";
+import { resolveMediaUrl } from "@/services/api";
 
 /**
  * Лёгкий рендерер markdown-lite для статей блога.
  *
  * Поддерживается (по строкам):
- *   ## Заголовок 2  →  <h2>
- *   ### Заголовок 3 →  <h3>
- *   > цитата        →  <blockquote>
- *   - / • строка    →  <ul><li>
- *   ---             →  <hr>
- *   обычная строка  →  <p>
+ *   ## Заголовок 2          →  <h2>
+ *   ### Заголовок 3         →  <h3>
+ *   > цитата                →  <blockquote>
+ *   - / • строка            →  <ul><li>
+ *   ---                     →  <hr>
+ *   ![Подпись](url) одна    →  <figure><img><figcaption>
+ *   обычная строка          →  <p>
  *
  * Поддерживается (внутри строки):
- *   **жирный**       →  <strong>
- *   *курсив*         →  <em>
- *   [текст](url)     →  <a>  (внутренние ссылки рендерятся через next/link
- *                              на уровне use Link только если начинаются с '/')
+ *   **жирный**              →  <strong>
+ *   *курсив*                →  <em>
+ *   [текст](url)            →  <a>
+ *   ![alt](url) (инлайн)    →  <img> внутри текста
  *
  * Это полностью SSR-безопасный код — без dangerouslySetInnerHTML.
  */
@@ -24,7 +26,8 @@ type Token =
   | { type: "text"; value: string }
   | { type: "bold"; value: string }
   | { type: "italic"; value: string }
-  | { type: "link"; text: string; href: string };
+  | { type: "link"; text: string; href: string }
+  | { type: "image"; alt: string; src: string };
 
 // Парсим инлайн-разметку строки в массив токенов.
 // Простая реализация: бежим по строке и ищем спец-маркеры в порядке
@@ -42,6 +45,23 @@ function tokenize(line: string): Token[] {
   };
 
   while (i < line.length) {
+    // ![alt](src) — должно идти ДО [text](url), т.к. отличается только
+    // ведущим «!».
+    if (line[i] === "!" && line[i + 1] === "[") {
+      const close = line.indexOf("]", i + 2);
+      if (close > -1 && line[close + 1] === "(") {
+        const parenClose = line.indexOf(")", close + 2);
+        if (parenClose > -1) {
+          flush();
+          const alt = line.slice(i + 2, close);
+          const src = line.slice(close + 2, parenClose);
+          tokens.push({ type: "image", alt, src });
+          i = parenClose + 1;
+          continue;
+        }
+      }
+    }
+
     // [text](url)
     if (line[i] === "[") {
       const close = line.indexOf("]", i + 1);
@@ -110,6 +130,21 @@ function renderTokens(tokens: Token[]): ReactNode {
         </a>
       );
     }
+    if (t.type === "image") {
+      // Инлайн-картинка в строке (редкий случай — обычно блок-figure).
+      // Прогон через resolveMediaUrl нужен для относительных /media/ путей.
+      // eslint-disable-next-line @next/next/no-img-element
+      return (
+        <img
+          key={i}
+          src={resolveMediaUrl(t.src)}
+          alt={t.alt}
+          className="inline-block max-h-[1.4em] align-middle mx-1"
+          loading="lazy"
+          decoding="async"
+        />
+      );
+    }
     return null;
   });
 }
@@ -119,7 +154,10 @@ type Block =
   | { type: "paragraph"; content: string }
   | { type: "blockquote"; content: string }
   | { type: "hr" }
-  | { type: "list"; items: string[] };
+  | { type: "list"; items: string[] }
+  | { type: "figure"; src: string; alt: string };
+
+const FIGURE_RE = /^!\[([^\]]*)\]\(([^)]+)\)$/;
 
 function parseBlocks(text: string): Block[] {
   const blocks: Block[] = [];
@@ -177,6 +215,18 @@ function parseBlocks(text: string): Block[] {
         i++;
       }
       blocks.push({ type: "list", items });
+      continue;
+    }
+
+    // Картинка на отдельной строке → блок <figure> с подписью.
+    const figureMatch = line.match(FIGURE_RE);
+    if (figureMatch) {
+      blocks.push({
+        type: "figure",
+        alt: figureMatch[1],
+        src: figureMatch[2],
+      });
+      i++;
       continue;
     }
 
@@ -265,6 +315,25 @@ export default function BlogContent({ text }: { text: string }) {
                 </li>
               ))}
             </ul>
+          );
+        }
+        if (b.type === "figure") {
+          return (
+            <figure key={i} className="my-8 -mx-4 sm:mx-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resolveMediaUrl(b.src)}
+                alt={b.alt}
+                className="w-full h-auto sm:rounded-2xl bg-[var(--rs-line)]/40"
+                loading="lazy"
+                decoding="async"
+              />
+              {b.alt && (
+                <figcaption className="mt-3 px-4 sm:px-0 text-[13px] text-[var(--rs-muted)] italic text-center">
+                  {b.alt}
+                </figcaption>
+              )}
+            </figure>
           );
         }
         return (

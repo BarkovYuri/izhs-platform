@@ -2,9 +2,9 @@ from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, TabularInline
 
-from .models import Article, Category
+from .models import Article, ArticleImage, Category
 
 
 @admin.register(Category)
@@ -27,6 +27,39 @@ class CategoryAdmin(ModelAdmin):
     def article_count(self, obj):
         return obj.articles.filter(is_published=True).count()
     article_count.short_description = "Статей"
+
+
+class ArticleImageInline(TabularInline):
+    model = ArticleImage
+    extra = 0
+    fields = ("image", "preview", "alt", "snippet", "order")
+    readonly_fields = ("preview", "snippet")
+    ordering = ("order", "id")
+
+    def preview(self, obj):
+        if obj and obj.image:
+            return format_html(
+                '<img src="{}" style="max-width:120px;max-height:80px;'
+                'border-radius:6px;border:1px solid #ddd;" />',
+                obj.image.url,
+            )
+        return "—"
+    preview.short_description = "Превью"
+
+    def snippet(self, obj):
+        """Готовый markdown-шорткод для копипасты в тело статьи."""
+        if not (obj and obj.image):
+            return "—"
+        alt = obj.alt or "Иллюстрация"
+        code = f"![{alt}]({obj.image.url})"
+        return format_html(
+            '<code style="display:inline-block;background:#f5f0e8;'
+            'border:1px solid #d9c5a8;padding:4px 8px;border-radius:4px;'
+            'font-size:11px;user-select:all;cursor:text;" '
+            'title="Скопируйте и вставьте в тело статьи">{}</code>',
+            code,
+        )
+    snippet.short_description = "Markdown-код (копировать в текст)"
 
 
 class ArticleForm(forms.ModelForm):
@@ -59,6 +92,7 @@ class ArticleAdmin(ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     date_hierarchy = "published_at"
     readonly_fields = ("cover_preview_big", "created_at", "updated_at")
+    inlines = [ArticleImageInline]
 
     fieldsets = (
         ("Заголовок и публикация", {
@@ -85,7 +119,10 @@ class ArticleAdmin(ModelAdmin):
                 "  **жирный**   *курсив*\n"
                 "  [текст ссылки](https://example.com)\n"
                 "  - пункт списка (или •)\n"
-                "  > цитата (начинается с >)\n\n"
+                "  > цитата (начинается с >)\n"
+                "  ![Подпись](url) — картинка из блока «Изображения "
+                "в статье» ниже. Скопируйте готовый Markdown-код "
+                "из строки изображения и вставьте в текст где нужно.\n\n"
                 "Между абзацами оставляйте пустую строку."
             ),
         }),

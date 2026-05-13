@@ -160,12 +160,19 @@ export type BlogArticleListItem = {
   published_at: string;
 };
 
+export type BlogInlineImage = {
+  image: string;
+  alt: string;
+  order: number;
+};
+
 export type BlogArticle = BlogArticleListItem & {
   body: string;
   updated_at: string;
   meta_title: string;
   meta_description: string;
   keywords: string;
+  inline_images: BlogInlineImage[];
 };
 
 export type LeadPayload = {

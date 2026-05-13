@@ -1,12 +1,18 @@
 from rest_framework import serializers
 
-from .models import Article, Category
+from .models import Article, ArticleImage, Category
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ("name", "slug", "description", "order")
+
+
+class ArticleImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArticleImage
+        fields = ("image", "alt", "order")
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
@@ -28,6 +34,7 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
     """Полный сериализатор для отдельной страницы статьи."""
 
     category = CategorySerializer(read_only=True)
+    inline_images = ArticleImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Article
@@ -37,4 +44,5 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
             "category",
             "published_at", "updated_at",
             "meta_title", "meta_description", "keywords",
+            "inline_images",
         )
