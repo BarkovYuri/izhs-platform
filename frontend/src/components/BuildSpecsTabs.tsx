@@ -23,12 +23,24 @@ export default function BuildSpecsTabs({ build }: { build: BuildDetail }) {
     (r) => Number(r.materials_cost) > 0 || Number(r.works_cost) > 0
   );
 
+  // Все 4 панели всегда рендерятся в DOM — переключаем видимость
+  // через CSS. Это даёт поисковикам полный HTML со всеми данными:
+  // характеристики, планировки, фасады, смета — всё индексируется.
+  // UX-эффект таб-переключения для пользователя сохраняется.
   return (
     <div>
-      <div className="flex gap-2 overflow-x-auto pb-1 mb-6 border-b border-[var(--rs-line)] w-full max-w-full">
+      <div
+        role="tablist"
+        aria-label="Информация о проекте"
+        className="flex gap-2 overflow-x-auto pb-1 mb-6 border-b border-[var(--rs-line)] w-full max-w-full"
+      >
         {TABS.map((t) => (
           <button
             key={t.id}
+            role="tab"
+            aria-selected={tab === t.id}
+            aria-controls={`panel-${t.id}`}
+            id={`tab-${t.id}`}
             onClick={() => setTab(t.id)}
             className={cn(
               "shrink-0 px-4 py-3 text-[14px] font-bold border-b-2 -mb-px transition",
@@ -42,29 +54,44 @@ export default function BuildSpecsTabs({ build }: { build: BuildDetail }) {
         ))}
       </div>
 
-      {tab === "specs" && (
+      <Panel id="specs" active={tab === "specs"}>
         <div className="grid gap-4 md:grid-cols-2">
           <SpecsCard title="Основные характеристики" specs={build.specs_main} />
           <SpecsCard title="Подключение к сетям" specs={build.specs_networks} />
           <SpecsCard title="Объёмно-планировочные решения" specs={build.specs_layout} />
           <SpecsCard title="Конструктивные решения" specs={build.specs_struct} />
         </div>
-      )}
+      </Panel>
 
-      {tab === "plans" && (
-        hasPlans ? <Gallery items={build.floor_plans} />
-                 : <Empty>Поэтажные планы скоро появятся</Empty>
-      )}
+      <Panel id="plans" active={tab === "plans"}>
+        {hasPlans ? <Gallery items={build.floor_plans} />
+                  : <Empty>Поэтажные планы скоро появятся</Empty>}
+      </Panel>
 
-      {tab === "facades" && (
-        hasFacades ? <Gallery items={build.facades} />
-                   : <Empty>Схемы фасадов скоро появятся</Empty>
-      )}
+      <Panel id="facades" active={tab === "facades"}>
+        {hasFacades ? <Gallery items={build.facades} />
+                    : <Empty>Схемы фасадов скоро появятся</Empty>}
+      </Panel>
 
-      {tab === "estimate" && (
-        hasEstimate ? <EstimateTable rows={build.estimate_items} />
-                    : <Empty>Сметный расчёт уточняется индивидуально под клиента</Empty>
-      )}
+      <Panel id="estimate" active={tab === "estimate"}>
+        {hasEstimate ? <EstimateTable rows={build.estimate_items} />
+                     : <Empty>Сметный расчёт уточняется индивидуально под клиента</Empty>}
+      </Panel>
+    </div>
+  );
+}
+
+function Panel({
+  id, active, children,
+}: { id: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <div
+      role="tabpanel"
+      id={`panel-${id}`}
+      aria-labelledby={`tab-${id}`}
+      hidden={!active}
+    >
+      {children}
     </div>
   );
 }

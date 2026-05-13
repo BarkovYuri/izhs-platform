@@ -79,6 +79,16 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
     ...(b.facades || []),
   ].map((i) => resolveMediaUrl(i.image));
 
+  // Собираем все характеристики из 4 групп в плоский список
+  // PropertyValue. Пустые ключи/значения отфильтровываем — в schema
+  // должны попадать только реальные данные.
+  const specEntries = [
+    ...Object.entries(b.specs_main || {}),
+    ...Object.entries(b.specs_networks || {}),
+    ...Object.entries(b.specs_layout || {}),
+    ...Object.entries(b.specs_struct || {}),
+  ].filter(([k, v]) => k.trim() && v.trim());
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -98,7 +108,16 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
     additionalProperty: [
       { "@type": "PropertyValue", name: "Площадь", value: formatArea(b.area) },
       { "@type": "PropertyValue", name: "Этажность", value: String(b.floors) },
-      ...(b.bedrooms != null ? [{ "@type": "PropertyValue", name: "Спальни", value: String(b.bedrooms) }] : []),
+      ...(b.bedrooms != null
+        ? [{ "@type": "PropertyValue", name: "Спальни", value: String(b.bedrooms) }]
+        : []),
+      // Все характеристики из админки — поисковик увидит полный
+      // паспорт дома: тип фундамента, материал стен, толщина и т.д.
+      ...specEntries.map(([name, value]) => ({
+        "@type": "PropertyValue",
+        name,
+        value,
+      })),
     ],
   };
 
