@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
+import CookieBanner from "@/components/CookieBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getPageContent, getSettings } from "@/services/api";
@@ -135,6 +136,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Navbar settings={s} />
         <main>{children}</main>
         <Footer s={s} />
+        <CookieBanner />
         {s.yandex_metrika_id && (
           <>
             {/* Snippet от Яндекс.Метрики для Next.js / SSR-приложений.
