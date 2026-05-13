@@ -270,6 +270,14 @@ UNFOLD = {
                 ],
             },
             {
+                "title": "Блог",
+                "separator": True,
+                "items": [
+                    {"title": "Статьи", "icon": "article", "link": "/admin/blog/article/"},
+                    {"title": "Категории статей", "icon": "folder_open", "link": "/admin/blog/category/"},
+                ],
+            },
+            {
                 "title": "Шаблоны",
                 "separator": True,
                 "items": [
@@ -282,6 +290,7 @@ UNFOLD = {
                 "separator": True,
                 "items": [
                     {"title": "Заголовки и описания", "icon": "edit_note", "link": "/admin/common/pagecontent/"},
+                    {"title": "Тексты фильтров каталога", "icon": "filter_alt", "link": "/admin/common/buildfiltercontent/"},
                 ],
             },
             {
