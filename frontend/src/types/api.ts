@@ -107,6 +107,15 @@ export type PageContentImage = {
   order: number;
 };
 
+export type BuildFilterContent = {
+  slug: string;
+  kicker: string;
+  title: string;
+  intro: string;
+  meta_title: string;
+  meta_description: string;
+};
+
 export type PageContent = {
   slug: PageSlug;
   kicker: string;

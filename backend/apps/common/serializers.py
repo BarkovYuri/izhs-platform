@@ -1,5 +1,19 @@
 from rest_framework import serializers
-from .models import PageContent, PageContentImage, SiteSettings
+from .models import (
+    BuildFilterContent,
+    PageContent,
+    PageContentImage,
+    SiteSettings,
+)
+
+
+class BuildFilterContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BuildFilterContent
+        fields = (
+            "slug", "kicker", "title", "intro",
+            "meta_title", "meta_description",
+        )
 
 
 class PageContentImageSerializer(serializers.ModelSerializer):

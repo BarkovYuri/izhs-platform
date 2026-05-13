@@ -1,8 +1,12 @@
 from django.http import Http404, JsonResponse
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
-from .models import PageContent, SiteSettings
-from .serializers import PageContentSerializer, SiteSettingsSerializer
+from .models import BuildFilterContent, PageContent, SiteSettings
+from .serializers import (
+    BuildFilterContentSerializer,
+    PageContentSerializer,
+    SiteSettingsSerializer,
+)
 
 
 def health(request):
@@ -29,3 +33,15 @@ class PageContentView(RetrieveAPIView):
             raise Http404("Unknown page slug")
         obj, _ = PageContent.objects.get_or_create(slug=slug)
         return obj
+
+
+class BuildFilterContentListView(ListAPIView):
+    """Список SEO-текстов для всех фильтров каталога /builds/filtr/<slug>/.
+
+    Возвращает все записи одним запросом — фронт кеширует на странице
+    каталога и каждой filter-странице. Объём небольшой (10 строк).
+    """
+
+    serializer_class = BuildFilterContentSerializer
+    queryset = BuildFilterContent.objects.all()
+    pagination_class = None

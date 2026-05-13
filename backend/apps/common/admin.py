@@ -6,7 +6,12 @@ from django.utils.html import format_html
 
 from unfold.admin import ModelAdmin, TabularInline
 
-from .models import PageContent, PageContentImage, SiteSettings
+from .models import (
+    BuildFilterContent,
+    PageContent,
+    PageContentImage,
+    SiteSettings,
+)
 
 
 PAGE_FRONT_URLS = {
@@ -266,4 +271,72 @@ class PageContentAdmin(ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         # Записи создаются миграцией. Удалять не нужно — иначе после
         # повторного захода в админку придётся пересоздавать вручную.
+        return False
+
+
+class BuildFilterContentForm(forms.ModelForm):
+    class Meta:
+        model = BuildFilterContent
+        fields = "__all__"
+        widgets = {
+            "kicker": forms.TextInput(attrs={"size": 60}),
+            "title": forms.TextInput(attrs={"size": 80}),
+            "intro": forms.Textarea(attrs={"rows": 5, "cols": 80}),
+            "meta_title": forms.TextInput(attrs={"size": 80}),
+            "meta_description": forms.Textarea(attrs={"rows": 3, "cols": 80}),
+        }
+
+
+@admin.register(BuildFilterContent)
+class BuildFilterContentAdmin(ModelAdmin):
+    form = BuildFilterContentForm
+    list_display = ("slug", "title", "kicker", "view_on_site_link")
+    list_display_links = ("slug", "title")
+    search_fields = ("slug", "title", "intro")
+    ordering = ("slug",)
+
+    fieldsets = (
+        ("Технический идентификатор", {
+            "fields": ("slug",),
+            "description": (
+                "Slug фильтра должен совпадать с FILTER_TYPES в "
+                "frontend/src/lib/buildFilters.ts. Записи создаются "
+                "миграцией — новый фильтр добавляется сначала в коде, "
+                "потом сюда. Не меняй slug без согласования с фронтом."
+            ),
+        }),
+        ("Видимый текст на странице", {
+            "fields": ("kicker", "title", "intro"),
+            "description": (
+                "Эти тексты увидит посетитель: kicker над H1, сам H1 "
+                "и лид-абзац под ним. Если оставить пустыми — на "
+                "фронте подставится дефолт из buildFilters.ts."
+            ),
+        }),
+        ("Для поисковых систем (SEO)", {
+            "fields": ("meta_title", "meta_description"),
+            "classes": ("collapse",),
+            "description": (
+                "Title и description для выдачи Google/Яндекса. "
+                "До ~60 символов в title, до ~160 в description."
+            ),
+        }),
+    )
+
+    def view_on_site_link(self, obj):
+        return format_html(
+            '<a href="/builds/filtr/{}" target="_blank" rel="noopener" '
+            'style="color: rgb(184,90,53); font-weight:600;">'
+            'Открыть на сайте ↗</a>',
+            obj.slug,
+        )
+    view_on_site_link.short_description = "Просмотр"
+
+    def has_delete_permission(self, request, obj=None):
+        # Записи создаются миграцией. Удалять нельзя — фильтр в коде
+        # будет искать запись и упадёт на fallback к хардкоду.
+        return False
+
+    def has_add_permission(self, request):
+        # Новые фильтры добавляются миграцией, не через UI.
         return False

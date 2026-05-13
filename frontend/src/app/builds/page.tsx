@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import BuildFiltersBar from "@/components/BuildFiltersBar";
 import JsonLd from "@/components/JsonLd";
-import { getBuilds, getPageContent } from "@/services/api";
+import { getBuildFilters, getBuilds, getPageContent } from "@/services/api";
 import { buildsCatalogJsonLd } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
 import { FILTER_DEFS, FILTER_GROUPS, FILTER_TYPES } from "@/lib/buildFilters";
@@ -42,10 +42,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BuildsPage() {
-  const [builds, pc] = await Promise.all([getBuilds(), getPageContent("builds")]);
+  const [builds, pc, filterContents] = await Promise.all([
+    getBuilds(),
+    getPageContent("builds"),
+    getBuildFilters(),
+  ]);
   const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
   const title = pickText(pc, "title", FALLBACK_TITLE);
   const subtitle = pickText(pc, "subtitle", FALLBACK_SUBTITLE);
+  // Заголовки фильтров — из админки если редактировались, иначе fallback из кода.
+  const filterTitleFor = (slug: string, fallback: string) => {
+    const o = filterContents.find((f) => f.slug === slug);
+    const t = o?.title?.trim();
+    return (t || fallback).replace(" в Томске", "");
+  };
 
   return (
     <div className="container-rs py-10 sm:py-14">
@@ -88,7 +98,7 @@ export default async function BuildsPage() {
                         href={`/builds/filtr/${f.slug}`}
                         className="hover:text-[var(--rs-brand)] inline-flex items-center gap-1.5"
                       >
-                        <span>{f.title.replace(" в Томске", "")}</span>
+                        <span>{filterTitleFor(f.slug, f.title)}</span>
                         <ArrowRight size={12} className="opacity-50" />
                       </Link>
                     </li>

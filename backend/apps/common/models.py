@@ -306,6 +306,76 @@ class PageContent(models.Model):
         return dict(self.PAGE_CHOICES).get(self.slug, self.slug)
 
 
+class BuildFilterContent(models.Model):
+    """Тексты для SEO-фильтров каталога (/builds/filtr/<slug>/).
+
+    Каждая запись соответствует одному фильтру (одноэтажные, 100-150 м²,
+    с балконом и т.п.) — slug согласован с фронтенд-константой
+    FILTER_TYPES в src/lib/buildFilters.ts.
+
+    Логика отбора билдов (matches()) живёт в коде, в админке только
+    редактируемые тексты: заголовок, лид, meta-теги. При первом
+    деплое все записи создаются миграцией из дефолтов фронта;
+    далее редактируются как обычные страницы.
+    """
+
+    slug = models.SlugField(
+        "Слаг фильтра",
+        max_length=40,
+        unique=True,
+        help_text=(
+            "Технический идентификатор фильтра — должен совпадать с "
+            "FILTER_TYPES в frontend/src/lib/buildFilters.ts. "
+            "Например: odnoetazhnye, 100-150m2, s-balkonom."
+        ),
+    )
+    kicker = models.CharField(
+        "Мини-метка над заголовком",
+        max_length=80,
+        blank=True,
+        help_text="Например: «По этажности», «По площади».",
+    )
+    title = models.CharField(
+        "Заголовок страницы (H1)",
+        max_length=200,
+        blank=True,
+        help_text=(
+            "Например: «Одноэтажные кирпичные дома в Томске». "
+            "Также используется в крошках и блоке перелинковки."
+        ),
+    )
+    intro = models.TextField(
+        "Лид-абзац под заголовком",
+        blank=True,
+        help_text=(
+            "1–3 предложения над сеткой проектов. Описывает, для кого "
+            "и в каких случаях этот тип дома подходит."
+        ),
+    )
+    meta_title = models.CharField(
+        "SEO Title",
+        max_length=200,
+        blank=True,
+        help_text="Заголовок страницы в выдаче поисковика.",
+    )
+    meta_description = models.CharField(
+        "SEO Description",
+        max_length=300,
+        blank=True,
+        help_text="Описание страницы в выдаче поисковика (до 160 знаков).",
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Текст фильтра каталога"
+        verbose_name_plural = "Тексты фильтров каталога"
+        ordering = ("slug",)
+
+    def __str__(self) -> str:
+        return self.title or self.slug
+
+
 class PageContentImage(models.Model):
     """Фотографии для страницы — отображаются в галерее рядом с body.
 

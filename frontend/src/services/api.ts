@@ -1,5 +1,5 @@
 import type {
-  BuildDetail, BuildListItem, FaqCategory, LeadPayload,
+  BuildDetail, BuildFilterContent, BuildListItem, FaqCategory, LeadPayload,
   PageContent, PageSlug, PortfolioItem, SiteSettings,
 } from "@/types/api";
 
@@ -33,6 +33,8 @@ async function fetchJson<T>(path: string, init?: RequestInit, fallback?: T): Pro
 }
 
 export const getBuilds = () => fetchJson<BuildListItem[]>("/api/builds/", undefined, []);
+export const getBuildFilters = () =>
+  fetchJson<BuildFilterContent[]>("/api/build-filters/", undefined, []);
 export const getPortfolio = () => fetchJson<PortfolioItem[]>("/api/portfolio/", undefined, []);
 export const getBuild  = (slug: string) => fetchJson<BuildDetail>(`/api/builds/${slug}/`);
 export const getFaq    = () => fetchJson<FaqCategory[]>("/api/faq/", undefined, []);

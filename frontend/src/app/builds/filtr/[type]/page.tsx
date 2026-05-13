@@ -7,7 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import BuildCard from "@/components/BuildCard";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
-import { getBuilds } from "@/services/api";
+import { getBuildFilters, getBuilds } from "@/services/api";
 import {
   FILTER_DEFS,
   FILTER_GROUPS,
@@ -16,6 +16,17 @@ import {
   type FilterDefinition,
 } from "@/lib/buildFilters";
 import { SITE_URL } from "@/lib/seo";
+import type { BuildFilterContent } from "@/types/api";
+
+/** Берём поле из админки, иначе fallback из кода. Пустую строку считаем «нет». */
+function pick(
+  overrides: BuildFilterContent | undefined,
+  key: keyof BuildFilterContent,
+  fallback: string,
+): string {
+  const v = overrides?.[key];
+  return v && v.trim() ? v : fallback;
+}
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -32,28 +43,31 @@ export async function generateMetadata(
   const { type } = await params;
   const def = getFilter(type);
   if (!def) return {};
+  const overrides = (await getBuildFilters()).find((f) => f.slug === def.slug);
+  const metaTitle = pick(overrides, "meta_title", def.metaTitle);
+  const metaDescription = pick(overrides, "meta_description", def.metaDescription);
   const url = `/builds/filtr/${def.slug}`;
   return {
-    title: def.metaTitle,
-    description: def.metaDescription,
+    title: metaTitle,
+    description: metaDescription,
     alternates: { canonical: url },
     openGraph: {
-      title: def.metaTitle,
-      description: def.metaDescription,
+      title: metaTitle,
+      description: metaDescription,
       url,
       type: "website",
       images: ["/og.png"],
     },
     twitter: {
       card: "summary_large_image",
-      title: def.metaTitle,
-      description: def.metaDescription,
+      title: metaTitle,
+      description: metaDescription,
       images: ["/og.png"],
     },
   };
 }
 
-function breadcrumbJsonLd(def: FilterDefinition) {
+function breadcrumbJsonLd(def: FilterDefinition, title: string) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -73,7 +87,7 @@ function breadcrumbJsonLd(def: FilterDefinition) {
       {
         "@type": "ListItem",
         position: 3,
-        name: def.title,
+        name: title,
         item: `${SITE_URL}/builds/filtr/${def.slug}`,
       },
     ],
@@ -87,7 +101,14 @@ export default async function FilteredBuildsPage(
   const def = getFilter(type);
   if (!def) notFound();
 
-  const builds = await getBuilds();
+  const [builds, filterContents] = await Promise.all([
+    getBuilds(),
+    getBuildFilters(),
+  ]);
+  const overrides = filterContents.find((f) => f.slug === def.slug);
+  const kicker = pick(overrides, "kicker", def.kicker);
+  const title = pick(overrides, "title", def.title);
+  const intro = pick(overrides, "intro", def.intro);
   const filtered = builds.filter(def.matches);
 
   // Группируем все остальные фильтры по группам — выводим под каталогом
@@ -99,23 +120,23 @@ export default async function FilteredBuildsPage(
 
   return (
     <div className="container-rs py-10 sm:py-14">
-      <JsonLd data={breadcrumbJsonLd(def)} />
+      <JsonLd data={breadcrumbJsonLd(def, title)} />
       <Breadcrumbs
         items={[
           { label: "Проекты домов", href: "/builds" },
-          { label: def.title },
+          { label: title },
         ]}
       />
 
       <div className="mb-8 max-w-3xl">
         <div className="text-[12px] uppercase tracking-[0.2em] text-[var(--rs-brand)] font-bold">
-          {def.kicker}
+          {kicker}
         </div>
         <h1 className="h-display mt-2 text-[36px] sm:text-[52px] font-extrabold leading-tight">
-          {def.title}
+          {title}
         </h1>
         <p className="mt-4 text-[15px] sm:text-[17px] text-[var(--rs-muted)] leading-relaxed">
-          {def.intro}
+          {intro}
         </p>
       </div>
 
@@ -157,17 +178,21 @@ export default async function FilteredBuildsPage(
                   {g.label}
                 </div>
                 <ul className="space-y-2 text-[14px]">
-                  {items.map((f) => (
-                    <li key={f.slug}>
-                      <Link
-                        href={`/builds/filtr/${f.slug}`}
-                        className="hover:text-[var(--rs-brand)] inline-flex items-center gap-1.5"
-                      >
-                        <span>{f.title.replace(" в Томске", "")}</span>
-                        <ArrowRight size={12} className="opacity-50" />
-                      </Link>
-                    </li>
-                  ))}
+                  {items.map((f) => {
+                    const o = filterContents.find((x) => x.slug === f.slug);
+                    const label = pick(o, "title", f.title).replace(" в Томске", "");
+                    return (
+                      <li key={f.slug}>
+                        <Link
+                          href={`/builds/filtr/${f.slug}`}
+                          className="hover:text-[var(--rs-brand)] inline-flex items-center gap-1.5"
+                        >
+                          <span>{label}</span>
+                          <ArrowRight size={12} className="opacity-50" />
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             );

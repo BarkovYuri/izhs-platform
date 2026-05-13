@@ -1,5 +1,10 @@
 from django.urls import path, include
-from .views import health, PageContentView, SiteSettingsView
+from .views import (
+    BuildFilterContentListView,
+    health,
+    PageContentView,
+    SiteSettingsView,
+)
 
 urlpatterns = [
     path("health/", health, name="health"),
@@ -8,6 +13,11 @@ urlpatterns = [
         "page/<slug:slug>/",
         PageContentView.as_view(),
         name="page-content",
+    ),
+    path(
+        "build-filters/",
+        BuildFilterContentListView.as_view(),
+        name="build-filters",
     ),
     path("", include("apps.builds.urls")),
     path("", include("apps.leads.urls")),
