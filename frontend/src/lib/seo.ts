@@ -9,6 +9,23 @@ export function absoluteUrl(path: string): string {
   return SITE_URL + (path.startsWith("/") ? path : `/${path}`);
 }
 
+/**
+ * Преобразует часы работы из русского формата в Schema.org формат.
+ * "Пн–Пт 10:00–18:00" → "Mo-Fr 10:00-18:00"
+ * Возвращает оригинал если не смогли распарсить — Google всё равно
+ * лучше понимает любую разумную строку, чем её отсутствие.
+ */
+function toSchemaOpeningHours(s: string): string {
+  const map: Record<string, string> = {
+    "пн": "Mo", "вт": "Tu", "ср": "We", "чт": "Th",
+    "пт": "Fr", "сб": "Sa", "вс": "Su",
+  };
+  return s
+    .toLowerCase()
+    .replace(/[–—]/g, "-")
+    .replace(/(пн|вт|ср|чт|пт|сб|вс)/g, (m) => map[m] || m);
+}
+
 /** Полный JSON-LD блок для HomeAndConstructionBusiness + WebSite (главная страница). */
 export function organizationJsonLd(s: SiteSettings) {
   const sameAs = [s.vk_url, s.telegram_url, s.whatsapp_url, s.max_url].filter(Boolean);
@@ -36,6 +53,26 @@ export function organizationJsonLd(s: SiteSettings) {
       addressCountry: "RU",
       addressLocality: "Томск",
       streetAddress: s.address,
+    } : undefined,
+    openingHours: s.working_hours
+      ? toSchemaOpeningHours(s.working_hours)
+      : undefined,
+    // makesOffer описывает гарантию на услуги застройщика. Это
+    // помогает Google показывать «5 лет гарантии» в карточке.
+    makesOffer: s.warranty_years ? {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: "Строительство кирпичного дома",
+        warranty: {
+          "@type": "WarrantyPromise",
+          durationOfWarranty: {
+            "@type": "QuantitativeValue",
+            value: s.warranty_years,
+            unitCode: "ANN",
+          },
+        },
+      },
     } : undefined,
   };
 
@@ -71,7 +108,9 @@ export function localBusinessJsonLd(s: SiteSettings) {
       addressLocality: "Томск",
       streetAddress: s.address || "Комсомольский проспект, 43А",
     },
-    openingHours: s.working_hours || undefined,
+    openingHours: s.working_hours
+      ? toSchemaOpeningHours(s.working_hours)
+      : undefined,
     areaServed: { "@type": "AdministrativeArea", name: "Томская область" },
     sameAs: [s.vk_url, s.telegram_url, s.max_url].filter(Boolean),
   };

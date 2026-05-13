@@ -62,6 +62,8 @@ export type SiteSettings = {
   yandex_verification: string;
   google_verification: string;
   working_hours: string;
+  warranty_years: number;
+  warranty_subject: string;
   founded_year: number;
   homes_built_total: number;
   settlement_homes_built: number;
@@ -104,6 +106,9 @@ export type PageContent = {
   kicker: string;
   title: string;
   subtitle: string;
+  body: string;
+  hero_lead: string;
+  hero_accent: string;
   meta_title: string;
   meta_description: string;
 };

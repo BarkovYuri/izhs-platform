@@ -7,7 +7,8 @@ class PageContentSerializer(serializers.ModelSerializer):
         model = PageContent
         fields = (
             "slug",
-            "kicker", "title", "subtitle",
+            "kicker", "title", "subtitle", "body",
+            "hero_lead", "hero_accent",
             "meta_title", "meta_description",
         )
 
@@ -23,7 +24,9 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             "vk_url", "telegram_url", "whatsapp_url", "max_url",
             "yandex_map_iframe", "office_map_iframe", "settlement_plan",
             "yandex_metrika_id", "yandex_verification", "google_verification",
-            "working_hours", "founded_year",
+            "working_hours",
+            "warranty_years", "warranty_subject",
+            "founded_year",
             "homes_built_total",
             "settlement_homes_built", "settlement_homes_total",
             "about_short",

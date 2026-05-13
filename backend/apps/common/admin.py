@@ -64,6 +64,13 @@ class SiteSettingsAdmin(ModelAdmin):
             "fields": ("yandex_metrika_id", "yandex_verification", "google_verification"),
         }),
         ("Контакты — дополнительно", {"fields": ("working_hours",)}),
+        ("Гарантия", {
+            "fields": ("warranty_years", "warranty_subject"),
+            "description": (
+                "Используется в Hero на главной, в футере и в "
+                "Schema.org для поисковиков."
+            ),
+        }),
         ("Стаж и статистика", {
             "fields": (
                 "founded_year",
@@ -118,6 +125,9 @@ class PageContentForm(forms.ModelForm):
             "kicker": forms.TextInput(attrs={"size": 60}),
             "title": forms.TextInput(attrs={"size": 80}),
             "subtitle": forms.Textarea(attrs={"rows": 3, "cols": 80}),
+            "body": forms.Textarea(attrs={"rows": 14, "cols": 80}),
+            "hero_lead": forms.TextInput(attrs={"size": 60}),
+            "hero_accent": forms.TextInput(attrs={"size": 60}),
             "meta_title": forms.TextInput(attrs={"size": 80}),
             "meta_description": forms.Textarea(attrs={"rows": 2, "cols": 80}),
         }
@@ -146,6 +156,22 @@ class PageContentAdmin(ModelAdmin):
                 "Это то, что увидит посетитель в самом верху страницы: "
                 "мини-метка, большой заголовок и короткий лид-абзац под ним."
             ),
+        }),
+        ("Hero на главной (только для slug=home)", {
+            "fields": ("hero_lead", "hero_accent"),
+            "description": (
+                "Большой заголовок в Hero делится на белую и оранжевую "
+                "часть. На остальных страницах эти поля игнорируются."
+            ),
+            "classes": ("collapse",),
+        }),
+        ("Основной текст страницы", {
+            "fields": ("body",),
+            "description": (
+                "Длинное описание (например, описание ЖК). Поддерживает "
+                "абзацы и маркированные списки."
+            ),
+            "classes": ("collapse",),
         }),
         ("Для поисковых систем (SEO)", {
             "fields": ("meta_title", "meta_description"),
@@ -178,18 +204,26 @@ class PageContentAdmin(ModelAdmin):
         if not obj or not obj.pk:
             return "—"
         url = PAGE_FRONT_URLS.get(obj.slug, "")
-        # На главной странице верхний блок (Hero) сейчас зашит в коде —
-        # через эту запись для главной редактируется только SEO.
         if obj.slug == PageContent.PAGE_HOME:
             extra = (
                 '<div style="margin-top:8px;padding:8px 12px;'
-                'background:rgb(255,251,235);border:1px solid '
-                'rgb(252,211,77);border-radius:6px;color:rgb(133,77,14);">'
-                '<b>Важно для главной:</b> верхний блок «Кирпичные дома '
-                'под ваш стиль жизни…» сейчас зашит в коде. Через эту '
-                'запись редактируется только превью для соцсетей и '
-                'поисковиков (поля SEO ниже). Возможность менять '
-                'заголовки на главной добавим отдельным этапом.'
+                'background:rgb(253,246,240);border:1px solid '
+                'rgb(243,207,184);border-radius:6px;color:rgb(120,60,20);">'
+                '<b>Hero на главной:</b> большой заголовок собирается из '
+                'двух частей — «белая» (поле «Hero — заголовок, белая '
+                'часть») и «оранжевая» (акцентная). По умолчанию: '
+                '«Свой кирпичный дом / по цене квартиры».'
+                '</div>'
+            )
+        elif obj.slug == PageContent.PAGE_SETTLEMENT:
+            extra = (
+                '<div style="margin-top:8px;padding:8px 12px;'
+                'background:rgb(253,246,240);border:1px solid '
+                'rgb(243,207,184);border-radius:6px;color:rgb(120,60,20);">'
+                '<b>Описание ЖК:</b> разверните блок «Основной текст '
+                'страницы» — там описание комплекса. Поддерживаются '
+                'абзацы (пустая строка) и маркеры списка (строка '
+                'начинается с «-» или «•»).'
                 '</div>'
             )
         else:

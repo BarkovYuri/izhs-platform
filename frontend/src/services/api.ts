@@ -46,6 +46,7 @@ export const getSettings = () => fetchJson<SiteSettings>("/api/settings/", undef
   vk_url: "", telegram_url: "", whatsapp_url: "", max_url: "",
   yandex_map_iframe: "", office_map_iframe: "", settlement_plan: null,
   yandex_metrika_id: "", yandex_verification: "", google_verification: "", working_hours: "",
+  warranty_years: 5, warranty_subject: "на конструктив",
   founded_year: 2016,
   homes_built_total: 30, settlement_homes_built: 12, settlement_homes_total: 40,
   about_short: "",
@@ -65,6 +66,9 @@ export const getPageContent = (slug: PageSlug) =>
     kicker: "",
     title: "",
     subtitle: "",
+    body: "",
+    hero_lead: "",
+    hero_accent: "",
     meta_title: "",
     meta_description: "",
   });

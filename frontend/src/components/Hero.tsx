@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Award, CheckCircle2, MapPin } from "lucide-react";
+import { ArrowRight, Award, CheckCircle2, MapPin, ShieldCheck } from "lucide-react";
 import type { PageContent, SiteSettings } from "@/types/api";
 import WriteUsButton from "@/components/WriteUsButton";
 import { pickText } from "@/lib/pageContent";
@@ -9,6 +9,9 @@ const DEFAULT_HERO_SUBTITLE =
   "• Бесплатная доработка архитектором под ваши нужды " +
   "• Скважина и септик включены в стоимость " +
   "• Строим в «Красной смородине» и на ваших участках.";
+
+const DEFAULT_HERO_LEAD = "Свой кирпичный дом";
+const DEFAULT_HERO_ACCENT = "по цене квартиры";
 
 export default function Hero({
   s,
@@ -21,6 +24,14 @@ export default function Hero({
   const homesBuilt = s.homes_built_total || 30;
   const settlementBuilt = s.settlement_homes_built || 12;
   const settlementTotal = s.settlement_homes_total || 40;
+  const warrantyYears = s.warranty_years || 5;
+  const warrantySubject = s.warranty_subject || "на конструктив";
+
+  // Заголовок Hero собирается из двух частей: «белая» (lead) и
+  // «оранжевая» (accent). Обе берутся из админки через PageContent
+  // для slug=home, с дефолтами на случай пустых значений.
+  const heroLead = pickText(pageContent, "hero_lead", DEFAULT_HERO_LEAD);
+  const heroAccent = pickText(pageContent, "hero_accent", DEFAULT_HERO_ACCENT);
 
   // Subtitle берём из PageContent (можно править в админке).
   // Если пользователь разделил пункты через •, показываем как
@@ -60,11 +71,15 @@ export default function Hero({
               <Award size={13} />
               На рынке с {foundedYear} года
             </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 text-white text-[12px] sm:text-[13px] font-bold border border-white/20 backdrop-blur-sm">
+              <ShieldCheck size={13} />
+              Гарантия {warrantyYears} лет {warrantySubject}
+            </div>
           </div>
 
           <h1 className="h-display mt-5 text-[40px] sm:text-[64px] font-extrabold leading-[1.05] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
-            Кирпичные дома{" "}
-            <span className="text-[#f3a677]">под ваш стиль жизни</span>
+            {heroLead}{" "}
+            <span className="text-[#f3a677]">{heroAccent}</span>
           </h1>
 
           {bullets ? (

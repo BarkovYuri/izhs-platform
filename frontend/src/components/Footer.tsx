@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin, MessageCircle, MessageSquare, Phone, Send, Users } from "lucide-react";
+import { Clock, Mail, MapPin, MessageCircle, MessageSquare, Phone, Send, ShieldCheck, Users } from "lucide-react";
 import type { SiteSettings } from "@/types/api";
 import { formatPhoneHref } from "@/lib/utils";
 import PrivacyLink from "@/components/PrivacyLink";
@@ -60,10 +60,22 @@ export default function Footer({ s }: { s: SiteSettings }) {
                   <a href={`mailto:${s.email}`} className="hover:text-[var(--rs-brand)]">{s.email}</a>
                 </li>
               )}
-              {(s.settlement_location || s.address) && (
+              {(s.address || s.settlement_location) && (
                 <li className="flex items-start gap-2">
                   <MapPin size={16} className="mt-0.5 shrink-0 text-[var(--rs-brand)]" />
-                  <span>{s.settlement_location || s.address}</span>
+                  <span>{s.address || s.settlement_location}</span>
+                </li>
+              )}
+              {s.working_hours && (
+                <li className="flex items-start gap-2">
+                  <Clock size={16} className="mt-0.5 shrink-0 text-[var(--rs-brand)]" />
+                  <span>{s.working_hours}</span>
+                </li>
+              )}
+              {s.warranty_years && (
+                <li className="flex items-start gap-2">
+                  <ShieldCheck size={16} className="mt-0.5 shrink-0 text-[var(--rs-brand)]" />
+                  <span>Гарантия {s.warranty_years} лет {s.warranty_subject || "на конструктив"}</span>
                 </li>
               )}
               {s.telegram_url && (

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Mail, MapPin, MessageCircle, MessageSquare, Phone, Send, Users } from "lucide-react";
+import { ArrowRight, Clock, Mail, MapPin, MessageCircle, MessageSquare, Phone, Send, Users } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
@@ -70,6 +70,9 @@ export default async function ContactsPage() {
             {s.phone && <ContactBox icon={<Phone />} title="Телефон" value={s.phone} href={formatPhoneHref(s.phone)} />}
             {(s.address || s.settlement_location) && (
               <ContactBox icon={<MapPin />} title="Офис" value={s.address || s.settlement_location} />
+            )}
+            {s.working_hours && (
+              <ContactBox icon={<Clock />} title="Часы работы" value={s.working_hours} />
             )}
           </div>
 
