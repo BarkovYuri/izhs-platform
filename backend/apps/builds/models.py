@@ -221,6 +221,57 @@ class BuildEstimateValue(models.Model):
         return (self.materials_cost or 0) + (self.works_cost or 0)
 
 
+class BuildFAQ(models.Model):
+    """Вопрос-ответ, специфичный для конкретного проекта.
+
+    Цель — закрыть возражения посетителя на странице билда и дать
+    SEO через FAQPage schema (rich snippets в выдаче Google).
+    Общий FAQ остаётся на /faq — он отвечает на вопросы про
+    компанию в целом, тут — про этот конкретный проект.
+    """
+
+    build = models.ForeignKey(
+        Build,
+        on_delete=models.CASCADE,
+        related_name="faq_items",
+        verbose_name="Проект",
+    )
+    question = models.CharField(
+        "Вопрос",
+        max_length=300,
+        help_text=(
+            "Конкретный вопрос про этот проект: «Можно ли изменить "
+            "планировку?», «Какая площадь террасы?», «Подходит ли "
+            "под семейную ипотеку?» и т.п."
+        ),
+    )
+    answer = models.TextField(
+        "Ответ",
+        help_text=(
+            "Развёрнутый ответ, 1–3 абзаца. Можно с ссылками на "
+            "другие страницы или статьи блога — они отрендерятся "
+            "как ссылки."
+        ),
+    )
+    order = models.PositiveSmallIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Меньшее число — выше в списке.",
+    )
+    is_published = models.BooleanField(
+        "Опубликован",
+        default=True,
+    )
+
+    class Meta:
+        verbose_name = "Вопрос-ответ по проекту"
+        verbose_name_plural = "Вопросы-ответы по проекту"
+        ordering = ("order", "id")
+
+    def __str__(self) -> str:
+        return f"{self.build.slug}: {self.question[:60]}"
+
+
 @receiver(post_save, sender=Build)
 def ensure_templates(sender, instance: Build, created: bool, **kwargs):
     if not created:

@@ -28,6 +28,12 @@ export type EstimateItem = {
   order: number;
 };
 
+export type BuildFAQItem = {
+  question: string;
+  answer: string;
+  order: number;
+};
+
 export type BuildDetail = BuildListItem & {
   description: string;
   images: ImageRef[];
@@ -38,6 +44,7 @@ export type BuildDetail = BuildListItem & {
   specs_layout: Record<string, string>;
   specs_struct: Record<string, string>;
   estimate_items: EstimateItem[];
+  faq_items: BuildFAQItem[];
 };
 
 export type SiteSettings = {

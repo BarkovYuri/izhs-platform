@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Bed, Building2, Hash, MapPin, Maximize2 } from "lucide-react";
+import { ArrowRight, Bed, Building2, Hash, MapPin, Maximize2 } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import FaqAccordion from "@/components/FaqAccordion";
 import Gallery from "@/components/Gallery";
 import BuildSpecsTabs from "@/components/BuildSpecsTabs";
 import LeadForm from "@/components/LeadForm";
 import { getBuild, getSettings, resolveMediaUrl } from "@/services/api";
 import { formatArea, formatPrice } from "@/lib/utils";
-import { SITE_URL } from "@/lib/seo";
+import { faqPageJsonLd, SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -184,6 +186,41 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             <BuildSpecsTabs build={b} />
           </section>
 
+          {/* Per-build FAQ — 3-8 вопросов конкретно про этот проект.
+              Заполняется в админке через inline. Если пуст — секция
+              не рендерится. FAQPage schema добавляется отдельным
+              JSON-LD скриптом ниже — даёт rich snippets в Google. */}
+          {b.faq_items.length > 0 && (
+            <section className="mt-12">
+              <h2 className="h-display text-[24px] sm:text-[30px] font-extrabold mb-6">
+                Вопросы по проекту
+              </h2>
+              <FaqAccordion
+                categories={[
+                  {
+                    id: 0,
+                    title: "",
+                    slug: "",
+                    order: 0,
+                    items: b.faq_items.map((it, i) => ({
+                      id: i,
+                      question: it.question,
+                      answer: it.answer,
+                      order: it.order,
+                    })),
+                  },
+                ]}
+              />
+              <Link
+                href="/faq"
+                className="inline-flex items-center gap-1.5 mt-6 text-[14px] font-bold text-[var(--rs-brand)] hover:underline"
+              >
+                Не нашли свой вопрос? Смотрите общие вопросы и ответы
+                <ArrowRight size={14} />
+              </Link>
+            </section>
+          )}
+
           <section className="mt-10 grid gap-3 sm:grid-cols-2">
             {b.available_in_settlement && (
               <div className="card-rs p-5 flex items-start gap-3">
@@ -238,6 +275,20 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      {/* Отдельный JSON-LD для FAQPage — Google поддерживает только
+          один FAQPage на страницу и не любит когда он смешан с
+          Product schema. Поэтому второй <script>, не объединяем. */}
+      {b.faq_items.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              faqPageJsonLd([{ items: b.faq_items }]),
+            ),
+          }}
+        />
+      )}
     </div>
   );
 }

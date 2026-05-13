@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import (
     Build,
     BuildImage, BuildFloorImage, BuildFacadeImage,
+    BuildFAQ,
     SpecKey,
     BuildEstimateValue,
 )
@@ -38,6 +39,12 @@ class EstimateValueSerializer(serializers.ModelSerializer):
         return str(obj.total)
 
 
+class BuildFAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BuildFAQ
+        fields = ("question", "answer", "order")
+
+
 COMMON_LIST_FIELDS = (
     "title", "slug", "area", "price", "floors", "bedrooms",
     "status", "is_typical", "is_featured",
@@ -70,6 +77,7 @@ class BuildDetailSerializer(serializers.ModelSerializer):
     specs_networks = serializers.SerializerMethodField()
     specs_layout = serializers.SerializerMethodField()
     specs_struct = serializers.SerializerMethodField()
+    faq_items = serializers.SerializerMethodField()
 
     class Meta:
         model = Build
@@ -78,7 +86,12 @@ class BuildDetailSerializer(serializers.ModelSerializer):
             "images", "floor_plans", "facades",
             "specs_main", "specs_networks", "specs_layout", "specs_struct",
             "estimate_items",
+            "faq_items",
         )
+
+    def get_faq_items(self, obj: Build):
+        qs = obj.faq_items.filter(is_published=True).order_by("order", "id")
+        return BuildFAQSerializer(qs, many=True).data
 
     def _specs_by_section(self, obj: Build, section: str):
         qs = obj.spec_values.select_related("key").filter(key__section=section).order_by("key__order", "key__id")

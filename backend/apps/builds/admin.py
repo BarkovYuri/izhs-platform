@@ -4,6 +4,7 @@ from unfold.admin import ModelAdmin, StackedInline, TabularInline
 from .models import (
     Build,
     BuildImage, BuildFloorImage, BuildFacadeImage,
+    BuildFAQ,
     SpecKey, BuildSpecValue,
     EstimateStage, BuildEstimateValue,
 )
@@ -45,6 +46,24 @@ class BuildFacadeInline(_ImageInlineBase):
     model = BuildFacadeImage
     verbose_name = "Схема фасада"
     verbose_name_plural = "Схемы фасадов"
+
+
+class BuildFAQInline(StackedInline):
+    """Вопросы-ответы по конкретному проекту.
+
+    Эти Q&A:
+    - показываются на странице билда отдельной секцией;
+    - попадают в FAQPage schema.org — дают rich snippets в выдаче
+      Google (раскрывающиеся вопросы под основной ссылкой).
+    """
+
+    model = BuildFAQ
+    extra = 0
+    tab = True
+    fields = ("question", "answer", "order", "is_published")
+    ordering = ("order", "id")
+    verbose_name = "Вопрос-ответ"
+    verbose_name_plural = "Вопросы и ответы по проекту"
 
 
 class _BaseSpecsInline(StackedInline):
@@ -167,6 +186,7 @@ class BuildAdmin(ModelAdmin):
         MainSpecsInline, NetworksSpecsInline,
         LayoutSpecsInline, StructSpecsInline,
         BuildEstimateInline,
+        BuildFAQInline,
     ]
     inlines = detail_inlines
 
