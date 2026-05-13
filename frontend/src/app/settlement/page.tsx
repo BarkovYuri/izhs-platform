@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Hammer, Home, MapPin, Trees } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Gallery from "@/components/Gallery";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
+import RichText from "@/components/RichText";
 import ZoomableImage from "@/components/ZoomableImage";
 import { getBuilds, getPageContent, getSettings, resolveMediaUrl } from "@/services/api";
 import { settlementJsonLd } from "@/lib/seo";
@@ -49,6 +51,8 @@ export default async function SettlementPage() {
   const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
   const title = pickText(pc, "title", `«${s.settlement_name}»`);
   const subtitle = pickText(pc, "subtitle", s.about_settlement);
+  const body = pc?.body || "";
+  const photos = pc?.images || [];
 
   return (
     <div className="container-rs py-10 sm:py-14">
@@ -96,6 +100,31 @@ export default async function SettlementPage() {
           </div>
         )}
       </section>
+
+      {/* Подробное описание ЖК — редактируется в админке (PageContent.body)
+          Если body пустой — секция не рендерится, чтобы не показывать
+          плейсхолдер. Галерея фотографий идёт справа от текста на десктопе. */}
+      {(body || photos.length > 0) && (
+        <section className="mb-14">
+          <h2 className="h-display text-[26px] sm:text-[34px] font-extrabold mb-6">
+            О посёлке
+          </h2>
+          <div
+            className={
+              photos.length > 0
+                ? "grid gap-8 lg:grid-cols-[1.1fr_1fr] items-start"
+                : ""
+            }
+          >
+            {body && (
+              <div className="card-rs p-6 sm:p-8">
+                <RichText text={body} />
+              </div>
+            )}
+            {photos.length > 0 && <Gallery items={photos} />}
+          </div>
+        </section>
+      )}
 
       {/* Прогресс застройки посёлка */}
       <section className="mb-14">

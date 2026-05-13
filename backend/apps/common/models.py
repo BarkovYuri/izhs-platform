@@ -304,3 +304,54 @@ class PageContent(models.Model):
 
     def __str__(self) -> str:
         return dict(self.PAGE_CHOICES).get(self.slug, self.slug)
+
+
+class PageContentImage(models.Model):
+    """Фотографии для страницы — отображаются в галерее рядом с body.
+
+    Сейчас используется только на /settlement, но модель универсальная
+    (привязка по PageContent), чтобы в будущем можно было добавить
+    галереи на /about, /portfolio и т.п. без новой модели.
+    """
+
+    page = models.ForeignKey(
+        PageContent,
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name="Страница",
+    )
+    image = models.ImageField(
+        "Фотография",
+        upload_to="pages/",
+        help_text="Большие фото автоматически сжимаются до 1920px.",
+    )
+    alt = models.CharField(
+        "Подпись / альт-текст",
+        max_length=200,
+        blank=True,
+        help_text=(
+            "Короткое описание фото — пригодится для поиска картинок "
+            "и для людей со скринридерами. Можно оставить пустым."
+        ),
+    )
+    order = models.PositiveSmallIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Меньшее число — выше в галерее.",
+    )
+
+    class Meta:
+        verbose_name = "Фото для страницы"
+        verbose_name_plural = "Фотографии для страниц"
+        ordering = ("order", "id")
+
+    def __str__(self) -> str:
+        return f"{self.page.slug} #{self.order}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Импорт здесь, чтобы не было циклической зависимости common ↔ builds.
+        from apps.builds.models import _compress_imagefield
+
+        if _compress_imagefield(self.image):
+            super().save(update_fields=["image"])

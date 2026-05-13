@@ -1,8 +1,16 @@
 from rest_framework import serializers
-from .models import PageContent, SiteSettings
+from .models import PageContent, PageContentImage, SiteSettings
+
+
+class PageContentImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PageContentImage
+        fields = ("image", "alt", "order")
 
 
 class PageContentSerializer(serializers.ModelSerializer):
+    images = PageContentImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = PageContent
         fields = (
@@ -10,6 +18,7 @@ class PageContentSerializer(serializers.ModelSerializer):
             "kicker", "title", "subtitle", "body",
             "hero_lead", "hero_accent",
             "meta_title", "meta_description",
+            "images",
         )
 
 

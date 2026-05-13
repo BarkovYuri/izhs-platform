@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
 
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, TabularInline
 
-from .models import PageContent, SiteSettings
+from .models import PageContent, PageContentImage, SiteSettings
 
 
 PAGE_FRONT_URLS = {
@@ -117,6 +117,24 @@ class SiteSettingsAdmin(ModelAdmin):
         )
 
 
+class PageContentImageInline(TabularInline):
+    model = PageContentImage
+    extra = 0
+    fields = ("image", "preview", "alt", "order")
+    readonly_fields = ("preview",)
+    ordering = ("order", "id")
+
+    def preview(self, obj):
+        if obj and obj.image:
+            return format_html(
+                '<img src="{}" style="max-width:120px;max-height:80px;'
+                'border-radius:6px;border:1px solid #ddd;" />',
+                obj.image.url,
+            )
+        return "—"
+    preview.short_description = "Превью"
+
+
 class PageContentForm(forms.ModelForm):
     class Meta:
         model = PageContent
@@ -140,6 +158,7 @@ class PageContentAdmin(ModelAdmin):
     list_display_links = ("page_label", "title")
     readonly_fields = ("page_help",)
     change_form_template = "admin/common/sitesettings/change_form.html"
+    inlines = [PageContentImageInline]
 
     fieldsets = (
         ("Какая страница", {

@@ -71,6 +71,7 @@ export const getPageContent = (slug: PageSlug) =>
     hero_accent: "",
     meta_title: "",
     meta_description: "",
+    images: [],
   });
 
 export async function createLead(payload: LeadPayload): Promise<{ ok: boolean; id?: number; error?: string }> {

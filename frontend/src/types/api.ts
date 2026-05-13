@@ -101,6 +101,12 @@ export type PortfolioItem = {
 export type PageSlug =
   | "home" | "builds" | "faq" | "about" | "contacts" | "settlement" | "portfolio";
 
+export type PageContentImage = {
+  image: string;
+  alt: string;
+  order: number;
+};
+
 export type PageContent = {
   slug: PageSlug;
   kicker: string;
@@ -111,6 +117,7 @@ export type PageContent = {
   hero_accent: string;
   meta_title: string;
   meta_description: string;
+  images: PageContentImage[];
 };
 
 export type FaqItem = {
