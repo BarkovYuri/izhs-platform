@@ -218,7 +218,7 @@ export default async function BlogArticlePage(
       )}
 
       <div className="max-w-3xl">
-        <BlogContent text={article.body} />
+        <BlogContent text={article.body} showToc />
       </div>
 
       {/* Похожие статьи — внутренняя перелинковка для SEO + UX. */}

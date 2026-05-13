@@ -150,7 +150,8 @@ function renderTokens(tokens: Token[]): ReactNode {
 }
 
 type Block =
-  | { type: "h2" | "h3"; content: string }
+  | { type: "h2"; content: string; id: string }
+  | { type: "h3"; content: string; id: string }
   | { type: "paragraph"; content: string }
   | { type: "blockquote"; content: string }
   | { type: "hr" }
@@ -159,9 +160,42 @@ type Block =
 
 const FIGURE_RE = /^!\[([^\]]*)\]\(([^)]+)\)$/;
 
+const RU_TO_LAT: Record<string, string> = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "yo",
+  ж: "zh", з: "z", и: "i", й: "y", к: "k", л: "l", м: "m",
+  н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u",
+  ф: "f", х: "h", ц: "c", ч: "ch", ш: "sh", щ: "sch", ъ: "",
+  ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
+};
+
+function slugifyHeading(text: string): string {
+  const out = text
+    .toLowerCase()
+    .replace(/[а-яё]/g, (c) => RU_TO_LAT[c] ?? "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+  return out || "section";
+}
+
 function parseBlocks(text: string): Block[] {
   const blocks: Block[] = [];
   const lines = text.replace(/\r\n/g, "\n").split("\n");
+
+  // Дедуп id для одинаковых заголовков: «Плюсы» → «plusy»,
+  // «Плюсы» (второй раз) → «plusy-2» и т.д.
+  const seenIds = new Set<string>();
+  const makeId = (content: string): string => {
+    const base = slugifyHeading(content);
+    let id = base;
+    let n = 2;
+    while (seenIds.has(id)) {
+      id = `${base}-${n}`;
+      n++;
+    }
+    seenIds.add(id);
+    return id;
+  };
 
   let i = 0;
   while (i < lines.length) {
@@ -180,13 +214,15 @@ function parseBlocks(text: string): Block[] {
     }
 
     if (line.startsWith("## ")) {
-      blocks.push({ type: "h2", content: line.slice(3).trim() });
+      const content = line.slice(3).trim();
+      blocks.push({ type: "h2", content, id: makeId(content) });
       i++;
       continue;
     }
 
     if (line.startsWith("### ")) {
-      blocks.push({ type: "h3", content: line.slice(4).trim() });
+      const content = line.slice(4).trim();
+      blocks.push({ type: "h3", content, id: makeId(content) });
       i++;
       continue;
     }
@@ -257,12 +293,50 @@ function parseBlocks(text: string): Block[] {
   return blocks;
 }
 
-export default function BlogContent({ text }: { text: string }) {
+export default function BlogContent({
+  text,
+  showToc = false,
+}: {
+  text: string;
+  /** Показать блок «Содержание» вверху со ссылками на H2-разделы.
+   *  TOC появляется только если в тексте 3+ H2 — иначе бессмысленно. */
+  showToc?: boolean;
+}) {
   if (!text) return null;
   const blocks = parseBlocks(text);
 
+  // TOC только если 3+ заголовков второго уровня — для коротких статей
+  // оглавление бессмысленно и захламляет верх.
+  const tocItems = blocks
+    .filter((b): b is Extract<Block, { type: "h2" }> => b.type === "h2")
+    .map((b) => ({ id: b.id, content: b.content }));
+  const renderToc = showToc && tocItems.length >= 3;
+
   return (
     <div className="prose-rs text-[15px] sm:text-[17px] leading-relaxed text-[var(--rs-ink)] space-y-5">
+      {renderToc && (
+        <nav
+          aria-label="Содержание статьи"
+          className="card-rs p-5 sm:p-6 not-prose"
+        >
+          <div className="text-[12px] uppercase tracking-wide text-[var(--rs-muted)] mb-3 font-bold">
+            Содержание
+          </div>
+          <ol className="space-y-1.5 list-decimal list-inside text-[14px] sm:text-[15px] marker:text-[var(--rs-brand)] marker:font-bold">
+            {tocItems.map((it) => (
+              <li key={it.id}>
+                <a
+                  href={`#${it.id}`}
+                  className="hover:text-[var(--rs-brand)] hover:underline underline-offset-2"
+                >
+                  {it.content}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
       {blocks.map((b, i) => {
         if (b.type === "hr") {
           return (
@@ -276,7 +350,8 @@ export default function BlogContent({ text }: { text: string }) {
           return (
             <h2
               key={i}
-              className="h-display mt-10 text-[24px] sm:text-[30px] font-extrabold leading-tight"
+              id={b.id}
+              className="h-display mt-10 text-[24px] sm:text-[30px] font-extrabold leading-tight scroll-mt-24"
             >
               {renderTokens(tokenize(b.content))}
             </h2>
@@ -286,7 +361,8 @@ export default function BlogContent({ text }: { text: string }) {
           return (
             <h3
               key={i}
-              className="h-display mt-6 text-[20px] sm:text-[24px] font-extrabold leading-tight"
+              id={b.id}
+              className="h-display mt-6 text-[20px] sm:text-[24px] font-extrabold leading-tight scroll-mt-24"
             >
               {renderTokens(tokenize(b.content))}
             </h3>
