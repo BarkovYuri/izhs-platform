@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getBuilds } from "@/services/api";
 import { SITE_URL } from "@/lib/seo";
+import { FILTER_TYPES } from "@/lib/buildFilters";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const builds = await getBuilds();
@@ -22,5 +23,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly",
     priority: 0.8,
   }));
-  return [...staticRoutes, ...buildRoutes];
+  // SEO-фильтры каталога — отдельные landing-страницы под низкочастотные
+  // запросы (одноэтажные/двухэтажные, площадь, с балконом и т.п.).
+  const filterRoutes: MetadataRoute.Sitemap = FILTER_TYPES.map((t) => ({
+    url: `${SITE_URL}/builds/filtr/${t}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+  return [...staticRoutes, ...buildRoutes, ...filterRoutes];
 }

@@ -1,11 +1,14 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import BuildFiltersBar from "@/components/BuildFiltersBar";
 import JsonLd from "@/components/JsonLd";
 import { getBuilds, getPageContent } from "@/services/api";
 import { buildsCatalogJsonLd } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
+import { FILTER_DEFS, FILTER_GROUPS, FILTER_TYPES } from "@/lib/buildFilters";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -59,6 +62,43 @@ export default async function BuildsPage() {
           {subtitle}
         </p>
       </div>
+
+      {/* SEO-фильтры — отдельные landing'и под низкочастотные запросы.
+          Идут до клиентского BuildFiltersBar, чтобы боты сразу видели
+          ссылки в статичном HTML. */}
+      <section className="mb-10">
+        <div className="text-[12px] uppercase tracking-wide text-[var(--rs-muted)] mb-3 font-bold">
+          Подобрать дом
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {FILTER_GROUPS.map((g) => {
+            const items = FILTER_TYPES
+              .map((t) => FILTER_DEFS[t])
+              .filter((f) => f.group === g.id);
+            if (items.length === 0) return null;
+            return (
+              <div key={g.id} className="card-rs p-5">
+                <div className="text-[12px] uppercase tracking-wide text-[var(--rs-muted)] mb-3 font-bold">
+                  {g.label}
+                </div>
+                <ul className="space-y-2 text-[14px]">
+                  {items.map((f) => (
+                    <li key={f.slug}>
+                      <Link
+                        href={`/builds/filtr/${f.slug}`}
+                        className="hover:text-[var(--rs-brand)] inline-flex items-center gap-1.5"
+                      >
+                        <span>{f.title.replace(" в Томске", "")}</span>
+                        <ArrowRight size={12} className="opacity-50" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       <Suspense fallback={<CatalogSkeleton />}>
         <BuildFiltersBar builds={builds} />
