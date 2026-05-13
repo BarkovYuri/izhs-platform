@@ -15,6 +15,7 @@ const NAV: NavLink[] = [
   { href: "/builds", label: "Проекты" },
   { href: "/portfolio", label: "Построенные" },
   { href: "/settlement", label: "ЖК" },
+  { href: "/blog", label: "Статьи" },
   { href: "/about", label: "О компании" },
   { href: "/faq", label: "Вопросы" },
   { href: "/contacts", label: "Контакты" },

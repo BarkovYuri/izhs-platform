@@ -144,6 +144,29 @@ export type FaqCategory = {
   items: FaqItem[];
 };
 
+export type BlogCategory = {
+  name: string;
+  slug: string;
+  description: string;
+  order: number;
+};
+
+export type BlogArticleListItem = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  cover: string | null;
+  category: BlogCategory | null;
+  published_at: string;
+};
+
+export type BlogArticle = BlogArticleListItem & {
+  body: string;
+  updated_at: string;
+  meta_title: string;
+  meta_description: string;
+};
+
 export type LeadPayload = {
   name: string;
   phone: string;

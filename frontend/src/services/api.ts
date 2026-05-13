@@ -1,4 +1,5 @@
 import type {
+  BlogArticle, BlogArticleListItem, BlogCategory,
   BuildDetail, BuildFilterContent, BuildListItem, FaqCategory, LeadPayload,
   PageContent, PageSlug, PortfolioItem, SiteSettings,
 } from "@/types/api";
@@ -35,6 +36,15 @@ async function fetchJson<T>(path: string, init?: RequestInit, fallback?: T): Pro
 export const getBuilds = () => fetchJson<BuildListItem[]>("/api/builds/", undefined, []);
 export const getBuildFilters = () =>
   fetchJson<BuildFilterContent[]>("/api/build-filters/", undefined, []);
+
+export const getArticles = (categorySlug?: string) => {
+  const qs = categorySlug ? `?category=${encodeURIComponent(categorySlug)}` : "";
+  return fetchJson<BlogArticleListItem[]>(`/api/articles/${qs}`, undefined, []);
+};
+export const getArticle = (slug: string) =>
+  fetchJson<BlogArticle>(`/api/articles/${slug}/`);
+export const getBlogCategories = () =>
+  fetchJson<BlogCategory[]>("/api/categories/", undefined, []);
 export const getPortfolio = () => fetchJson<PortfolioItem[]>("/api/portfolio/", undefined, []);
 export const getBuild  = (slug: string) => fetchJson<BuildDetail>(`/api/builds/${slug}/`);
 export const getFaq    = () => fetchJson<FaqCategory[]>("/api/faq/", undefined, []);

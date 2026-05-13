@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "apps.faq.apps.FaqConfig",
     "apps.leads.apps.LeadsConfig",
     "apps.portfolio.apps.PortfolioConfig",
+    "apps.blog.apps.BlogConfig",
 ]
 
 SITE_NAME = "Ремстрой"
