@@ -9,6 +9,14 @@ export const API_BASE =
 
 export function resolveMediaUrl(url: string | null | undefined): string {
   if (!url) return "";
+  // Бэк за nginx-прокси иногда генерирует абсолютные URL по http://
+  // (не получает X-Forwarded-Proto: https). nginx редиректит их 301
+  // на https, но next/image за redirect не ходит — показывает alt.
+  // Принудительно апгрейдим http://remstroy70.ru → https:// чтобы
+  // картинки грузились с первого запроса.
+  if (url.startsWith("http://remstroy70.ru")) {
+    return "https://" + url.slice("http://".length);
+  }
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
   return `${API_BASE}${url}`;
 }
