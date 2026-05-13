@@ -156,9 +156,18 @@ type Block =
   | { type: "blockquote"; content: string }
   | { type: "hr" }
   | { type: "list"; items: string[] }
-  | { type: "figure"; src: string; alt: string };
+  | { type: "figure"; src: string; alt: string }
+  | { type: "table"; headers: string[]; rows: string[][] };
 
 const FIGURE_RE = /^!\[([^\]]*)\]\(([^)]+)\)$/;
+
+function parseTableRow(line: string): string[] {
+  // Разбиваем строку «| a | b | c |» в ["a", "b", "c"].
+  const parts = line.split("|").map((p) => p.trim());
+  if (parts.length && parts[0] === "") parts.shift();
+  if (parts.length && parts[parts.length - 1] === "") parts.pop();
+  return parts;
+}
 
 const RU_TO_LAT: Record<string, string> = {
   а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "yo",
@@ -263,6 +272,29 @@ function parseBlocks(text: string): Block[] {
         src: figureMatch[2],
       });
       i++;
+      continue;
+    }
+
+    // Таблица в стиле markdown:
+    //   | Заголовок | Заголовок |
+    //   | --- | --- |
+    //   | данные | данные |
+    if (
+      /^\|.*\|$/.test(line) &&
+      i + 1 < lines.length &&
+      /^\|[\s|:-]+\|$/.test(lines[i + 1].trim()) &&
+      lines[i + 1].includes("-")
+    ) {
+      const headers = parseTableRow(line);
+      i += 2; // пропускаем заголовок + строку-разделитель
+      const rows: string[][] = [];
+      while (i < lines.length) {
+        const next = lines[i].trim();
+        if (!/^\|.*\|$/.test(next)) break;
+        rows.push(parseTableRow(next));
+        i++;
+      }
+      blocks.push({ type: "table", headers, rows });
       continue;
     }
 
@@ -391,6 +423,47 @@ export default function BlogContent({
                 </li>
               ))}
             </ul>
+          );
+        }
+        if (b.type === "table") {
+          return (
+            <div
+              key={i}
+              className="not-prose my-6 -mx-4 sm:mx-0 overflow-x-auto"
+            >
+              <table className="min-w-full text-[13px] sm:text-[14px] border-collapse">
+                <thead>
+                  <tr className="bg-[var(--rs-line)]/40">
+                    {b.headers.map((h, hi) => (
+                      <th
+                        key={hi}
+                        scope="col"
+                        className="px-3 py-2.5 text-left font-bold border-b-2 border-[var(--rs-brand)] align-top"
+                      >
+                        {renderTokens(tokenize(h))}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {b.rows.map((row, ri) => (
+                    <tr
+                      key={ri}
+                      className="border-b border-[var(--rs-line)] last:border-0"
+                    >
+                      {row.map((cell, ci) => (
+                        <td
+                          key={ci}
+                          className="px-3 py-2 align-top"
+                        >
+                          {renderTokens(tokenize(cell))}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           );
         }
         if (b.type === "figure") {
