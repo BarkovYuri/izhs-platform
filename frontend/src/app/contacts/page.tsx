@@ -68,8 +68,8 @@ export default async function ContactsPage() {
             {s.vk_url && <ContactBox icon={<Users />} title="ВКонтакте" value="Сообщество ВК" href={s.vk_url} accent="#0077FF" />}
             {s.email && <ContactBox icon={<Mail />} title="Email" value={s.email} href={`mailto:${s.email}`} />}
             {s.phone && <ContactBox icon={<Phone />} title="Телефон" value={s.phone} href={formatPhoneHref(s.phone)} />}
-            {(s.settlement_location || s.address) && (
-              <ContactBox icon={<MapPin />} title="Расположение" value={s.settlement_location || s.address} />
+            {(s.address || s.settlement_location) && (
+              <ContactBox icon={<MapPin />} title="Офис" value={s.address || s.settlement_location} />
             )}
           </div>
 
