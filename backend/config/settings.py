@@ -171,6 +171,13 @@ if USE_S3:
         "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
     }
 
+# ---- IndexNow (Яндекс/Bing) ----
+# Ключ публикуется на сайте как /<KEY>.txt — Яндекс проверяет
+# принадлежность домена по этому файлу. Если переменная пустая,
+# уведомления не отправляются (no-op для локалки и тестов).
+INDEXNOW_KEY = env("INDEXNOW_KEY", default="")
+SITE_URL = env("SITE_URL", default="https://remstroy70.ru")
+
 # ---- Sentry (включается, если задан DSN) ----
 SENTRY_DSN = env("SENTRY_DSN", default="")
 if SENTRY_DSN and not DEBUG:
