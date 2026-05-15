@@ -76,61 +76,27 @@ export async function generateMetadata(
 }
 
 function articleJsonLd(a: BlogArticle, orgName: string) {
+  // BreadcrumbList JSON-LD генерируется компонентом Breadcrumbs ниже —
+  // здесь оставляем только Article schema, чтобы не было дубликата.
   const cover = a.cover ? absoluteUrl(a.cover) : OG_IMAGE;
   const url = `${SITE_URL}/blog/${a.slug}`;
-  return [
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      headline: a.title,
-      description: a.excerpt || a.meta_description,
-      image: cover,
-      datePublished: a.published_at,
-      dateModified: a.updated_at,
-      author: {
-        "@type": "Organization",
-        name: orgName,
-        url: SITE_URL,
-      },
-      publisher: { "@id": `${SITE_URL}/#organization` },
-      mainEntityOfPage: { "@type": "WebPage", "@id": url },
-      articleSection: a.category?.name,
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: a.title,
+    description: a.excerpt || a.meta_description,
+    image: cover,
+    datePublished: a.published_at,
+    dateModified: a.updated_at,
+    author: {
+      "@type": "Organization",
+      name: orgName,
+      url: SITE_URL,
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Главная",
-          item: `${SITE_URL}/`,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Блог",
-          item: `${SITE_URL}/blog`,
-        },
-        ...(a.category
-          ? [
-              {
-                "@type": "ListItem",
-                position: 3,
-                name: a.category.name,
-                item: `${SITE_URL}/blog/category/${a.category.slug}`,
-              },
-            ]
-          : []),
-        {
-          "@type": "ListItem",
-          position: a.category ? 4 : 3,
-          name: a.title,
-          item: url,
-        },
-      ],
-    },
-  ];
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    articleSection: a.category?.name,
+  };
 }
 
 function formatDate(iso: string): string {

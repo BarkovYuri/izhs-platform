@@ -4,9 +4,7 @@ import { notFound } from "next/navigation";
 
 import ArticleCard from "@/components/ArticleCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import JsonLd from "@/components/JsonLd";
 import { getArticles, getBlogCategories } from "@/services/api";
-import { SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -56,34 +54,9 @@ export default async function BlogCategoryPage(
   const cat = categories.find((c) => c.slug === slug);
   if (!cat) notFound();
 
-  const breadcrumbs = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Главная",
-        item: `${SITE_URL}/`,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Блог",
-        item: `${SITE_URL}/blog`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: cat.name,
-        item: `${SITE_URL}/blog/category/${cat.slug}`,
-      },
-    ],
-  };
-
   return (
     <div className="container-rs py-10 sm:py-14">
-      <JsonLd data={breadcrumbs} />
+      {/* BreadcrumbList JSON-LD генерируется внутри компонента Breadcrumbs. */}
       <Breadcrumbs
         items={[
           { label: "Блог", href: "/blog" },

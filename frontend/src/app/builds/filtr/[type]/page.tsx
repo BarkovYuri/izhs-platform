@@ -5,7 +5,6 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
 import BuildCard from "@/components/BuildCard";
-import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
 import { getBuildFilters, getBuilds } from "@/services/api";
 import {
@@ -13,9 +12,7 @@ import {
   FILTER_GROUPS,
   FILTER_TYPES,
   getFilter,
-  type FilterDefinition,
 } from "@/lib/buildFilters";
-import { SITE_URL } from "@/lib/seo";
 import type { BuildFilterContent } from "@/types/api";
 
 /** Берём поле из админки, иначе fallback из кода. Пустую строку считаем «нет». */
@@ -67,33 +64,6 @@ export async function generateMetadata(
   };
 }
 
-function breadcrumbJsonLd(def: FilterDefinition, title: string) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Главная",
-        item: `${SITE_URL}/`,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Проекты домов",
-        item: `${SITE_URL}/builds`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: title,
-        item: `${SITE_URL}/builds/filtr/${def.slug}`,
-      },
-    ],
-  };
-}
-
 export default async function FilteredBuildsPage(
   { params }: { params: Promise<RouteParams> },
 ) {
@@ -120,7 +90,7 @@ export default async function FilteredBuildsPage(
 
   return (
     <div className="container-rs py-10 sm:py-14">
-      <JsonLd data={breadcrumbJsonLd(def, title)} />
+      {/* BreadcrumbList JSON-LD генерируется внутри компонента Breadcrumbs. */}
       <Breadcrumbs
         items={[
           { label: "Проекты домов", href: "/builds" },
