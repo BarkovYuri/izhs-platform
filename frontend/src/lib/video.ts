@@ -33,17 +33,23 @@ export function getVideoEmbedUrl(url: string | null | undefined): string | null 
       if (u.pathname.startsWith("/play/embed/")) return trimmed;
     }
 
-    // VK Видео: vk.com/video?z=video<owner>_<id> | vk.com/video<owner>_<id>
-    // Embed: https://vk.com/video_ext.php?oid=<owner>&id=<id>
+    // VK Видео и VK Клипы используют один и тот же embed-эндпоинт
+    // video_ext.php. URL могут быть:
+    //   vk.com/video-12345_67890       — обычное видео
+    //   vk.com/clip-12345_67890        — клип
+    //   vk.com/clips-12345?z=clip-...  — клип из списка канала
+    //   vk.com/video?z=video-...       — видео по параметру z
+    //   vkvideo.ru/clip-... / video-...
     if (host === "vk.com" || host === "m.vk.com" || host === "vkvideo.ru") {
-      // /video-12345_67890
-      const m = u.pathname.match(/^\/video(-?\d+)_(\d+)/);
+      // /video-12345_67890 или /clip-12345_67890
+      const m = u.pathname.match(/^\/(?:video|clip)(-?\d+)_(\d+)/);
       if (m) {
         return `https://vk.com/video_ext.php?oid=${m[1]}&id=${m[2]}&hd=2`;
       }
-      // ?z=video-12345_67890
+      // ?z=video-12345_67890 или ?z=clip-12345_67890
+      // (может иметь хвост типа /hash после ID — игнорируем его)
       const z = u.searchParams.get("z") || "";
-      const zm = z.match(/^video(-?\d+)_(\d+)/);
+      const zm = z.match(/^(?:video|clip)(-?\d+)_(\d+)/);
       if (zm) {
         return `https://vk.com/video_ext.php?oid=${zm[1]}&id=${zm[2]}&hd=2`;
       }
