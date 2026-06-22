@@ -10,6 +10,7 @@ import ZoomableImage from "@/components/ZoomableImage";
 import { getBuilds, getPageContent, getSettings, resolveMediaUrl } from "@/services/api";
 import { settlementJsonLd } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
+import { getVideoEmbedUrl } from "@/lib/video";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -53,6 +54,11 @@ export default async function SettlementPage() {
   const subtitle = pickText(pc, "subtitle", s.about_settlement);
   const body = pc?.body || "";
   const photos = pc?.images || [];
+  // Видео из админки: каждый элемент — URL на YouTube/RuTube/VK.
+  // Превращаем в embed-ссылку через helper, пропускаем нераспознанные.
+  const videos = (pc?.videos || [])
+    .map((v) => ({ ...v, embedUrl: getVideoEmbedUrl(v.video_url) }))
+    .filter((v) => v.embedUrl);
 
   return (
     <div className="container-rs py-10 sm:py-14">
@@ -101,27 +107,58 @@ export default async function SettlementPage() {
         )}
       </section>
 
-      {/* Подробное описание ЖК — редактируется в админке (PageContent.body)
-          Если body пустой — секция не рендерится, чтобы не показывать
-          плейсхолдер. Галерея фотографий идёт справа от текста на десктопе. */}
-      {(body || photos.length > 0) && (
-        <section className="mb-14">
+      {/* Подробное описание ЖК — редактируется в админке (PageContent.body).
+          Если body пустой — секция не рендерится. */}
+      {body && (
+        <section className="mb-10">
           <h2 className="h-display text-[26px] sm:text-[34px] font-extrabold mb-6">
             О посёлке
           </h2>
-          <div
-            className={
-              photos.length > 0
-                ? "grid gap-8 lg:grid-cols-[1.1fr_1fr] items-start"
-                : ""
-            }
-          >
-            {body && (
-              <div className="card-rs p-6 sm:p-8">
-                <RichText text={body} />
-              </div>
-            )}
-            {photos.length > 0 && <Gallery items={photos} />}
+          <div className="card-rs p-6 sm:p-8 max-w-4xl">
+            <RichText text={body} />
+          </div>
+        </section>
+      )}
+
+      {/* Галерея фотографий — отдельная секция на всю ширину контейнера.
+          Это даёт галерее правильное место даже при большом количестве
+          фото; раньше галерея «плыла» сбоку от body на узких колонках. */}
+      {photos.length > 0 && (
+        <section className="mb-14">
+          <h2 className="h-display text-[22px] sm:text-[28px] font-extrabold mb-5">
+            Фотографии ЖК
+          </h2>
+          <Gallery items={photos} />
+        </section>
+      )}
+
+      {/* Видео-обзоры ЖК — YouTube / RuTube / VK Видео, добавляются
+          из админки во вкладке «Видео для страниц». */}
+      {videos.length > 0 && (
+        <section className="mb-14">
+          <h2 className="h-display text-[22px] sm:text-[28px] font-extrabold mb-5">
+            Видео ЖК
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {videos.map((v, i) => (
+              <figure key={i} className="card-rs overflow-hidden p-0">
+                <div className="relative w-full aspect-video bg-black">
+                  <iframe
+                    src={v.embedUrl ?? undefined}
+                    title={v.title || `Видео ${i + 1}`}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full border-0"
+                  />
+                </div>
+                {v.title && (
+                  <figcaption className="px-4 py-3 text-[13px] text-[var(--rs-muted)] leading-snug">
+                    {v.title}
+                  </figcaption>
+                )}
+              </figure>
+            ))}
           </div>
         </section>
       )}

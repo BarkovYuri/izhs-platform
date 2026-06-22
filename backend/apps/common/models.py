@@ -425,3 +425,53 @@ class PageContentImage(models.Model):
 
         if _compress_imagefield(self.image):
             super().save(update_fields=["image"])
+
+
+class PageContentVideo(models.Model):
+    """Видео для страницы — YouTube / RuTube / VK / VK Видео.
+
+    Хранится только URL — встраивание происходит на фронте через
+    утилиту getVideoEmbedUrl(), которая определяет тип сервиса и
+    делает корректный embed-iframe.
+    """
+
+    page = models.ForeignKey(
+        PageContent,
+        on_delete=models.CASCADE,
+        related_name="videos",
+        verbose_name="Страница",
+    )
+    video_url = models.URLField(
+        "Ссылка на видео",
+        max_length=400,
+        help_text=(
+            "Поддерживается YouTube, RuTube, VK Видео. Просто скопируйте "
+            "ссылку из адресной строки браузера (например "
+            "https://youtu.be/abc123 или https://vk.com/video-12345_67890). "
+            "Сайт автоматически вставит плеер."
+        ),
+    )
+    title = models.CharField(
+        "Подпись под видео",
+        max_length=200,
+        blank=True,
+        help_text="Короткое описание сюжета — что в этом видео.",
+    )
+    order = models.PositiveSmallIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Меньшее число — выше в списке.",
+    )
+    is_published = models.BooleanField(
+        "Опубликовано",
+        default=True,
+        help_text="Сними галку, чтобы временно скрыть видео.",
+    )
+
+    class Meta:
+        verbose_name = "Видео для страницы"
+        verbose_name_plural = "Видео для страниц"
+        ordering = ("order", "id")
+
+    def __str__(self) -> str:
+        return self.title or self.video_url

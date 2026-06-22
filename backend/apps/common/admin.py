@@ -10,6 +10,7 @@ from .models import (
     BuildFilterContent,
     PageContent,
     PageContentImage,
+    PageContentVideo,
     SiteSettings,
 )
 
@@ -140,6 +141,13 @@ class PageContentImageInline(TabularInline):
     preview.short_description = "Превью"
 
 
+class PageContentVideoInline(TabularInline):
+    model = PageContentVideo
+    extra = 0
+    fields = ("video_url", "title", "order", "is_published")
+    ordering = ("order", "id")
+
+
 class PageContentForm(forms.ModelForm):
     class Meta:
         model = PageContent
@@ -163,7 +171,7 @@ class PageContentAdmin(ModelAdmin):
     list_display_links = ("page_label", "title")
     readonly_fields = ("page_help",)
     change_form_template = "admin/common/sitesettings/change_form.html"
-    inlines = [PageContentImageInline]
+    inlines = [PageContentImageInline, PageContentVideoInline]
 
     fieldsets = (
         ("Какая страница", {

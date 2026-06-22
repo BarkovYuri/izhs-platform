@@ -114,6 +114,12 @@ export type PageContentImage = {
   order: number;
 };
 
+export type PageContentVideo = {
+  video_url: string;
+  title: string;
+  order: number;
+};
+
 export type BuildFilterContent = {
   slug: string;
   kicker: string;
@@ -134,6 +140,7 @@ export type PageContent = {
   meta_title: string;
   meta_description: string;
   images: PageContentImage[];
+  videos: PageContentVideo[];
 };
 
 export type FaqItem = {

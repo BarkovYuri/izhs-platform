@@ -3,6 +3,7 @@ from .models import (
     BuildFilterContent,
     PageContent,
     PageContentImage,
+    PageContentVideo,
     SiteSettings,
 )
 
@@ -22,8 +23,15 @@ class PageContentImageSerializer(serializers.ModelSerializer):
         fields = ("image", "alt", "order")
 
 
+class PageContentVideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PageContentVideo
+        fields = ("video_url", "title", "order")
+
+
 class PageContentSerializer(serializers.ModelSerializer):
     images = PageContentImageSerializer(many=True, read_only=True)
+    videos = serializers.SerializerMethodField()
 
     class Meta:
         model = PageContent
@@ -33,7 +41,12 @@ class PageContentSerializer(serializers.ModelSerializer):
             "hero_lead", "hero_accent",
             "meta_title", "meta_description",
             "images",
+            "videos",
         )
+
+    def get_videos(self, obj):
+        qs = obj.videos.filter(is_published=True).order_by("order", "id")
+        return PageContentVideoSerializer(qs, many=True).data
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer):
