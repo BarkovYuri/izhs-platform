@@ -44,18 +44,37 @@ export default async function PromotionPage({ params }: { params: Promise<{ slug
       </div>
 
       <div className="container-rs">
-        <div className="promo-banner p-6 sm:p-10">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide bg-white/15 px-2.5 py-1 rounded-full text-white">
-            <Flame size={13} /> {p.badge_label}
-          </span>
-          <h1 className="h-display mt-3 font-extrabold leading-tight text-white text-[28px] sm:text-[40px]">
-            {p.banner_title || p.title}
-          </h1>
-          {p.banner_subtitle && (
-            <p className="mt-2 text-[14px] sm:text-[16px] text-white/85 max-w-2xl">
-              {p.banner_subtitle}
-            </p>
+        <div
+          className={`relative overflow-hidden rounded-[var(--rs-radius)] shadow-[var(--rs-shadow)] p-6 sm:p-10 ${p.banner_image ? "" : "promo-banner"}`}
+        >
+          {p.banner_image && (
+            <>
+              <Image
+                src={resolveMediaUrl(p.banner_image)}
+                alt=""
+                fill
+                sizes="(min-width: 1200px) 1200px, 100vw"
+                quality={70}
+                className="object-cover"
+                style={{ zIndex: 0 }}
+                priority
+              />
+              <div className="absolute inset-0 promo-banner-overlay" style={{ zIndex: 1 }} />
+            </>
           )}
+          <div className="relative" style={{ zIndex: 2 }}>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide bg-white/15 px-2.5 py-1 rounded-full text-white">
+              <Flame size={13} /> {p.badge_label}
+            </span>
+            <h1 className="h-display mt-3 font-extrabold leading-tight text-white text-[28px] sm:text-[40px]">
+              {p.banner_title || p.title}
+            </h1>
+            {p.banner_subtitle && (
+              <p className="mt-2 text-[14px] sm:text-[16px] text-white/85 max-w-2xl">
+                {p.banner_subtitle}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">

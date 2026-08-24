@@ -92,6 +92,13 @@ jobs:
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose -f docker-compose.prod.yml --env-file .env.prod pull
             docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+            # backend/frontend получают новые IP в docker-сети при каждом
+            # пересоздании; nginx резолвит их через переменные + resolver,
+            # но на практике не всегда переспрашивает вовремя (см. инцидент
+            # 2026-08-24 — 502 после деплоя, пока не перезапустили nginx
+            # вручную). Перезапускаем nginx каждый раз — это надёжнее и
+            # дешевле, чем разбираться в поведении встроенного DNS-кеша.
+            docker compose -f docker-compose.prod.yml restart nginx
             docker image prune -f
             sleep 5
             docker compose -f docker-compose.prod.yml ps
