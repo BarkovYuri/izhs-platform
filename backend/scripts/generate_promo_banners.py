@@ -1,26 +1,35 @@
-"""Фоновые изображения для баннеров акций (запуск двух домов).
+"""Фоновые изображения для баннеров акций — по главному (обложечному)
+фото дома, как оно выведено в каталоге (первое по полю order).
 
-Берём реальное фото дома, приводим cover-resize до 1600×640 (широкий
-формат баннера) и слегка тонируем в фирменный терракотовый — картинка
-используется как фон, весь текст (бейдж/цена/даты) рисует React поверх
-через .promo-banner-overlay, поэтому сюда текст не добавляем.
+Cover-resize до 1600×640 (широкий формат баннера) + лёгкая фирменная
+тонировка. Текст (бейдж/цена/даты) поверх рисует React через
+.promo-banner-overlay, поэтому сюда текст не добавляем.
 
 Запуск: cd backend && .venv/bin/python scripts/generate_promo_banners.py
 """
 
+import os
+import sys
 from pathlib import Path
-from PIL import Image, ImageEnhance
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+import django  # noqa: E402
+django.setup()
+
+from PIL import Image, ImageEnhance  # noqa: E402
+from apps.builds.models import Build  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-MEDIA = ROOT / "media" / "builds"
 OUT = ROOT / "apps" / "promotions" / "seed_assets"
 
 W, H = 1600, 640
 BRAND = (184, 90, 53)
 
-SOURCES = {
-    "akciya-1-euro-86b.jpg": "3_lFYZeVl.jpg",
-    "akciya-2-euro-136b.jpg": "1_x6Zc1y6.jpg",
+# out filename -> build slug
+TARGETS = {
+    "akciya-1-euro-86b.jpg": "odnoetazhnyj-dom-euro-86b",
+    "akciya-2-euro-136b.jpg": "dvuhetazhnyj-dom-euro-136b-s-balkonom",
 }
 
 
@@ -40,25 +49,32 @@ def cover_resize(src: Image.Image, w: int, h: int) -> Image.Image:
 
 
 def warm_tone(img: Image.Image) -> Image.Image:
-    """Лёгкая терракотовая тонировка + чуть выше контраст/насыщенность —
-    чтобы фото читалось как часть фирменного дизайна, а не случайный кадр."""
+    """Лёгкая терракотовая тонировка + чуть выше контраст/насыщенность."""
     img = ImageEnhance.Contrast(img).enhance(1.06)
     img = ImageEnhance.Color(img).enhance(1.08)
-
     overlay = Image.new("RGBA", img.size, (*BRAND, 26))
     return Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    for out_name, src_name in SOURCES.items():
-        src_path = MEDIA / src_name
-        img = Image.open(src_path).convert("RGB")
+    for out_name, slug in TARGETS.items():
+        build = Build.objects.filter(slug=slug).first()
+        if not build:
+            print(f"  ✗ {slug}: Build не найден")
+            continue
+        cover = build.images.order_by("order", "id").first()
+        if not cover or not cover.image:
+            print(f"  ✗ {slug}: нет фото")
+            continue
+
+        img = Image.open(cover.image.path).convert("RGB")
         img = cover_resize(img, W, H)
         img = warm_tone(img)
+
         out_path = OUT / out_name
         img.save(out_path, "JPEG", quality=85, optimize=True, progressive=True)
-        print(f"  ✓ {out_path.relative_to(ROOT)}  ({out_path.stat().st_size // 1024} KB)")
+        print(f"  ✓ {out_path.relative_to(ROOT)}  ← {cover.image.name}  ({out_path.stat().st_size // 1024} KB)")
 
 
 if __name__ == "__main__":
