@@ -2,11 +2,11 @@
 фото дома, как оно выведено в каталоге (первое по полю order).
 
 Cover-resize до 1600×640 (широкий формат баннера) + лёгкая фирменная
-тонировка, фирменный лого-плашка слева сверху (как в og.png, но
-собрана из прозрачного logo.png — чтобы не тащить светлый фон og.png)
-и крупная надпись «АКЦИЯ» по центру с тенью — чтобы файл выглядел
-завершённым рекламным баннером сам по себе, независимо от того, что
-поверх него ещё рисует React (.promo-banner-overlay) на сайте.
+тонировка, компактный брендовый уголок слева сверху (лого-плашка +
+«Ремстрой» / «Строительство кирпичных домов», как в og.png, но из
+прозрачного logo.png — чтобы не тащить светлый фон og.png) и крупная
+надпись «АКЦИЯ» по центру с тенью — чтобы файл выглядел завершённым
+рекламным баннером сам по себе.
 
 Запуск: cd backend && .venv/bin/python scripts/generate_promo_banners.py
 """
@@ -32,6 +32,7 @@ W, H = 1600, 640
 BRAND = (184, 90, 53)
 
 FONT_BOLD = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+FONT_REG = "/System/Library/Fonts/Supplemental/Arial.ttf"
 
 # out filename -> build slug
 TARGETS = {
@@ -85,6 +86,40 @@ def make_logo_plate(size: int) -> Image.Image:
                 px[x, y] = (255, 255, 255, a)
     plate.paste(logo, (pad, pad), logo)
     return plate
+
+
+def draw_text_shadow(draw, xy, text, font, fill):
+    for ox, oy in ((2, 2), (3, 3)):
+        draw.text((xy[0] + ox, xy[1] + oy), text, fill=(0, 0, 0, 130), font=font)
+    draw.text(xy, text, fill=fill, font=font)
+
+
+def draw_brand_lockup(img: Image.Image, xy, logo_h: int):
+    """Лого + «Ремстрой» / «Строительство кирпичных домов» рядом —
+    компактный брендовый уголок, как в og.png, но меньше и с тенью
+    вместо светлой подложки (чтобы легко читалось на любом фото)."""
+    draw = ImageDraw.Draw(img, "RGBA")
+    title_font = ImageFont.truetype(FONT_BOLD, 40)
+    tagline_font = ImageFont.truetype(FONT_REG, 20)
+
+    title = "Ремстрой"
+    tagline = "Строительство кирпичных домов"
+
+    title_bbox = draw.textbbox((0, 0), title, font=title_font)
+    title_h = title_bbox[3] - title_bbox[1]
+    tagline_bbox = draw.textbbox((0, 0), tagline, font=tagline_font)
+    tagline_h = tagline_bbox[3] - tagline_bbox[1]
+
+    gap = 6
+    block_h = title_h + gap + tagline_h
+    text_x = xy[0]
+    text_top = xy[1] + (logo_h - block_h) / 2
+
+    title_y = text_top - title_bbox[1]
+    draw_text_shadow(draw, (text_x, title_y), title, title_font, (255, 255, 255, 255))
+
+    tagline_y = text_top + title_h + gap - tagline_bbox[1]
+    draw_text_shadow(draw, (text_x, tagline_y), tagline, tagline_font, (255, 255, 255, 225))
 
 
 def paste_with_shadow(base: Image.Image, layer: Image.Image, xy, blur=14, alpha=110):
@@ -146,10 +181,11 @@ def main():
         img = cover_resize(img, W, H)
         img = warm_tone(img).convert("RGBA")
 
-        logo_size = 116
+        logo_size = 72
         margin = 40
         plate = make_logo_plate(logo_size)
         paste_with_shadow(img, plate, (margin, margin))
+        draw_brand_lockup(img, (margin + logo_size + 18, margin), logo_size)
 
         draw_center_word(img, "АКЦИЯ")
 
