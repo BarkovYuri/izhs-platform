@@ -1,5 +1,16 @@
 export type BuildStatus = "planned" | "building" | "available" | "sold";
 
+export type PromoInfo = {
+  promotion_slug: string;
+  promotion_title: string;
+  badge_label: string;
+  promo_price: string;
+  starts_at: string;
+  ends_at: string;
+  contract_deadline: string | null;
+  terms: string;
+};
+
 export type BuildListItem = {
   title: string;
   slug: string;
@@ -16,6 +27,7 @@ export type BuildListItem = {
   plot_number: string;
   short_description: string;
   cover: string | null;
+  promo: PromoInfo | null;
 };
 
 export type ImageRef = { image: string; order: number };
@@ -187,6 +199,30 @@ export type BlogArticle = BlogArticleListItem & {
   meta_description: string;
   keywords: string;
   inline_images: BlogInlineImage[];
+};
+
+export type PromotionBuildItem = {
+  build_slug: string;
+  build_title: string;
+  build_cover: string | null;
+  original_price: string;
+  promo_price: string;
+  discount_percent: number;
+};
+
+export type Promotion = {
+  title: string;
+  slug: string;
+  badge_label: string;
+  banner_title: string;
+  banner_subtitle: string;
+  banner_image: string | null;
+  terms: string;
+  contract_deadline: string | null;
+  starts_at: string;
+  ends_at: string;
+  is_active: boolean;
+  builds: PromotionBuildItem[];
 };
 
 export type LeadPayload = {

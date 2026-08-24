@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "apps.leads.apps.LeadsConfig",
     "apps.portfolio.apps.PortfolioConfig",
     "apps.blog.apps.BlogConfig",
+    "apps.promotions.apps.PromotionsConfig",
 ]
 
 SITE_NAME = "Ремстрой"
@@ -270,6 +271,7 @@ UNFOLD = {
                 "separator": True,
                 "items": [
                     {"title": "Проекты домов", "icon": "home_work", "link": "/admin/builds/build/"},
+                    {"title": "Акции", "icon": "local_offer", "link": "/admin/promotions/promotion/"},
                     {"title": "Реализованные объекты", "icon": "photo_library", "link": "/admin/portfolio/portfolioitem/"},
                     {"title": "Заявки клиентов", "icon": "inbox", "link": "/admin/leads/lead/"},
                     {"title": "Вопросы и ответы", "icon": "help", "link": "/admin/faq/faqitem/"},

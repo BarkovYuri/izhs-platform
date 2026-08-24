@@ -4,6 +4,7 @@ import { ArrowRight, Bed, Building2, Maximize2 } from "lucide-react";
 import type { BuildListItem } from "@/types/api";
 import { formatArea, formatPrice } from "@/lib/utils";
 import { resolveMediaUrl } from "@/services/api";
+import PromoBadge from "@/components/PromoBadge";
 
 const STATUS_BADGE: Record<string, string> = {
   available: "badge-olive",
@@ -42,6 +43,7 @@ export default function BuildCard({ b }: { b: BuildListItem }) {
           {b.is_typical && (
             <span className="badge badge-brand !text-[11px] !py-0.5 !px-2">Типовой</span>
           )}
+          {b.promo && <PromoBadge label={b.promo.badge_label} />}
         </div>
       </div>
 
@@ -79,9 +81,20 @@ export default function BuildCard({ b }: { b: BuildListItem }) {
             <div className="text-[10.5px] sm:text-[11px] text-[var(--rs-muted)] uppercase tracking-wide leading-none">
               Цена от
             </div>
-            <div className="font-extrabold text-[17px] sm:text-[20px] text-[var(--rs-ink)] leading-tight whitespace-nowrap">
-              {formatPrice(b.price)}
-            </div>
+            {b.promo ? (
+              <div className="leading-tight">
+                <span className="price-old text-[12px] sm:text-[13px] mr-1.5 whitespace-nowrap">
+                  {formatPrice(b.price)}
+                </span>
+                <div className="font-extrabold text-[17px] sm:text-[20px] text-[var(--rs-brand)] leading-tight whitespace-nowrap">
+                  {formatPrice(b.promo.promo_price)}
+                </div>
+              </div>
+            ) : (
+              <div className="font-extrabold text-[17px] sm:text-[20px] text-[var(--rs-ink)] leading-tight whitespace-nowrap">
+                {formatPrice(b.price)}
+              </div>
+            )}
           </div>
           <span className="inline-flex items-center gap-1 text-[var(--rs-brand)] font-bold text-[13px] shrink-0">
             <span className="hidden sm:inline">Подробнее</span>

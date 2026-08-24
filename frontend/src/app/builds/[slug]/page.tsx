@@ -7,8 +7,10 @@ import FaqAccordion from "@/components/FaqAccordion";
 import Gallery from "@/components/Gallery";
 import BuildSpecsTabs from "@/components/BuildSpecsTabs";
 import LeadForm from "@/components/LeadForm";
-import { getBuild, getSettings, resolveMediaUrl } from "@/services/api";
-import { formatArea, formatPrice } from "@/lib/utils";
+import PromoBadge from "@/components/PromoBadge";
+import PromoCarousel from "@/components/PromoCarousel";
+import { getBuild, getPromotions, getSettings, resolveMediaUrl } from "@/services/api";
+import { formatArea, formatDate, formatPrice } from "@/lib/utils";
 import { faqPageJsonLd, SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -69,9 +71,10 @@ export async function generateMetadata(
 
 export default async function BuildPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [b, s] = await Promise.all([
+  const [b, s, promotions] = await Promise.all([
     getBuild(slug).catch(() => null),
     getSettings(),
+    getPromotions(),
   ]);
   if (!b) notFound();
 
@@ -101,7 +104,7 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
     category: "Дом",
     offers: {
       "@type": "Offer",
-      price: b.price,
+      price: b.promo ? b.promo.promo_price : b.price,
       priceCurrency: "RUB",
       availability: STATUS_AVAILABILITY[b.status] || "https://schema.org/PreOrder",
       url: `${SITE_URL}/builds/${b.slug}`,
@@ -139,6 +142,7 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             {b.plot_number && (
               <span className="badge"><Hash size={12} /> Участок {b.plot_number}</span>
             )}
+            {b.promo && <PromoBadge label={b.promo.badge_label} />}
           </div>
 
           <h1
@@ -250,6 +254,9 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
         <aside className="lg:sticky lg:top-24 self-start min-w-0">
           <div className="card-rs p-5 sm:p-6">
             <div className="text-[12px] text-[var(--rs-muted)] uppercase tracking-wide">Цена от</div>
+            {b.promo && (
+              <div className="price-old text-[15px] mt-1">{formatPrice(b.price)}</div>
+            )}
             <div
               className="font-extrabold text-[var(--rs-brand)] leading-none"
               style={{
@@ -258,11 +265,19 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
                 overflowWrap: "anywhere",
               }}
             >
-              {formatPrice(b.price)}
+              {formatPrice(b.promo ? b.promo.promo_price : b.price)}
             </div>
-            <div className="text-[12px] text-[var(--rs-muted)] mt-2">
-              Финальная стоимость зависит от участка, доработок и комплектации.
-            </div>
+            {b.promo ? (
+              <div className="text-[12px] text-[var(--rs-brand-2)] font-semibold mt-2">
+                Акция «{b.promo.promotion_title}» — при заключении договора
+                {b.promo.contract_deadline ? ` до ${formatDate(b.promo.contract_deadline)}` : ""}.
+                Действует до {formatDate(b.promo.ends_at)}.
+              </div>
+            ) : (
+              <div className="text-[12px] text-[var(--rs-muted)] mt-2">
+                Финальная стоимость зависит от участка, доработок и комплектации.
+              </div>
+            )}
             <div className="mt-5 border-t border-[var(--rs-line)] pt-5">
               <h3 className="font-extrabold text-[16px] mb-3">Получить расчёт</h3>
               <LeadForm source="project" buildId={undefined} buildTitle={b.title} compact />
@@ -270,6 +285,8 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
           </div>
         </aside>
       </div>
+
+      <PromoCarousel promotions={promotions} />
 
       <script
         type="application/ld+json"

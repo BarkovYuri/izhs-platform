@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       { protocol: "http", hostname: "localhost", port: "8000" },
     ],
     formats: ["image/avif", "image/webp"],
+    qualities: [70, 75],
   },
 };
 

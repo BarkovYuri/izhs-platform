@@ -225,6 +225,32 @@ body {
 .badge-olive { background: rgba(91,107,65,0.10); color: var(--rs-olive); border-color: rgba(91,107,65,0.20); }
 .badge-gold  { background: rgba(201,163,94,0.15); color: #8a6926; border-color: rgba(201,163,94,0.30); }
 .badge-muted { background: rgba(31,28,24,0.05); color: var(--rs-muted); }
+.badge-promo {
+  background: linear-gradient(135deg, var(--rs-brand), var(--rs-gold));
+  color: #fff;
+  border-color: transparent;
+  font-weight: 700;
+  animation: promo-pulse 2.2s ease-in-out infinite;
+}
+@keyframes promo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184,90,53,0.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(184,90,53,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge-promo { animation: none; }
+}
+
+.promo-banner {
+  background: linear-gradient(120deg, var(--rs-brand-2) 0%, var(--rs-brand) 55%, var(--rs-gold) 130%);
+  color: #fff;
+  border-radius: var(--rs-radius);
+  box-shadow: var(--rs-shadow);
+}
+.price-old {
+  text-decoration: line-through;
+  color: var(--rs-muted);
+  font-weight: 600;
+}
 
 .h-display { font-family: var(--font-manrope), var(--font-inter), system-ui, sans-serif; letter-spacing: -0.02em; line-height: 1.05; }
 

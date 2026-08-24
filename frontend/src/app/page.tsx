@@ -10,12 +10,14 @@ import LeadForm from "@/components/LeadForm";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import PortfolioCard from "@/components/PortfolioCard";
-import { getBuilds, getFaq, getPageContent, getPortfolio, getSettings } from "@/services/api";
+import PromoBanner from "@/components/PromoBanner";
+import PromoCarousel from "@/components/PromoCarousel";
+import { getBuilds, getFaq, getPageContent, getPortfolio, getPromotions, getSettings } from "@/services/api";
 import { organizationJsonLd } from "@/lib/seo";
 
 export default async function HomePage() {
-  const [s, builds, faq, portfolio, homePageContent] = await Promise.all([
-    getSettings(), getBuilds(), getFaq(), getPortfolio(), getPageContent("home"),
+  const [s, builds, faq, portfolio, homePageContent, promotions] = await Promise.all([
+    getSettings(), getBuilds(), getFaq(), getPortfolio(), getPageContent("home"), getPromotions(),
   ]);
   // На главную показываем только проекты с флагом is_featured.
   // Если ни один проект не отмечен — fallback на первые 6, чтобы блок не был пустым.
@@ -27,6 +29,7 @@ export default async function HomePage() {
     <>
       <JsonLd data={organizationJsonLd(s)} />
       <Hero s={s} pageContent={homePageContent} />
+      <PromoBanner promotion={promotions[0]} />
 
       <section className="section">
         <div className="container-rs">
@@ -159,6 +162,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <PromoCarousel promotions={promotions} />
     </>
   );
 }

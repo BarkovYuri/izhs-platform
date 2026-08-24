@@ -20,3 +20,9 @@ export function formatArea(value: number | string): string {
 export function formatPhoneHref(phone: string): string {
   return "tel:" + phone.replace(/[^+\d]/g, "");
 }
+
+export function formatDate(value: string): string {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" }).format(d);
+}

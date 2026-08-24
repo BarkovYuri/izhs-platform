@@ -5,7 +5,8 @@ import { ArrowRight } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import BuildFiltersBar from "@/components/BuildFiltersBar";
 import JsonLd from "@/components/JsonLd";
-import { getBuildFilters, getBuilds, getPageContent } from "@/services/api";
+import PromoCarousel from "@/components/PromoCarousel";
+import { getBuildFilters, getBuilds, getPageContent, getPromotions } from "@/services/api";
 import { buildsCatalogJsonLd } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
 import { FILTER_DEFS, FILTER_GROUPS, FILTER_TYPES } from "@/lib/buildFilters";
@@ -42,10 +43,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BuildsPage() {
-  const [builds, pc, filterContents] = await Promise.all([
+  const [builds, pc, filterContents, promotions] = await Promise.all([
     getBuilds(),
     getPageContent("builds"),
     getBuildFilters(),
+    getPromotions(),
   ]);
   const kicker = pickText(pc, "kicker", FALLBACK_KICKER);
   const title = pickText(pc, "title", FALLBACK_TITLE);
@@ -58,6 +60,7 @@ export default async function BuildsPage() {
   };
 
   return (
+    <>
     <div className="container-rs py-10 sm:py-14">
       <JsonLd data={buildsCatalogJsonLd(builds)} />
       <Breadcrumbs items={[{ label: "Проекты домов" }]} />
@@ -114,6 +117,9 @@ export default async function BuildsPage() {
         <BuildFiltersBar builds={builds} />
       </Suspense>
     </div>
+
+    <PromoCarousel promotions={promotions} />
+    </>
   );
 }
 

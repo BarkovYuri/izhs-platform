@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
-import { getArticles, getBlogCategories, getBuilds } from "@/services/api";
+import { getArticles, getBlogCategories, getBuilds, getPromotions } from "@/services/api";
 import { SITE_URL } from "@/lib/seo";
 import { FILTER_TYPES } from "@/lib/buildFilters";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [builds, articles, blogCategories] = await Promise.all([
+  const [builds, articles, blogCategories, promotions] = await Promise.all([
     getBuilds(),
     getArticles(),
     getBlogCategories(),
+    getPromotions(),
   ]);
   const now = new Date();
   // /privacy и /terms намеренно не включаем — у них noindex,
@@ -15,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/builds`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/akcii`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/portfolio`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${SITE_URL}/settlement`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
@@ -49,11 +51,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly",
     priority: 0.6,
   }));
+  const promotionRoutes: MetadataRoute.Sitemap = promotions.map((p) => ({
+    url: `${SITE_URL}/akcii/${p.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
   return [
     ...staticRoutes,
     ...buildRoutes,
     ...filterRoutes,
     ...articleRoutes,
     ...blogCategoryRoutes,
+    ...promotionRoutes,
   ];
 }

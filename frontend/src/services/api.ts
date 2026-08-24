@@ -1,7 +1,7 @@
 import type {
   BlogArticle, BlogArticleListItem, BlogCategory,
   BuildDetail, BuildFilterContent, BuildListItem, FaqCategory, LeadPayload,
-  PageContent, PageSlug, PortfolioItem, SiteSettings,
+  PageContent, PageSlug, PortfolioItem, Promotion, SiteSettings,
 } from "@/types/api";
 
 export const API_BASE =
@@ -55,6 +55,8 @@ export const getBlogCategories = () =>
   fetchJson<BlogCategory[]>("/api/categories/", undefined, []);
 export const getPortfolio = () => fetchJson<PortfolioItem[]>("/api/portfolio/", undefined, []);
 export const getBuild  = (slug: string) => fetchJson<BuildDetail>(`/api/builds/${slug}/`);
+export const getPromotions = () => fetchJson<Promotion[]>("/api/promotions/", undefined, []);
+export const getPromotion  = (slug: string) => fetchJson<Promotion>(`/api/promotions/${slug}/`);
 export const getFaq    = () => fetchJson<FaqCategory[]>("/api/faq/", undefined, []);
 export const getSettings = () => fetchJson<SiteSettings>("/api/settings/", undefined, {
   site_name: "Ремстрой",

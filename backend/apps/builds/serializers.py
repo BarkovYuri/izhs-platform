@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from .models import (
     Build,
@@ -49,13 +50,46 @@ COMMON_LIST_FIELDS = (
     "title", "slug", "area", "price", "floors", "bedrooms",
     "status", "is_typical", "is_featured",
     "available_in_settlement", "available_on_client_land",
-    "plot_number", "short_description",
+    "plot_number", "short_description", "promo",
 )
 
 
-class BuildListSerializer(serializers.ModelSerializer):
+class PromoFieldMixin:
+    """Отдаёт активную акцию дома (или null), если она есть.
+
+    Зависит от prefetch_related("promo_links__promotion") на queryset
+    вьюхи (см. apps/builds/views.py) — без него будет N+1 на список.
+    Импорт apps.promotions.models — не циклический: там Build подключён
+    строкой "builds.Build", а не прямым импортом.
+    """
+
+    def get_promo(self, obj: Build):
+        today = timezone.localdate()
+        best = None
+        for link in obj.promo_links.all():
+            p = link.promotion
+            if p.is_published and p.starts_at <= today <= p.ends_at:
+                if best is None or p.ends_at < best.promotion.ends_at:
+                    best = link
+        if best is None:
+            return None
+        p = best.promotion
+        return {
+            "promotion_slug": p.slug,
+            "promotion_title": p.title,
+            "badge_label": p.badge_label,
+            "promo_price": str(best.promo_price),
+            "starts_at": p.starts_at,
+            "ends_at": p.ends_at,
+            "contract_deadline": p.contract_deadline,
+            "terms": p.terms,
+        }
+
+
+class BuildListSerializer(PromoFieldMixin, serializers.ModelSerializer):
     cover = serializers.SerializerMethodField()
     status_label = serializers.CharField(source="get_status_display", read_only=True)
+    promo = serializers.SerializerMethodField()
 
     class Meta:
         model = Build
@@ -66,7 +100,7 @@ class BuildListSerializer(serializers.ModelSerializer):
         return first.image.url if first else None
 
 
-class BuildDetailSerializer(serializers.ModelSerializer):
+class BuildDetailSerializer(PromoFieldMixin, serializers.ModelSerializer):
     images = ImgSerializer(many=True, read_only=True)
     floor_plans = FloorPlanSerializer(many=True, read_only=True, source="floors_images")
     facades = FacadeSerializer(many=True, read_only=True)
@@ -78,6 +112,7 @@ class BuildDetailSerializer(serializers.ModelSerializer):
     specs_layout = serializers.SerializerMethodField()
     specs_struct = serializers.SerializerMethodField()
     faq_items = serializers.SerializerMethodField()
+    promo = serializers.SerializerMethodField()
 
     class Meta:
         model = Build

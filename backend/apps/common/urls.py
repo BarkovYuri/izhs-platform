@@ -20,6 +20,7 @@ urlpatterns = [
         name="build-filters",
     ),
     path("", include("apps.builds.urls")),
+    path("", include("apps.promotions.urls")),
     path("", include("apps.leads.urls")),
     path("", include("apps.faq.urls")),
     path("", include("apps.portfolio.urls")),
