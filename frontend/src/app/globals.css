@@ -246,8 +246,8 @@ body {
   border-radius: var(--rs-radius);
   box-shadow: var(--rs-shadow);
 }
-.promo-banner-overlay {
-  background: linear-gradient(100deg, rgba(31,20,12,0.90) 0%, rgba(140,65,38,0.80) 45%, rgba(92,41,22,0.62) 100%);
+.promo-banner-bottom-overlay {
+  background: linear-gradient(to top, rgba(20,14,10,0.90) 0%, rgba(20,14,10,0.55) 32%, rgba(20,14,10,0) 62%);
 }
 .price-old {
   text-decoration: line-through;
