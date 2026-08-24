@@ -24,7 +24,11 @@ export default function PromoBanner({ promotions }: { promotions: Promotion[] })
   const slideWidth = 100 / itemsPerView;
 
   return (
-    <section className="container-rs pt-8 sm:pt-12">
+    // Без container-rs — секция растянута на всю ширину сайта, как Hero
+    // над ней (у той тот же приём: контейнер только у контента внутри,
+    // не у самой section). px вместо него — небольшой отступ от края
+    // экрана, чтобы скруглённые углы карточек не упирались в него.
+    <section className="px-3 sm:px-6 lg:px-10 pt-8 sm:pt-12">
       <div
         className="relative"
         onMouseEnter={() => setPaused(true)}
@@ -39,7 +43,7 @@ export default function PromoBanner({ promotions }: { promotions: Promotion[] })
             onTransitionEnd={handleTransitionEnd}
           >
             {extended.map((p, i) => (
-              <div key={`${p.slug}-${i}`} className="shrink-0 px-1.5 sm:px-2" style={{ width: `${slideWidth}%` }}>
+              <div key={`${p.slug}-${i}`} className="shrink-0 px-2 sm:px-3" style={{ width: `${slideWidth}%` }}>
                 <PromoBannerSlide promotion={p} />
               </div>
             ))}
