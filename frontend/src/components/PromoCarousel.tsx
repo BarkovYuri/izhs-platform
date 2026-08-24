@@ -1,29 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Promotion } from "@/types/api";
 import PromoCard from "@/components/PromoCard";
-
-const AUTOPLAY_MS = 5000;
+import { useItemsPerView, useLoopCarousel } from "@/lib/useLoopCarousel";
 
 export default function PromoCarousel({ promotions }: { promotions: Promotion[] }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const rawItemsPerView = useItemsPerView();
   const count = promotions.length;
+  const itemsPerView = Math.max(1, Math.min(rawItemsPerView, count || 1));
 
-  const go = (delta: number) => {
-    setIndex((i) => (count === 0 ? 0 : (i + delta + count) % count));
-  };
-
-  useEffect(() => {
-    if (count <= 1 || paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % count), AUTOPLAY_MS);
-    return () => clearInterval(id);
-  }, [count, paused]);
+  const {
+    index, noTransition, setPaused,
+    goNext, goPrev, goTo, handleTransitionEnd, activeDot, canLoop,
+  } = useLoopCarousel(count, itemsPerView);
 
   if (count === 0) return null;
+
+  const extended = canLoop ? [...promotions, ...promotions.slice(0, itemsPerView)] : promotions;
+  const slideWidth = 100 / itemsPerView;
 
   return (
     <section className="section">
@@ -35,12 +30,12 @@ export default function PromoCarousel({ promotions }: { promotions: Promotion[] 
             </div>
             <h2 className="h-display mt-2 text-[28px] sm:text-[36px] font-extrabold">Акции</h2>
           </div>
-          {count > 1 && (
+          {canLoop && (
             <div className="hidden sm:flex items-center gap-2">
-              <CarouselButton onClick={() => go(-1)} label="Предыдущая акция">
+              <CarouselButton onClick={goPrev} label="Предыдущая акция">
                 <ChevronLeft size={18} />
               </CarouselButton>
-              <CarouselButton onClick={() => go(1)} label="Следующая акция">
+              <CarouselButton onClick={goNext} label="Следующая акция">
                 <ChevronRight size={18} />
               </CarouselButton>
             </div>
@@ -55,31 +50,30 @@ export default function PromoCarousel({ promotions }: { promotions: Promotion[] 
           onBlur={() => setPaused(false)}
         >
           <div
-            className="flex transition-transform duration-500 ease-out"
-            style={{ transform: `translateX(-${index * 100}%)` }}
+            className={`flex ${noTransition ? "" : "transition-transform duration-500 ease-out"}`}
+            style={{ transform: `translateX(-${index * slideWidth}%)` }}
+            onTransitionEnd={handleTransitionEnd}
           >
-            {promotions.map((p) => (
-              <div key={p.slug} className="w-full shrink-0 px-1">
-                <div className="max-w-xl mx-auto sm:mx-0">
-                  <PromoCard promotion={p} />
-                </div>
+            {extended.map((p, i) => (
+              <div key={`${p.slug}-${i}`} className="shrink-0 px-1.5 sm:px-2" style={{ width: `${slideWidth}%` }}>
+                <PromoCard promotion={p} />
               </div>
             ))}
           </div>
         </div>
 
-        {count > 1 && (
+        {canLoop && (
           <div className="mt-6 flex items-center justify-center gap-2">
             {promotions.map((p, i) => (
               <button
                 key={p.slug}
                 type="button"
                 aria-label={`Показать акцию «${p.title}»`}
-                onClick={() => setIndex(i)}
+                onClick={() => goTo(i)}
                 className="h-2 rounded-full transition-all"
                 style={{
-                  width: i === index ? 24 : 8,
-                  background: i === index ? "var(--rs-brand)" : "var(--rs-line)",
+                  width: i === activeDot ? 24 : 8,
+                  background: i === activeDot ? "var(--rs-brand)" : "var(--rs-line)",
                 }}
               />
             ))}

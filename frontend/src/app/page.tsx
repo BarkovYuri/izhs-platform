@@ -29,7 +29,7 @@ export default async function HomePage() {
     <>
       <JsonLd data={organizationJsonLd(s)} />
       <Hero s={s} pageContent={homePageContent} />
-      <PromoBanner promotion={promotions[0]} />
+      <PromoBanner promotions={promotions} />
 
       <section className="section">
         <div className="container-rs">
