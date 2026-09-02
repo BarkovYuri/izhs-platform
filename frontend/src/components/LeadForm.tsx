@@ -15,11 +15,18 @@ export default function LeadForm({
   buildId,
   buildTitle,
   compact = false,
+  mortgageAnchor,
 }: {
   source?: Source;
   buildId?: number;
   buildTitle?: string;
   compact?: boolean;
+  /** Если рядом на этой же странице уже есть калькулятор ипотеки (например
+   * карточка дома) — передайте якорь на его id ("#ipoteka-calc"), и ссылка
+   * просто проскроллит вниз вместо перехода на отдельную страницу /ipoteka
+   * с потерей контекста конкретного дома. Без этого пропа — обычная
+   * ссылка на /ipoteka. */
+  mortgageAnchor?: string;
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -30,7 +37,8 @@ export default function LeadForm({
   const [state, setState] = useState<"idle" | "loading" | "ok" | "error">("idle");
   const [errorText, setErrorText] = useState("");
   const pathname = usePathname();
-  const showMortgageLink = !pathname?.startsWith("/ipoteka");
+  const mortgageHref = mortgageAnchor || "/ipoteka";
+  const showMortgageLink = mortgageAnchor ? true : !pathname?.startsWith("/ipoteka");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -144,7 +152,7 @@ export default function LeadForm({
       </button>
       {showMortgageLink && (
         <Link
-          href="/ipoteka"
+          href={mortgageHref}
           className="inline-flex items-center justify-center gap-1.5 text-[13px] font-semibold text-[var(--rs-brand)] hover:underline"
         >
           <Calculator size={14} /> Рассчитать платёж по ипотеке

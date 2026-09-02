@@ -191,7 +191,7 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             <BuildSpecsTabs build={b} />
           </section>
 
-          <section className="mt-10">
+          <section id="ipoteka-calc" className="mt-10 scroll-mt-24">
             <div className="flex items-end justify-between gap-4 mb-5">
               <h2 className="h-display text-[24px] sm:text-[30px] font-extrabold">
                 Рассчитать ипотеку на этот дом
@@ -296,7 +296,13 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
             )}
             <div className="mt-5 border-t border-[var(--rs-line)] pt-5">
               <h3 className="font-extrabold text-[16px] mb-3">Получить расчёт</h3>
-              <LeadForm source="project" buildId={undefined} buildTitle={b.title} compact />
+              <LeadForm
+                source="project"
+                buildId={undefined}
+                buildTitle={b.title}
+                compact
+                mortgageAnchor="#ipoteka-calc"
+              />
             </div>
           </div>
         </aside>

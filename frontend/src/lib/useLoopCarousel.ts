@@ -40,9 +40,9 @@ export function useLoopCarousel(count: number, itemsPerView: number, autoplayMs 
   useEffect(() => {
     if (!canLoop || paused) return;
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setIndex((i) => i + 1), autoplayMs);
+    const id = setInterval(() => setIndex((i) => Math.min(i + 1, count)), autoplayMs);
     return () => clearInterval(id);
-  }, [canLoop, paused, autoplayMs]);
+  }, [canLoop, paused, autoplayMs, count]);
 
   useEffect(() => {
     if (!noTransition) return;
@@ -58,7 +58,11 @@ export function useLoopCarousel(count: number, itemsPerView: number, autoplayMs 
   };
 
   const goNext = () => {
-    if (canLoop) setIndex((i) => i + 1);
+    // Клэмп на count — без него быстрые повторные клики уводили index
+    // за пределы клонированного «хвоста» массива (длина count+itemsPerView)
+    // быстрее, чем успевал сработать onTransitionEnd со сбросом на 0.
+    // Рендерился несуществующий элемент — карусель выглядела пустой.
+    if (canLoop) setIndex((i) => Math.min(i + 1, count));
   };
 
   const goPrev = () => {
