@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { CheckCircle2, Calculator, Loader2 } from "lucide-react";
 import PrivacyLink from "@/components/PrivacyLink";
 import { createLead } from "@/services/api";
 import type { LeadPayload } from "@/types/api";
@@ -27,6 +29,8 @@ export default function LeadForm({
   const [agree, setAgree] = useState(true);
   const [state, setState] = useState<"idle" | "loading" | "ok" | "error">("idle");
   const [errorText, setErrorText] = useState("");
+  const pathname = usePathname();
+  const showMortgageLink = !pathname?.startsWith("/ipoteka");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -138,6 +142,14 @@ export default function LeadForm({
         {state === "loading" ? <Loader2 size={16} className="animate-spin" /> : null}
         {state === "loading" ? "Отправляем…" : "Отправить заявку"}
       </button>
+      {showMortgageLink && (
+        <Link
+          href="/ipoteka"
+          className="inline-flex items-center justify-center gap-1.5 text-[13px] font-semibold text-[var(--rs-brand)] hover:underline"
+        >
+          <Calculator size={14} /> Рассчитать платёж по ипотеке
+        </Link>
+      )}
     </form>
   );
 }

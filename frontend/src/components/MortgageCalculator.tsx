@@ -6,7 +6,7 @@ import { formatPrice } from "@/lib/utils";
 const DEFAULT_PRICE = 8_500_000;
 const DEFAULT_DOWN_PERCENT = 20;
 const DEFAULT_RATE = 8; // семейная ипотека — частый сценарий для этой аудитории
-const DEFAULT_YEARS = 20;
+const DEFAULT_YEARS = 30; // максимальный срок — минимальный платёж, меньше пугает с порога
 
 function annuityPayment(principal: number, annualRatePercent: number, months: number): number {
   if (principal <= 0 || months <= 0) return 0;
@@ -28,18 +28,15 @@ export default function MortgageCalculator({
   const [years, setYears] = useState(DEFAULT_YEARS);
   const [rate, setRate] = useState(DEFAULT_RATE);
 
-  const { downPayment, principal, monthlyPayment, overpayment, totalPaid } = useMemo(() => {
+  const { downPayment, principal, monthlyPayment } = useMemo(() => {
     const down = Math.round((price * downPercent) / 100);
     const loan = Math.max(price - down, 0);
     const months = years * 12;
     const monthly = annuityPayment(loan, rate, months);
-    const total = monthly * months;
     return {
       downPayment: down,
       principal: loan,
       monthlyPayment: monthly,
-      overpayment: Math.max(total - loan, 0),
-      totalPaid: total,
     };
   }, [price, downPercent, years, rate]);
 
@@ -95,7 +92,7 @@ export default function MortgageCalculator({
         </Field>
       </div>
 
-      <div className="mt-6 sm:mt-8 pt-6 border-t border-[var(--rs-line)] grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 sm:mt-8 pt-6 border-t border-[var(--rs-line)] grid gap-4 sm:grid-cols-2">
         <div>
           <div className="text-[11px] uppercase tracking-wide text-[var(--rs-muted)]">Платёж в месяц</div>
           <div
@@ -108,14 +105,6 @@ export default function MortgageCalculator({
         <div>
           <div className="text-[11px] uppercase tracking-wide text-[var(--rs-muted)]">Сумма кредита</div>
           <div className="font-bold text-[18px] sm:text-[20px]">{formatPrice(principal)}</div>
-        </div>
-        <div>
-          <div className="text-[11px] uppercase tracking-wide text-[var(--rs-muted)]">Переплата за весь срок</div>
-          <div className="font-bold text-[18px] sm:text-[20px]">{formatPrice(Math.round(overpayment))}</div>
-        </div>
-        <div>
-          <div className="text-[11px] uppercase tracking-wide text-[var(--rs-muted)]">Итого выплачено</div>
-          <div className="font-bold text-[18px] sm:text-[20px]">{formatPrice(Math.round(totalPaid))}</div>
         </div>
       </div>
 
