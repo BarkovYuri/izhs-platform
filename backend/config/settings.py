@@ -150,7 +150,19 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
-    X_FRAME_OPTIONS = "DENY"
+    # nginx (infra/nginx/conf.d/remstroy.conf) уже проставляет
+    # X-Frame-Options: SAMEORIGIN на все ответы сайта — держим то же
+    # значение здесь, иначе браузер получает два разных заголовка
+    # (Django DENY + nginx SAMEORIGIN) на /api/-эндпоинтах.
+    X_FRAME_OPTIONS = "SAMEORIGIN"
+    # Django 4+ по умолчанию сам добавляет Cross-Origin-Opener-Policy:
+    # same-origin на все ответы SecurityMiddleware. На чистых
+    # API/фид-эндпоинтах (например /api/feeds/realty.xml, который
+    # должны свободно открывать боты и сам пользователь в браузере по
+    # прямой ссылке) это приводило к ERR_BLOCKED_BY_RESPONSE при
+    # прямом переходе — отключаем, фронтенд-страницы этот заголовок
+    # никогда не получали (их отдаёт Next.js, не Django).
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 # ---- Object storage (Timeweb S3 / любой S3-совместимый) ----
 USE_S3 = env.bool("USE_S3", default=False)
