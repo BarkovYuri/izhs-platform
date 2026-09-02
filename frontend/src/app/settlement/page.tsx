@@ -8,7 +8,7 @@ import LeadForm from "@/components/LeadForm";
 import RichText from "@/components/RichText";
 import ZoomableImage from "@/components/ZoomableImage";
 import { getBuilds, getPageContent, getSettings, resolveMediaUrl } from "@/services/api";
-import { settlementJsonLd } from "@/lib/seo";
+import { settlementJsonLd, withBrand } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
 import { getVideoEmbedUrl } from "@/lib/video";
 
@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
   const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
   return {
-    title,
+    title: withBrand(title),
     description,
     alternates: { canonical: "/settlement" },
     openGraph: {
@@ -128,7 +128,7 @@ export default async function SettlementPage() {
           <h2 className="h-display text-[22px] sm:text-[28px] font-extrabold mb-5">
             Фотографии ЖК
           </h2>
-          <Gallery items={photos} />
+          <Gallery items={photos} title={`ЖК «${s.settlement_name}»`} />
         </section>
       )}
 

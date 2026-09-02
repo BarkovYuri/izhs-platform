@@ -7,7 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import LeadForm from "@/components/LeadForm";
 import { getPromotion, resolveMediaUrl } from "@/services/api";
 import { formatDate, formatPrice } from "@/lib/utils";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -18,7 +18,7 @@ export async function generateMetadata(
   const { slug } = await params;
   try {
     const p = await getPromotion(slug);
-    const title = `${p.title} — акция на кирпичные дома`;
+    const title = withBrand(`${p.title} — акция`);
     const description = p.terms.length > 160 ? p.terms.slice(0, 157).replace(/\s+\S*$/, "") + "…" : p.terms;
     return {
       title,
@@ -28,7 +28,7 @@ export async function generateMetadata(
       twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
     };
   } catch {
-    return { title: "Акция" };
+    return { title: withBrand("Акция") };
   }
 }
 

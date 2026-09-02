@@ -14,6 +14,7 @@ import {
   getFilter,
 } from "@/lib/buildFilters";
 import type { BuildFilterContent } from "@/types/api";
+import { withBrand } from "@/lib/seo";
 
 /** Берём поле из админки, иначе fallback из кода. Пустую строку считаем «нет». */
 function pick(
@@ -41,7 +42,7 @@ export async function generateMetadata(
   const def = getFilter(type);
   if (!def) return {};
   const overrides = (await getBuildFilters()).find((f) => f.slug === def.slug);
-  const metaTitle = pick(overrides, "meta_title", def.metaTitle);
+  const metaTitle = withBrand(pick(overrides, "meta_title", def.metaTitle));
   const metaDescription = pick(overrides, "meta_description", def.metaDescription);
   const url = `/builds/filtr/${def.slug}`;
   return {

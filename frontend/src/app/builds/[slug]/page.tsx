@@ -11,7 +11,7 @@ import PromoBadge from "@/components/PromoBadge";
 import PromoCarousel from "@/components/PromoCarousel";
 import { getBuild, getPromotions, getSettings, resolveMediaUrl } from "@/services/api";
 import { formatArea, formatDate, formatPrice } from "@/lib/utils";
-import { faqPageJsonLd, SITE_URL } from "@/lib/seo";
+import { faqPageJsonLd, SITE_URL, withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -47,7 +47,7 @@ export async function generateMetadata(
         : fullDescription;
     const ogImage = b.cover ? resolveMediaUrl(b.cover) : "/og.png";
     return {
-      title: `${b.title} — кирпичный дом ${formatArea(b.area)}`,
+      title: withBrand(`${b.title} — кирпичный дом ${formatArea(b.area)}`),
       description,
       alternates: { canonical: `${SITE_URL}/builds/${b.slug}` },
       openGraph: {
@@ -65,7 +65,7 @@ export async function generateMetadata(
       },
     };
   } catch {
-    return { title: "Проект дома" };
+    return { title: withBrand("Проект дома") };
   }
 }
 
@@ -174,7 +174,7 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
           {/* Галерея в пределах контейнера (никаких отрицательных margin'ов —
               они вызывали horizontal overflow на iPhone Safari → авто-zoom). */}
           <div className="mt-5 sm:mt-8">
-            <Gallery items={b.images} />
+            <Gallery items={b.images} title={b.title} />
           </div>
 
           {b.description && (

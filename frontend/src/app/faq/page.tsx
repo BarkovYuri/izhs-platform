@@ -4,7 +4,7 @@ import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
 import { getFaq, getPageContent } from "@/services/api";
-import { faqPageJsonLd } from "@/lib/seo";
+import { faqPageJsonLd, withBrand } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
 
 // Не кэшируем — FAQ редактируется в админке, должен обновляться сразу.
@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
   const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
   return {
-    title,
+    title: withBrand(title),
     description,
     alternates: { canonical: "/faq" },
     openGraph: {

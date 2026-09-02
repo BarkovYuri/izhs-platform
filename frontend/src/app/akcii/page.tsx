@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import PromoCard from "@/components/PromoCard";
 import { getPromotions } from "@/services/api";
+import { withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -9,7 +10,7 @@ export const revalidate = 0;
 const TITLE = "Акции на кирпичные дома";
 const SUBTITLE =
   "Дома со сниженной ценой при заключении договора строительного подряда в отведённый срок. Акции ограничены по времени.";
-const META_TITLE = "Акции на кирпичные дома в Томске | Ремстрой";
+const META_TITLE = withBrand("Акции на кирпичные дома в Томске");
 const META_DESCRIPTION =
   "Действующие акции на типовые проекты кирпичных домов от застройщика Ремстрой. Сниженная цена при заключении договора в срок акции.";
 

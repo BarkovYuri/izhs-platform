@@ -6,22 +6,24 @@ import ArticleCard from "@/components/ArticleCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import JsonLd from "@/components/JsonLd";
 import { getArticles, getBlogCategories } from "@/services/api";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const TITLE = "Блог Ремстрой — статьи о строительстве, ипотеке и материалах";
+// Бренд не пишем сюда руками — withBrand() ниже добавляет «— Ремстрой»
+// ровно один раз при рендере title/openGraph/twitter.
+const TITLE = "Блог — статьи о строительстве, ипотеке и материалах";
 const DESCRIPTION =
   "Гайды по строительству кирпичных домов в Томске: как выбрать участок, " +
   "оформить ипотеку, какой кирпич использовать. Опыт застройщика «Ремстрой».";
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: withBrand(TITLE),
   description: DESCRIPTION,
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: TITLE,
+    title: withBrand(TITLE),
     description: DESCRIPTION,
     url: "/blog",
     type: "website",
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: TITLE,
+    title: withBrand(TITLE),
     description: DESCRIPTION,
     images: ["/og.png"],
   },

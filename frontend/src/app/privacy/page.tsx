@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import PrivacyContent from "@/components/PrivacyContent";
 import { getSettings } from "@/services/api";
+import { withBrand } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Политика обработки персональных данных",
+  title: withBrand("Политика обработки персональных данных"),
   description: "Политика в отношении обработки и защиты персональных данных пользователей сайта Ремстрой.",
   alternates: { canonical: "/privacy" },
   robots: { index: false, follow: true },

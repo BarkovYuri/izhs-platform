@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import ArticleCard from "@/components/ArticleCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getArticles, getBlogCategories } from "@/services/api";
+import { withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -18,7 +19,7 @@ export async function generateMetadata(
   const categories = await getBlogCategories();
   const cat = categories.find((c) => c.slug === slug);
   if (!cat) return {};
-  const title = `${cat.name} — статьи блога | Ремстрой`;
+  const title = withBrand(`${cat.name} — статьи блога`);
   const description =
     cat.description ||
     `Статьи в категории «${cat.name}» — блог застройщика «Ремстрой».`;

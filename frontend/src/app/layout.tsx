@@ -46,7 +46,11 @@ export async function generateMetadata(): Promise<Metadata> {
   if (s.google_verification) verification.google = s.google_verification;
 
   return {
-    title: { default: title, template: `%s — ${s.site_name}` },
+    // Без template: раньше «%s — Ремстрой» слепо приклеивался к любому
+    // дочернему title, даже если бренд там уже был вписан вручную —
+    // получалось «…Ремстрой — Ремстрой». Теперь каждая страница сама
+    // решает через withBrand() (см. lib/seo.ts).
+    title,
     description,
     metadataBase: new URL(SITE_URL),
     alternates: { canonical: "/" },

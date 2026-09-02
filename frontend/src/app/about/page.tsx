@@ -5,6 +5,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import LeadForm from "@/components/LeadForm";
 import { getPageContent, getSettings } from "@/services/api";
 import { pickText } from "@/lib/pageContent";
+import { withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -20,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
   const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
   return {
-    title,
+    title: withBrand(title),
     description,
     alternates: { canonical: "/about" },
     openGraph: {

@@ -15,7 +15,7 @@ import {
   getSettings,
   resolveMediaUrl,
 } from "@/services/api";
-import { absoluteUrl, OG_IMAGE, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, OG_IMAGE, SITE_URL, withBrand } from "@/lib/seo";
 import type { BlogArticle } from "@/types/api";
 
 export const dynamic = "force-dynamic";
@@ -43,7 +43,7 @@ export async function generateMetadata(
   } catch {
     return {};
   }
-  const title = metaTitleFor(article);
+  const title = withBrand(metaTitleFor(article));
   const description = metaDescriptionFor(article);
   const cover = article.cover ? resolveMediaUrl(article.cover) : "/og.png";
   const url = `/blog/${article.slug}`;

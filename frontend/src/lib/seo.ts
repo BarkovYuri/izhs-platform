@@ -10,6 +10,21 @@ export function absoluteUrl(path: string): string {
 }
 
 /**
+ * Добавляет «— Ремстрой» к <title> ровно один раз. Раньше это делал
+ * template в layout.tsx («%s — Ремстрой»), но он слепо приклеивался
+ * даже к заголовкам, где бренд уже был вписан вручную («Блог Ремстрой…»,
+ * «…| Ремстрой», мета-title статьи из админки) — получалось «…Ремстрой
+ * — Ремстрой» в выдаче. Поэтому layout.tsx больше не использует
+ * template, а каждая страница сама зовёт withBrand() для <title>.
+ */
+export function withBrand(title: string, siteName = "Ремстрой"): string {
+  const t = title.trim();
+  if (!t) return siteName;
+  if (t.toLowerCase().includes(siteName.toLowerCase())) return t;
+  return `${t} — ${siteName}`;
+}
+
+/**
  * Преобразует часы работы из русского формата в Schema.org формат.
  * "Пн–Пт 10:00–18:00" → "Mo-Fr 10:00-18:00"
  * Возвращает оригинал если не смогли распарсить — Google всё равно

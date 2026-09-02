@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import TermsContent from "@/components/TermsContent";
 import { getSettings } from "@/services/api";
+import { withBrand } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Пользовательское соглашение",
+  title: withBrand("Пользовательское соглашение"),
   description: "Условия использования сайта Ремстрой и информации, размещённой на нём.",
   alternates: { canonical: "/terms" },
   robots: { index: false, follow: true },

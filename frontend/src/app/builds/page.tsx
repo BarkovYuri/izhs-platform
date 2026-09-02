@@ -7,7 +7,7 @@ import BuildFiltersBar from "@/components/BuildFiltersBar";
 import JsonLd from "@/components/JsonLd";
 import PromoCarousel from "@/components/PromoCarousel";
 import { getBuildFilters, getBuilds, getPageContent, getPromotions } from "@/services/api";
-import { buildsCatalogJsonLd } from "@/lib/seo";
+import { buildsCatalogJsonLd, withBrand } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
 import { FILTER_DEFS, FILTER_GROUPS, FILTER_TYPES } from "@/lib/buildFilters";
 
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
   const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
   return {
-    title,
+    title: withBrand(title),
     description,
     alternates: { canonical: "/builds" },
     openGraph: {

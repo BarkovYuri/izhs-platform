@@ -6,7 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import LeadForm from "@/components/LeadForm";
 import { getPageContent, getSettings } from "@/services/api";
 import { formatPhoneHref } from "@/lib/utils";
-import { localBusinessJsonLd } from "@/lib/seo";
+import { localBusinessJsonLd, withBrand } from "@/lib/seo";
 import { pickText } from "@/lib/pageContent";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
   const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
   return {
-    title,
+    title: withBrand(title),
     description,
     alternates: { canonical: "/contacts" },
     openGraph: {

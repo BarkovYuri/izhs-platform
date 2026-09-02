@@ -96,7 +96,7 @@ export default function PortfolioLightbox({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photos[idx]}
-                alt=""
+                alt={`${item.title} — фото ${idx + 1} из ${total}`}
                 className="w-full max-h-[78vh] object-contain rounded-lg select-none"
               />
               {total > 1 && (

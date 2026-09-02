@@ -6,7 +6,7 @@ import { resolveMediaUrl } from "@/services/api";
 
 type Item = { image: string; order: number };
 
-export default function Gallery({ items }: { items: Item[] }) {
+export default function Gallery({ items, title = "Фото" }: { items: Item[]; title?: string }) {
   const urls = useMemo(
     () =>
       items
@@ -59,7 +59,7 @@ export default function Gallery({ items }: { items: Item[] }) {
           <img
             key={src}
             src={src}
-            alt=""
+            alt={`${title} — фото ${i + 1} из ${total}`}
             loading={i < 3 ? "eager" : "lazy"}
             decoding="async"
             fetchPriority={i === idx ? "high" : "auto"}
@@ -136,7 +136,7 @@ export default function Gallery({ items }: { items: Item[] }) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={urls[idx]}
-              alt=""
+              alt={`${title} — фото ${idx + 1} из ${total}`}
               className="w-full max-h-[88vh] object-contain rounded-lg"
             />
             <button

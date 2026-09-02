@@ -5,7 +5,7 @@ import LeadForm from "@/components/LeadForm";
 import PortfolioCard from "@/components/PortfolioCard";
 import { getPageContent, getPortfolio, getSettings } from "@/services/api";
 import { pickText } from "@/lib/pageContent";
-import { portfolioJsonLd } from "@/lib/seo";
+import { portfolioJsonLd, withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = pickText(pc, "meta_title", FALLBACK_META_TITLE);
   const description = pickText(pc, "meta_description", FALLBACK_META_DESCRIPTION);
   return {
-    title,
+    title: withBrand(title),
     description,
     alternates: { canonical: "/portfolio" },
     openGraph: {
