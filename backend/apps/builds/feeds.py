@@ -1,23 +1,30 @@
 """XML-фид «Недвижимость» для Яндекс.Вебмастера (формат YRL).
 
 Загружается вручную в Вебмастере: Фиды → Недвижимость → указать URL
-этого эндпоинта. Формат описан тут:
+этого эндпоинта. Официальная спецификация (важно соблюдать порядок
+дочерних тегов — YRL это XSD-схема, порядок значим):
 https://yandex.ru/support/realty/ru/feed/requirements-sale-housing.md
 
 В фид попадают только дома, которые реально можно купить с участком в
-ЖК «Красная смородина» (available_in_settlement=True) — у них есть
-фиксированный адрес и координаты. Вариант «строим на вашем участке»
-сюда не годится: это услуга, а не конкретный объект недвижимости с
-адресом, фид на такое не рассчитан.
+ЖК «Красная смородина» (available_in_settlement=True, не распроданные)
+— у них есть фиксированный адрес и координаты посёлка. Вариант «строим
+на вашем участке» сюда не годится: это услуга, а не конкретный объект
+недвижимости с адресом, фид на такое не рассчитан.
 
-Часть опциональных тегов спецификации (built-year, lot-area,
-living-space) не заполняем — таких данных просто нет в модели Build,
-а слать неточные/выдуманные значения рискованнее, чем не слать вовсе
-(Яндекс блокирует фид при расхождении с данными на сайте). Если
-Вебмастер после загрузки укажет на другие обязательные поля — их
-легко добавить точечно.
+Сознательно не заполняем:
+- built-year — по спецификации не обязателен для частных домов;
+- lot-area / category="дом с участком" — площадь участка не хранится
+  в Build, а слать неточное значение хуже, чем не слать (категория
+  "дом" без участка не требует lot-area);
+- room-space (площадь каждой комнаты по отдельности) — таких данных
+  нет, поле по смыслу больше для комнат под аренду, не для дома целиком;
+- yandex-building-id/yandex-house-id — это для новостроек-квартир из
+  базы Яндекса, к частным домам не относится.
+living-space заполняем тем же значением, что и area (общая площадь) —
+сайт нигде не разделяет общую/жилую площадь, разошедшихся цифр не будет.
 """
 
+import re
 from datetime import datetime, timezone as dt_timezone
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
@@ -35,6 +42,9 @@ SETTLEMENT_LNG = "84.871372"
 
 NS = "http://webmaster.yandex.ru/schemas/feed/realty/2010-06"
 
+MIN_IMAGES = 3  # спецификация: "image* — не меньше трёх фото"
+MAX_DESCRIPTION = 10_000  # спецификация: "не более 10 000 знаков"
+
 
 def _iso(dt: datetime) -> str:
     if dt.tzinfo is None:
@@ -48,6 +58,17 @@ def _sub(parent: Element, tag: str, text) -> Element | None:
     el = SubElement(parent, tag)
     el.text = str(text)
     return el
+
+
+def _phone_yrl(raw: str) -> str | None:
+    """+7XXXXXXXXXX — код страны и 10 цифр, без пробелов (требование YRL).
+    Сайт хранит телефон в человекочитаемом виде («+7 909 543 58 85»)."""
+    digits = re.sub(r"\D", "", raw or "")
+    if digits.startswith("8"):
+        digits = "7" + digits[1:]
+    if len(digits) != 11 or not digits.startswith("7"):
+        return None
+    return f"+{digits}"
 
 
 def _current_price(build: Build):
@@ -65,6 +86,11 @@ def _current_price(build: Build):
 
 def realty_feed(request):
     s = SiteSettings.load()
+    phone = _phone_yrl(s.phone)
+    # settlement_location обычно вида «д. Кисловка, Томская область» —
+    # берём только населённый пункт, область передаём отдельным тегом.
+    locality = (s.settlement_location or "д. Кисловка").split(",")[0].strip()
+
     builds = (
         Build.objects.filter(
             is_published=True,
@@ -79,29 +105,36 @@ def realty_feed(request):
     _sub(root, "generation-date", _iso(datetime.now(dt_timezone.utc)))
 
     for b in builds:
+        images = [img for img in b.images.order_by("order", "id") if img.image][:10]
+        # "каждое объявление посвящено одному объекту... не меньше трёх
+        # фото" — без хотя бы 3 фото объявление невалидно, пропускаем его,
+        # а не шлём заведомо невалидный offer на весь фид.
+        if len(images) < MIN_IMAGES:
+            continue
+
+        # Порядок дочерних тегов ниже соответствует официальному примеру
+        # YRL-документа — намеренно не переставляем произвольно.
         offer = SubElement(root, "offer", {"internal-id": b.slug})
         _sub(offer, "type", "продажа")
         _sub(offer, "property-type", "жилая")
         _sub(offer, "category", "дом")
-        _sub(offer, "creation-date", _iso(b.created_at))
         _sub(offer, "url", f"{settings.SITE_URL}/builds/{b.slug}")
+        _sub(offer, "creation-date", _iso(b.created_at))
 
         location = SubElement(offer, "location")
         _sub(location, "country", "Россия")
         _sub(location, "region", "Томская область")
-        # settlement_location обычно вида «д. Кисловка, Томская область» —
-        # берём только населённый пункт, область уже отдельным тегом выше.
-        locality = (s.settlement_location or "д. Кисловка").split(",")[0].strip()
         _sub(location, "locality-name", locality)
-        address = f"ЖК «{s.settlement_name}»" + (f", участок {b.plot_number}" if b.plot_number else "")
+        address = f"уч. {b.plot_number}" if b.plot_number else f"ЖК «{s.settlement_name}»"
         _sub(location, "address", address)
         _sub(location, "latitude", SETTLEMENT_LAT)
         _sub(location, "longitude", SETTLEMENT_LNG)
+        _sub(location, "village-name", f"ЖК «{s.settlement_name}»")
 
         agent = SubElement(offer, "sales-agent")
+        if phone:
+            _sub(agent, "phone", phone)
         _sub(agent, "category", "застройщик")
-        if s.phone:
-            _sub(agent, "phone", s.phone)
         _sub(agent, "organization", s.legal_name or s.site_name)
 
         price = SubElement(offer, "price")
@@ -112,14 +145,20 @@ def realty_feed(request):
         _sub(area, "value", b.area)
         _sub(area, "unit", "кв. м")
 
+        living_space = SubElement(offer, "living-space")
+        _sub(living_space, "value", b.area)
+        _sub(living_space, "unit", "кв. м")
+
         if b.bedrooms:
             _sub(offer, "rooms", b.bedrooms)
+        _sub(offer, "floors-total", b.floors)
         _sub(offer, "building-type", "кирпичный")
-        _sub(offer, "description", b.short_description or b.description)
 
-        for img in b.images.order_by("order", "id")[:10]:
-            if img.image:
-                _sub(offer, "image", f"{settings.SITE_URL}{img.image.url}")
+        description = (b.short_description or b.description or "")[:MAX_DESCRIPTION]
+        _sub(offer, "description", description)
+
+        for img in images:
+            _sub(offer, "image", f"{settings.SITE_URL}{img.image.url}")
 
     xml_bytes = tostring(root, encoding="utf-8")
     pretty = minidom.parseString(xml_bytes).toprettyxml(indent="  ", encoding="utf-8")
