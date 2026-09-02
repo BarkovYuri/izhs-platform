@@ -125,11 +125,14 @@ def realty_feed(request):
         _sub(location, "country", "Россия")
         _sub(location, "region", "Томская область")
         _sub(location, "locality-name", locality)
-        address = f"уч. {b.plot_number}" if b.plot_number else f"ЖК «{s.settlement_name}»"
+        # village-name — не валидный элемент <location> по факту (проверено
+        # валидатором Вебмастера, реальный список короче документированного);
+        # название ЖК держим прямо в address, благо валидный тег и всегда
+        # присутствует, с уч. или без.
+        address = f"ЖК «{s.settlement_name}»" + (f", уч. {b.plot_number}" if b.plot_number else "")
         _sub(location, "address", address)
         _sub(location, "latitude", SETTLEMENT_LAT)
         _sub(location, "longitude", SETTLEMENT_LNG)
-        _sub(location, "village-name", f"ЖК «{s.settlement_name}»")
 
         agent = SubElement(offer, "sales-agent")
         if phone:
