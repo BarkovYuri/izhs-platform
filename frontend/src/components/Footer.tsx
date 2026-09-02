@@ -28,6 +28,7 @@ export default function Footer({ s }: { s: SiteSettings }) {
             <ul className="space-y-2 text-[14px]">
               <li><Link href="/builds" className="hover:text-[var(--rs-brand)]">Проекты домов</Link></li>
               <li><Link href="/akcii" className="hover:text-[var(--rs-brand)]">Акции</Link></li>
+              <li><Link href="/ipoteka" className="hover:text-[var(--rs-brand)]">Калькулятор ипотеки</Link></li>
               <li><Link href="/portfolio" className="hover:text-[var(--rs-brand)]">Построенные дома</Link></li>
               <li><Link href="/settlement" className="hover:text-[var(--rs-brand)]">ЖК «{s.settlement_name}»</Link></li>
               <li><Link href="/blog" className="hover:text-[var(--rs-brand)]">Статьи</Link></li>

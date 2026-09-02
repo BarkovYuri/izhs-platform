@@ -18,6 +18,7 @@ class Lead(models.Model):
     SOURCE_PROJECT = "project"
     SOURCE_CONTACTS = "contacts"
     SOURCE_CATALOG = "catalog"
+    SOURCE_MORTGAGE = "mortgage"
     SOURCE_OTHER = "other"
 
     SOURCE_CHOICES = (
@@ -25,6 +26,7 @@ class Lead(models.Model):
         (SOURCE_PROJECT, "Карточка проекта"),
         (SOURCE_CONTACTS, "Страница контактов"),
         (SOURCE_CATALOG, "Каталог"),
+        (SOURCE_MORTGAGE, "Калькулятор ипотеки"),
         (SOURCE_OTHER, "Другое"),
     )
 

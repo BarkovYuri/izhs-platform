@@ -231,7 +231,7 @@ export type LeadPayload = {
   email?: string;
   message?: string;
   build?: number;
-  source?: "homepage" | "project" | "contacts" | "catalog" | "other";
+  source?: "homepage" | "project" | "contacts" | "catalog" | "mortgage" | "other";
   page_url?: string;
   utm_source?: string;
   utm_medium?: string;

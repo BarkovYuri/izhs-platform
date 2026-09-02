@@ -202,6 +202,42 @@ body {
 }
 .input-rs:focus { outline: none; border-color: var(--rs-brand); box-shadow: 0 0 0 3px rgba(184,90,53,0.15); }
 
+.range-rs {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--rs-line);
+  outline: none;
+  cursor: pointer;
+}
+.range-rs::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--rs-brand);
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(31,28,24,0.25);
+  cursor: pointer;
+}
+.range-rs::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--rs-brand);
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(31,28,24,0.25);
+  cursor: pointer;
+}
+.range-rs::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--rs-line);
+}
+
 .card-rs {
   background: var(--rs-surface);
   border: 1px solid var(--rs-line);

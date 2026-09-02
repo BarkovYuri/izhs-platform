@@ -7,6 +7,7 @@ import FaqAccordion from "@/components/FaqAccordion";
 import Gallery from "@/components/Gallery";
 import BuildSpecsTabs from "@/components/BuildSpecsTabs";
 import LeadForm from "@/components/LeadForm";
+import MortgageCalculator from "@/components/MortgageCalculator";
 import PromoBadge from "@/components/PromoBadge";
 import PromoCarousel from "@/components/PromoCarousel";
 import { getBuild, getPromotions, getSettings, resolveMediaUrl } from "@/services/api";
@@ -188,6 +189,21 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
 
           <section className="mt-10">
             <BuildSpecsTabs build={b} />
+          </section>
+
+          <section className="mt-10">
+            <div className="flex items-end justify-between gap-4 mb-5">
+              <h2 className="h-display text-[24px] sm:text-[30px] font-extrabold">
+                Рассчитать ипотеку на этот дом
+              </h2>
+              <Link
+                href="/ipoteka"
+                className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-bold text-[var(--rs-brand)] hover:underline shrink-0"
+              >
+                Подробнее об ипотеке <ArrowRight size={14} />
+              </Link>
+            </div>
+            <MortgageCalculator initialPrice={Number(b.promo ? b.promo.promo_price : b.price)} />
           </section>
 
           {/* Per-build FAQ — 3-8 вопросов конкретно про этот проект.
