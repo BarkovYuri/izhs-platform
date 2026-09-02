@@ -7,7 +7,12 @@ env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR.parent / ".env")
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
-DEBUG = env("DJANGO_DEBUG")
+# env("DJANGO_DEBUG") без .bool() отдавал сырую строку из окружения
+# ("0"/"False" и т.п.) — а в Python любая непустая строка truthy, так
+# что `if not DEBUG:` ниже по файлу всегда было `if False:`. Из-за
+# этого весь блок продакшен-настроек (HSTS, secure-cookies,
+# X-Frame-Options, COOP) никогда не применялся ни в проде, ни локально.
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
 ALLOWED_HOSTS = [h.strip() for h in env("DJANGO_ALLOWED_HOSTS").split(",") if h.strip()]
 
