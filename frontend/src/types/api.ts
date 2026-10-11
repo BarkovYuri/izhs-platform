@@ -6,7 +6,8 @@ export type PromoInfo = {
   badge_label: string;
   promo_price: string;
   starts_at: string;
-  ends_at: string;
+  /** null — бессрочная акция. */
+  ends_at: string | null;
   contract_deadline: string | null;
   terms: string;
 };
@@ -220,7 +221,8 @@ export type Promotion = {
   terms: string;
   contract_deadline: string | null;
   starts_at: string;
-  ends_at: string;
+  /** null — бессрочная акция. */
+  ends_at: string | null;
   is_active: boolean;
   builds: PromotionBuildItem[];
 };

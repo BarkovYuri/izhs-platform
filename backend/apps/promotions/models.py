@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.utils import timezone
 
@@ -39,7 +41,10 @@ class Promotion(models.Model):
     )
 
     starts_at = models.DateField("Акция действует с")
-    ends_at = models.DateField("Акция действует по")
+    ends_at = models.DateField(
+        "Акция действует по", null=True, blank=True,
+        help_text="Пусто — бессрочная акция (например, реферальная программа)",
+    )
 
     is_published = models.BooleanField("Опубликована", default=True)
 
@@ -54,10 +59,21 @@ class Promotion(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    def is_running_on(self, day) -> bool:
+        return (
+            self.is_published
+            and self.starts_at <= day
+            and (self.ends_at is None or day <= self.ends_at)
+        )
+
+    @property
+    def ends_sort_key(self):
+        """Для выбора «ближайшей к окончанию» акции: бессрочные — в конец."""
+        return self.ends_at or date.max
+
     @property
     def is_active(self) -> bool:
-        today = timezone.localdate()
-        return self.is_published and self.starts_at <= today <= self.ends_at
+        return self.is_running_on(timezone.localdate())
 
 
 class PromotionBuild(models.Model):

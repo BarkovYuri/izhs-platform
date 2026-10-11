@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronLeft, ChevronRight, Flame } from "lucide-react";
 import type { Promotion } from "@/types/api";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatUntil, pluralRu } from "@/lib/utils";
 import { resolveMediaUrl } from "@/services/api";
 import { useItemsPerView, useLoopCarousel } from "@/lib/useLoopCarousel";
 
@@ -120,10 +120,10 @@ function PromoBannerSlide({ promotion }: { promotion: Promotion }) {
               <Flame size={13} /> {promotion.badge_label}
             </span>
             <div className="mt-0 sm:mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[12px] sm:text-[12.5px] text-white/90 font-semibold">
-              <span>До {formatDate(promotion.ends_at)}</span>
+              <span>{promotion.ends_at ? `До ${formatDate(promotion.ends_at)}` : "Бессрочно"}</span>
               {houseCount > 0 && (
                 <span className="hidden sm:inline">
-                  {houseCount} {houseCount === 1 ? "дом участвует" : "дома/домов участвуют"}
+                  {houseCount} {pluralRu(houseCount, ["дом участвует", "дома участвуют", "домов участвуют"])}
                 </span>
               )}
             </div>
@@ -154,7 +154,7 @@ function PromoBannerSlide({ promotion }: { promotion: Promotion }) {
         </h2>
         <div className="mt-2 sm:mt-3 flex items-center justify-between gap-3">
           <span className="text-[12px] sm:text-[12.5px] text-white/80">
-            Действует до {formatDate(promotion.ends_at)}
+            Действует {formatUntil(promotion.ends_at)}
           </span>
           <Link
             href={`/akcii/${promotion.slug}`}

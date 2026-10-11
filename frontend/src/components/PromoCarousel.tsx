@@ -55,7 +55,14 @@ export default function PromoCarousel({ promotions }: { promotions: Promotion[] 
             onTransitionEnd={handleTransitionEnd}
           >
             {extended.map((p, i) => (
-              <div key={`${p.slug}-${i}`} className="shrink-0 px-1.5 sm:px-2" style={{ width: `${slideWidth}%` }}>
+              <div
+                key={`${p.slug}-${i}`}
+                className="shrink-0 px-1.5 sm:px-2"
+                style={{ width: `${slideWidth}%` }}
+                // Клоны для бесконечной прокрутки — только визуал: прячем от скринридеров и Tab.
+                aria-hidden={i >= count || undefined}
+                inert={i >= count || undefined}
+              >
                 <PromoCard promotion={p} />
               </div>
             ))}

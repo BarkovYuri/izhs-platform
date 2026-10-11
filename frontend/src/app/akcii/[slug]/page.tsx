@@ -97,7 +97,7 @@ export default async function PromotionPage({ params }: { params: Promise<{ slug
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <div className="text-[13.5px]">
                   <div className="text-[var(--rs-muted)]">Акция действует</div>
-                  <div className="font-bold">{formatDate(p.starts_at)} — {formatDate(p.ends_at)}</div>
+                  <div className="font-bold">{p.ends_at ? `${formatDate(p.starts_at)} — ${formatDate(p.ends_at)}` : `с ${formatDate(p.starts_at)}, бессрочно`}</div>
                 </div>
                 {p.contract_deadline && (
                   <div className="text-[13.5px]">

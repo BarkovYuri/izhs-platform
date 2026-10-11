@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Flame, Home } from "lucide-react";
 import type { Promotion } from "@/types/api";
-import { formatDate } from "@/lib/utils";
+import { formatDate, pluralRu } from "@/lib/utils";
 
 export default function PromoCard({ promotion }: { promotion: Promotion }) {
   const houseCount = promotion.builds.length;
@@ -19,14 +19,14 @@ export default function PromoCard({ promotion }: { promotion: Promotion }) {
       </h3>
 
       <p className="mt-2 text-[13.5px] text-[var(--rs-muted)] leading-relaxed line-clamp-3 flex-1">
-        {promotion.terms}
+        {promotion.banner_subtitle || promotion.terms}
       </p>
 
       <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-[12.5px] text-[var(--rs-muted)]">
-        <span>С {formatDate(promotion.starts_at)} по {formatDate(promotion.ends_at)}</span>
+        <span>{promotion.ends_at ? `С ${formatDate(promotion.starts_at)} по ${formatDate(promotion.ends_at)}` : "Бессрочно"}</span>
         {houseCount > 0 && (
           <span className="inline-flex items-center gap-1">
-            <Home size={13} /> {houseCount} {houseCount === 1 ? "дом" : "дома/домов"}
+            <Home size={13} /> {houseCount} {pluralRu(houseCount, ["дом", "дома", "домов"])}
           </span>
         )}
       </div>

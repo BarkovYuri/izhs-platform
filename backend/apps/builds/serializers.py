@@ -68,8 +68,8 @@ class PromoFieldMixin:
         best = None
         for link in obj.promo_links.all():
             p = link.promotion
-            if p.is_published and p.starts_at <= today <= p.ends_at:
-                if best is None or p.ends_at < best.promotion.ends_at:
+            if p.is_running_on(today):
+                if best is None or p.ends_sort_key < best.promotion.ends_sort_key:
                     best = link
         if best is None:
             return None

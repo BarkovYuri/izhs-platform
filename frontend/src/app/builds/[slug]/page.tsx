@@ -11,7 +11,7 @@ import MortgageCalculator from "@/components/MortgageCalculator";
 import PromoBadge from "@/components/PromoBadge";
 import PromoCarousel from "@/components/PromoCarousel";
 import { getBuild, getPromotions, getSettings, resolveMediaUrl } from "@/services/api";
-import { formatArea, formatDate, formatPrice } from "@/lib/utils";
+import { formatArea, formatDate, formatPrice, formatUntil } from "@/lib/utils";
 import { faqPageJsonLd, SITE_URL, withBrand } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -287,7 +287,7 @@ export default async function BuildPage({ params }: { params: Promise<{ slug: st
               <div className="text-[12px] text-[var(--rs-brand-2)] font-semibold mt-2">
                 Акция «{b.promo.promotion_title}» — при заключении договора
                 {b.promo.contract_deadline ? ` до ${formatDate(b.promo.contract_deadline)}` : ""}.
-                Действует до {formatDate(b.promo.ends_at)}.
+                Действует {formatUntil(b.promo.ends_at)}.
               </div>
             ) : (
               <div className="text-[12px] text-[var(--rs-muted)] mt-2">

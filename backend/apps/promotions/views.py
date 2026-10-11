@@ -1,3 +1,4 @@
+from django.db.models import F, Q
 from django.utils import timezone
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
@@ -9,9 +10,10 @@ def _active_promotions_qs():
     today = timezone.localdate()
     return (
         Promotion.objects
-        .filter(is_published=True, starts_at__lte=today, ends_at__gte=today)
+        .filter(is_published=True, starts_at__lte=today)
+        .filter(Q(ends_at__isnull=True) | Q(ends_at__gte=today))
         .prefetch_related("build_links__build__images")
-        .order_by("ends_at", "-created_at")
+        .order_by(F("ends_at").asc(nulls_last=True), "-created_at")
     )
 
 
